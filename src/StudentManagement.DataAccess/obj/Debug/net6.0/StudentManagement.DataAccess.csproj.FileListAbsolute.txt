@@ -1,0 +1,17 @@
+C:\Users\binch\OneDrive\Рабочий стол\FinalProject\StudentManagementSystemBackEnd\src\StudentManagement.DataAccess\bin\Debug\net6.0\StudentManagement.DataAccess.deps.json
+C:\Users\binch\OneDrive\Рабочий стол\FinalProject\StudentManagementSystemBackEnd\src\StudentManagement.DataAccess\bin\Debug\net6.0\StudentManagement.DataAccess.runtimeconfig.json
+C:\Users\binch\OneDrive\Рабочий стол\FinalProject\StudentManagementSystemBackEnd\src\StudentManagement.DataAccess\bin\Debug\net6.0\StudentManagement.DataAccess.dll
+C:\Users\binch\OneDrive\Рабочий стол\FinalProject\StudentManagementSystemBackEnd\src\StudentManagement.DataAccess\bin\Debug\net6.0\StudentManagement.DataAccess.pdb
+C:\Users\binch\OneDrive\Рабочий стол\FinalProject\StudentManagementSystemBackEnd\src\StudentManagement.DataAccess\bin\Debug\net6.0\StudentManagement.Core.dll
+C:\Users\binch\OneDrive\Рабочий стол\FinalProject\StudentManagementSystemBackEnd\src\StudentManagement.DataAccess\bin\Debug\net6.0\StudentManagement.Core.pdb
+C:\Users\binch\OneDrive\Рабочий стол\FinalProject\StudentManagementSystemBackEnd\src\StudentManagement.DataAccess\obj\Debug\net6.0\StudentManagement.DataAccess.csproj.AssemblyReference.cache
+C:\Users\binch\OneDrive\Рабочий стол\FinalProject\StudentManagementSystemBackEnd\src\StudentManagement.DataAccess\obj\Debug\net6.0\StudentManagement.DataAccess.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\binch\OneDrive\Рабочий стол\FinalProject\StudentManagementSystemBackEnd\src\StudentManagement.DataAccess\obj\Debug\net6.0\StudentManagement.DataAccess.AssemblyInfoInputs.cache
+C:\Users\binch\OneDrive\Рабочий стол\FinalProject\StudentManagementSystemBackEnd\src\StudentManagement.DataAccess\obj\Debug\net6.0\StudentManagement.DataAccess.AssemblyInfo.cs
+C:\Users\binch\OneDrive\Рабочий стол\FinalProject\StudentManagementSystemBackEnd\src\StudentManagement.DataAccess\obj\Debug\net6.0\StudentManagement.DataAccess.csproj.CoreCompileInputs.cache
+C:\Users\binch\OneDrive\Рабочий стол\FinalProject\StudentManagementSystemBackEnd\src\StudentManagement.DataAccess\obj\Debug\net6.0\StudentManagement.DataAccess.csproj.CopyComplete
+C:\Users\binch\OneDrive\Рабочий стол\FinalProject\StudentManagementSystemBackEnd\src\StudentManagement.DataAccess\obj\Debug\net6.0\StudentManagement.DataAccess.dll
+C:\Users\binch\OneDrive\Рабочий стол\FinalProject\StudentManagementSystemBackEnd\src\StudentManagement.DataAccess\obj\Debug\net6.0\refint\StudentManagement.DataAccess.dll
+C:\Users\binch\OneDrive\Рабочий стол\FinalProject\StudentManagementSystemBackEnd\src\StudentManagement.DataAccess\obj\Debug\net6.0\StudentManagement.DataAccess.pdb
+C:\Users\binch\OneDrive\Рабочий стол\FinalProject\StudentManagementSystemBackEnd\src\StudentManagement.DataAccess\obj\Debug\net6.0\StudentManagement.DataAccess.genruntimeconfig.cache
+C:\Users\binch\OneDrive\Рабочий стол\FinalProject\StudentManagementSystemBackEnd\src\StudentManagement.DataAccess\obj\Debug\net6.0\ref\StudentManagement.DataAccess.dll

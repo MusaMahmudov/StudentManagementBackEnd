@@ -1,0 +1,17 @@
+C:\Users\binch\OneDrive\Рабочий стол\FinalProject\StudentManagementSystemBackEnd\src\StudentManagement.Business\bin\Debug\net6.0\StudentManagement.Business.deps.json
+C:\Users\binch\OneDrive\Рабочий стол\FinalProject\StudentManagementSystemBackEnd\src\StudentManagement.Business\bin\Debug\net6.0\StudentManagement.Business.dll
+C:\Users\binch\OneDrive\Рабочий стол\FinalProject\StudentManagementSystemBackEnd\src\StudentManagement.Business\bin\Debug\net6.0\StudentManagement.Business.pdb
+C:\Users\binch\OneDrive\Рабочий стол\FinalProject\StudentManagementSystemBackEnd\src\StudentManagement.Business\bin\Debug\net6.0\StudentManagement.Core.dll
+C:\Users\binch\OneDrive\Рабочий стол\FinalProject\StudentManagementSystemBackEnd\src\StudentManagement.Business\bin\Debug\net6.0\StudentManagement.DataAccess.dll
+C:\Users\binch\OneDrive\Рабочий стол\FinalProject\StudentManagementSystemBackEnd\src\StudentManagement.Business\bin\Debug\net6.0\StudentManagement.DataAccess.pdb
+C:\Users\binch\OneDrive\Рабочий стол\FinalProject\StudentManagementSystemBackEnd\src\StudentManagement.Business\bin\Debug\net6.0\StudentManagement.Core.pdb
+C:\Users\binch\OneDrive\Рабочий стол\FinalProject\StudentManagementSystemBackEnd\src\StudentManagement.Business\obj\Debug\net6.0\StudentManagement.Business.csproj.AssemblyReference.cache
+C:\Users\binch\OneDrive\Рабочий стол\FinalProject\StudentManagementSystemBackEnd\src\StudentManagement.Business\obj\Debug\net6.0\StudentManagement.Business.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\binch\OneDrive\Рабочий стол\FinalProject\StudentManagementSystemBackEnd\src\StudentManagement.Business\obj\Debug\net6.0\StudentManagement.Business.AssemblyInfoInputs.cache
+C:\Users\binch\OneDrive\Рабочий стол\FinalProject\StudentManagementSystemBackEnd\src\StudentManagement.Business\obj\Debug\net6.0\StudentManagement.Business.AssemblyInfo.cs
+C:\Users\binch\OneDrive\Рабочий стол\FinalProject\StudentManagementSystemBackEnd\src\StudentManagement.Business\obj\Debug\net6.0\StudentManagement.Business.csproj.CoreCompileInputs.cache
+C:\Users\binch\OneDrive\Рабочий стол\FinalProject\StudentManagementSystemBackEnd\src\StudentManagement.Business\obj\Debug\net6.0\StudentManagement.Business.csproj.CopyComplete
+C:\Users\binch\OneDrive\Рабочий стол\FinalProject\StudentManagementSystemBackEnd\src\StudentManagement.Business\obj\Debug\net6.0\StudentManagement.Business.dll
+C:\Users\binch\OneDrive\Рабочий стол\FinalProject\StudentManagementSystemBackEnd\src\StudentManagement.Business\obj\Debug\net6.0\refint\StudentManagement.Business.dll
+C:\Users\binch\OneDrive\Рабочий стол\FinalProject\StudentManagementSystemBackEnd\src\StudentManagement.Business\obj\Debug\net6.0\StudentManagement.Business.pdb
+C:\Users\binch\OneDrive\Рабочий стол\FinalProject\StudentManagementSystemBackEnd\src\StudentManagement.Business\obj\Debug\net6.0\ref\StudentManagement.Business.dll
