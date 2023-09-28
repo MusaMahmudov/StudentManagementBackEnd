@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using StudentManagement.Business.DTOs.GroupDtos;
 using StudentManagement.Business.DTOs.StudentDTOs;
 using StudentManagement.Core.Entities;
 using System;
@@ -13,7 +14,7 @@ namespace StudentManagement.Business.Mappers
     {
         public StudentMapper() 
         {
-          CreateMap<Student,GetStudentDTO>().ReverseMap();
+          CreateMap<Student,GetStudentDTO>().ForMember(gs=>gs.Groups,x=>x.MapFrom(s=>s.studentGroups.Select(sg => new GetGroupStudentDTO {Id = sg.GroupId,Name = sg.Group.Name }))).ReverseMap();
           CreateMap<PostStudentDTO,Student>().ReverseMap();
         }
     }

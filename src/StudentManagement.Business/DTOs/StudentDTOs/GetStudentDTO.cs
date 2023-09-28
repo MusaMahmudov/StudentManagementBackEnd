@@ -10,6 +10,7 @@ namespace StudentManagement.Business.DTOs.StudentDTOs
 {
     public class GetStudentDTO
     {
+        public Guid Id { get; set; }
         public string FullName { get; set; }
         public int YearOfGraduation { get; set; }
         public string Gender { get; set; }
@@ -19,6 +20,6 @@ namespace StudentManagement.Business.DTOs.StudentDTOs
         public int HomePhoneNumber { get; set; }
         public int PhoneNumber { get; set; }
         public string Email { get; set; }
-        public List<GetGroupDTO>? Groups { get; set; }
+        public List<GetGroupStudentDTO>? Groups { get; set; }
     }
 }

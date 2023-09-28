@@ -47,6 +47,16 @@ namespace StudentManagement.Business.Services.Implementations
         public async Task CreateGroupAsync(PostGroupDTO postGroupDTO)
         {
             var newGroup = _mapper.Map<Group>(postGroupDTO);
+            if(newGroup.studentGroups is not null)
+            {
+                newGroup.StudentCount = (byte)postGroupDTO.StudentsId.Count();
+            }
+            else
+            {
+                newGroup.StudentCount = 0;
+            }
+
+
             await _groupRepository.CreateAsync(newGroup);
             await _groupRepository.SaveChangesAsync();
 
@@ -56,6 +66,8 @@ namespace StudentManagement.Business.Services.Implementations
         public async Task DeleteGroupAsync(Guid id)
         {
             var Group = await _groupRepository.GetSingleAsync(g=>g.Id == id);
+            if (Group is null)
+                throw new GroupNotFoundById("Group not found");
             _groupRepository.Delete(Group);
             await _groupRepository.SaveChangesAsync();
         }
@@ -65,7 +77,13 @@ namespace StudentManagement.Business.Services.Implementations
         public async Task UpdateGroupAsync(Guid Id, PostGroupDTO postGroupDTO)
         {
             var Group = await _groupRepository.GetSingleAsync(g => g.Id == Id);
+            if (Group is null)
+                throw new GroupNotFoundById("Group not found");
+           
+
+            
             Group = _mapper.Map(postGroupDTO, Group);
+            Group.StudentCount = (byte)postGroupDTO.StudentsId.Count();
             _groupRepository.Update(Group);
            await _groupRepository.SaveChangesAsync();
         }

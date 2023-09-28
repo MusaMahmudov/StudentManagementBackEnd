@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using StudentManagement.Business.DTOs.CommonDTOs;
 using StudentManagement.Business.DTOs.GroupDtos;
@@ -35,6 +36,18 @@ namespace StudentProject.API.Controllers
             var group = await _groupService.GetGroupByIdAsync(Id);
             return Ok(group);
 
+        }
+        [HttpDelete("{Id}")]
+        public async Task<IActionResult> DeleteGroup(Guid Id) 
+        { 
+           await _groupService.DeleteGroupAsync(Id);
+            return StatusCode((int)HttpStatusCode.OK, new ResponseDTO(HttpStatusCode.OK,"Group deleted"));
+        }
+        [HttpPost("{Id}")]
+        public async Task<IActionResult> UpdateGroup(Guid Id,PostGroupDTO postGroupDTO)
+        {
+           await _groupService.UpdateGroupAsync(Id, postGroupDTO);
+            return StatusCode((int)HttpStatusCode.OK, new ResponseDTO(HttpStatusCode.OK, "Group updated "));
         }
     }
 }

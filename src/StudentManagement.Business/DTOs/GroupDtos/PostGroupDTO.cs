@@ -9,7 +9,6 @@ namespace StudentManagement.Business.DTOs.GroupDtos
     public class PostGroupDTO
     {
         public string Name { get; set; }
-        public byte StudentCount { get; set; }
         public byte Year { get; set; }
         public Guid? FacultyId { get; set; }
         public List<Guid>? StudentsId { get; set; }

@@ -11,6 +11,7 @@ namespace StudentManagement.DataAccess.Configurations
 {
     public class StudentConfiguration : IEntityTypeConfiguration<Student>
     {
+        
         public void Configure(EntityTypeBuilder<Student> builder)
         {
             builder.Property(s => s.FullName).IsRequired(true).HasMaxLength(128);

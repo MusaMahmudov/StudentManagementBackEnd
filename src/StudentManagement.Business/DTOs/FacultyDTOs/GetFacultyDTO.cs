@@ -8,6 +8,7 @@ namespace StudentManagement.Business.DTOs.FacultyDTOs
 {
     public class GetFacultyDTO
     {
+        public Guid Id { get; set; }
         public string Name { get; set; }
     }
 }
