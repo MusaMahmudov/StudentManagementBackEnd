@@ -12,25 +12,15 @@ namespace StudentManagement.Business.Services.Implementations
 {
     public class AuthService : IAuthService
     {
-        private readonly 
         private readonly UserManager<AppUser> _userManager;
-        public AuthService(UserManager<AppUser> userManager)
+        private readonly SignInManager<AppUser> _signInManager;
+        public Task LoginAsync(string userName, string Password)
         {
-            _userManager = userManager;
-        }
-
-        public async Task LoginAsync(string userNameOrEmail, string Password)
-        {
-         var user =  await _userManager.FindByEmailAsync(userNameOrEmail);
-            if (user is null) 
-            {
-                user = await _userManager.FindByNameAsync(userNameOrEmail);
-                if(user is null)
-                {
-                    throw new Exception("UserName/Email or password is wrong");
-                }
-            }
            
+            throw new NotImplementedException();
         }
     }
+
+   
+    
 }

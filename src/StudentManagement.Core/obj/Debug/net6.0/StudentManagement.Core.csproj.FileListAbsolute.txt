@@ -1,0 +1,12 @@
+C:\Users\tural\OneDrive\Masaüstü\StudentManagementBackEnd\src\StudentManagement.Core\bin\Debug\net6.0\StudentManagement.Core.deps.json
+C:\Users\tural\OneDrive\Masaüstü\StudentManagementBackEnd\src\StudentManagement.Core\bin\Debug\net6.0\StudentManagement.Core.dll
+C:\Users\tural\OneDrive\Masaüstü\StudentManagementBackEnd\src\StudentManagement.Core\bin\Debug\net6.0\StudentManagement.Core.pdb
+C:\Users\tural\OneDrive\Masaüstü\StudentManagementBackEnd\src\StudentManagement.Core\obj\Debug\net6.0\StudentManagement.Core.csproj.AssemblyReference.cache
+C:\Users\tural\OneDrive\Masaüstü\StudentManagementBackEnd\src\StudentManagement.Core\obj\Debug\net6.0\StudentManagement.Core.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\tural\OneDrive\Masaüstü\StudentManagementBackEnd\src\StudentManagement.Core\obj\Debug\net6.0\StudentManagement.Core.AssemblyInfoInputs.cache
+C:\Users\tural\OneDrive\Masaüstü\StudentManagementBackEnd\src\StudentManagement.Core\obj\Debug\net6.0\StudentManagement.Core.AssemblyInfo.cs
+C:\Users\tural\OneDrive\Masaüstü\StudentManagementBackEnd\src\StudentManagement.Core\obj\Debug\net6.0\StudentManagement.Core.csproj.CoreCompileInputs.cache
+C:\Users\tural\OneDrive\Masaüstü\StudentManagementBackEnd\src\StudentManagement.Core\obj\Debug\net6.0\StudentManagement.Core.dll
+C:\Users\tural\OneDrive\Masaüstü\StudentManagementBackEnd\src\StudentManagement.Core\obj\Debug\net6.0\refint\StudentManagement.Core.dll
+C:\Users\tural\OneDrive\Masaüstü\StudentManagementBackEnd\src\StudentManagement.Core\obj\Debug\net6.0\StudentManagement.Core.pdb
+C:\Users\tural\OneDrive\Masaüstü\StudentManagementBackEnd\src\StudentManagement.Core\obj\Debug\net6.0\ref\StudentManagement.Core.dll
