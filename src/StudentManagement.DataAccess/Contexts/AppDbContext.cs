@@ -21,11 +21,14 @@ public class AppDbContext : IdentityDbContext<AppUser>
     public DbSet<Student> Students { get; set; } = null!;
     public DbSet<Faculty> Faculties { get; set; } = null!;
     public DbSet<Group> Groups { get; set; } = null!;
+    public DbSet<ExamType> ExamTypes { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(StudentConfiguration).Assembly);
 
+
+        modelBuilder.Entity<AppUser>().HasOne(u=>u.Student).WithOne(s => s.AppUser).HasForeignKey<Student>(s=>s.AppUserId);
 
         base.OnModelCreating(modelBuilder);
     }

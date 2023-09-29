@@ -11,5 +11,6 @@ namespace StudentManagement.Core.Entities.Identity
     {
         
         public bool IsActive { get; set; }
+        public Student? Student { get; set; }
     }
 }

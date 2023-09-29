@@ -23,6 +23,7 @@ namespace StudentManagement.Business
             services.AddScoped<IGroupService, GroupService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IExamTypeService, ExamTypeService>();
             return services;
         }
     }

@@ -1,4 +1,5 @@
 ﻿using StudentManagement.Core.Entities.Common;
+using StudentManagement.Core.Entities.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +20,8 @@ public class Student : BaseSectionEntity
     public int HomePhoneNumber { get; set; }
     public int PhoneNumber { get; set; }
     public string Email { get; set; }
+    public AppUser AppUser { get; set; }
+    public string AppUserId { get; set; }
     public List<StudentGroup>? studentGroups { get; set; }
 
 }

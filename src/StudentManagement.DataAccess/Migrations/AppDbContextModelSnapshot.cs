@@ -155,6 +155,39 @@ namespace StudentManagement.DataAccess.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("StudentManagement.Core.Entities.ExamType", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ExamTypes");
+                });
+
             modelBuilder.Entity("StudentManagement.Core.Entities.Faculty", b =>
                 {
                     b.Property<Guid>("Id")
@@ -247,6 +280,7 @@ namespace StudentManagement.DataAccess.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
+                        .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
@@ -286,6 +320,7 @@ namespace StudentManagement.DataAccess.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("UserName")
+                        .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
@@ -307,6 +342,10 @@ namespace StudentManagement.DataAccess.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AppUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -365,6 +404,9 @@ namespace StudentManagement.DataAccess.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AppUserId")
+                        .IsUnique();
 
                     b.ToTable("Students");
                 });
@@ -458,6 +500,17 @@ namespace StudentManagement.DataAccess.Migrations
                     b.Navigation("Faculty");
                 });
 
+            modelBuilder.Entity("StudentManagement.Core.Entities.Student", b =>
+                {
+                    b.HasOne("StudentManagement.Core.Entities.Identity.AppUser", "AppUser")
+                        .WithOne("Student")
+                        .HasForeignKey("StudentManagement.Core.Entities.Student", "AppUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppUser");
+                });
+
             modelBuilder.Entity("StudentManagement.Core.Entities.StudentGroup", b =>
                 {
                     b.HasOne("StudentManagement.Core.Entities.Group", "Group")
@@ -485,6 +538,11 @@ namespace StudentManagement.DataAccess.Migrations
             modelBuilder.Entity("StudentManagement.Core.Entities.Group", b =>
                 {
                     b.Navigation("studentGroups");
+                });
+
+            modelBuilder.Entity("StudentManagement.Core.Entities.Identity.AppUser", b =>
+                {
+                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("StudentManagement.Core.Entities.Student", b =>
