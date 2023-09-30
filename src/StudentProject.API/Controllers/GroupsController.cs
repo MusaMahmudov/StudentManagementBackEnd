@@ -43,7 +43,7 @@ namespace StudentProject.API.Controllers
            await _groupService.DeleteGroupAsync(Id);
             return StatusCode((int)HttpStatusCode.OK, new ResponseDTO(HttpStatusCode.OK,"Group deleted"));
         }
-        [HttpPost("{Id}")]
+        [HttpPut("{Id}")]
         public async Task<IActionResult> UpdateGroup(Guid Id,PostGroupDTO postGroupDTO)
         {
            await _groupService.UpdateGroupAsync(Id, postGroupDTO);

@@ -30,5 +30,14 @@ namespace StudentProject.API.Controllers
             return Ok("User created successefully");
 
         }
+        [HttpGet]
+        public async Task<IActionResult> GetAllUsers()
+        {
+          var users = await _userService.GetAllUsersAsync();
+          
+
+
+          return Ok(users);
+        }
     }
 }

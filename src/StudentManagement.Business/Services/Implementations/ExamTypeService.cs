@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using StudentManagement.Business.DTOs.ExamTypeDTOs;
+using StudentManagement.Business.Exceptions.ExamTypeExceptions;
 using StudentManagement.Business.Services.Interfaces;
 using StudentManagement.Core.Entities;
 using StudentManagement.DataAccess.Repositories.Interfaces;
@@ -34,7 +35,12 @@ namespace StudentManagement.Business.Services.Implementations
 
         public async Task<GetExamTypeDTO> GetExamTypeByIdAsync(Guid id)
         {
+            
+
             var examType = await _examTypeRepository.GetSingleAsync(e => e.Id == id);
+            if (examType is null)
+                throw new ExamTypeNotFoundByIdException("Exam type not found");
+
             var examTypeDTO = _mapper.Map<GetExamTypeDTO>(examType);
             return examTypeDTO;
         }
@@ -49,8 +55,13 @@ namespace StudentManagement.Business.Services.Implementations
         public async Task DeleteExamTypeAsync(Guid id)
         {
             var examType = await _examTypeRepository.GetSingleAsync(e => e.Id == id);
+            if (examType is null)
+                throw new ExamTypeNotFoundByIdException("Exam type not found");
+
+            
+
             _examTypeRepository.Delete(examType);
-            _examTypeRepository.Update(examType);
+           await _examTypeRepository.SaveChangesAsync();
         }
 
        
@@ -58,6 +69,9 @@ namespace StudentManagement.Business.Services.Implementations
         public async Task UpdateExamTypeAsync(Guid id, PostExamTypeDTO postExamTypeDTO)
         {
             var examType = await _examTypeRepository.GetSingleAsync(e=>e.Id == id);
+
+            if (examType is null)
+                throw new ExamTypeNotFoundByIdException("Exam type not found");
             examType = _mapper.Map(postExamTypeDTO,examType);
             _examTypeRepository.Update(examType);
            await _examTypeRepository.SaveChangesAsync();

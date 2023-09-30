@@ -10,6 +10,7 @@ namespace StudentManagement.Business.Services.Interfaces
     public interface IUserService
     {
         Task CreateAccountAsync(PostUserDTO postUserDTO);
+        Task<List<GetUserDTO>> GetAllUsersAsync( );
         
        
 

@@ -48,7 +48,7 @@ namespace StudentProject.API.Controllers
           await  _studentService.DeleteStudentAsync(Id);
             return Ok();
         }
-        [HttpPost("{Id}")]
+        [HttpPut("{Id}")]
         public async Task<IActionResult> UpdateStudent(Guid Id,PostStudentDTO postStudentDTO)
         {
            

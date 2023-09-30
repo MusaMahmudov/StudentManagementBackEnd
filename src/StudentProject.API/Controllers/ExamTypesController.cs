@@ -30,5 +30,24 @@ namespace StudentProject.API.Controllers
             await _examTypeService.CreateExamTypeAsync(postExamTypeDTO);
             return StatusCode((int)HttpStatusCode.OK, new ResponseDTO(HttpStatusCode.OK, "Exam type successefully created"));
         }
+        [HttpGet("{Id}")]
+        public async Task<IActionResult> GetExamTypeById(Guid Id)
+        {
+          var examType =   await _examTypeService.GetExamTypeByIdAsync(Id);
+            return Ok(examType);
+        }
+        [HttpDelete]
+        public async Task<IActionResult> DeleteExamTypeAsync(Guid Id)
+        {
+           await _examTypeService.DeleteExamTypeAsync(Id);
+            return StatusCode((int)HttpStatusCode.OK, new ResponseDTO(HttpStatusCode.OK, "Exam type successefully deleted "));
+        }
+        [HttpPut("{Id}")]
+        public async Task<IActionResult> UpdateExamTypeAsync(Guid Id,PostExamTypeDTO postExamTypeDTO)
+        {
+           await _examTypeService.UpdateExamTypeAsync(Id, postExamTypeDTO);
+            return StatusCode((int)HttpStatusCode.OK, new ResponseDTO(HttpStatusCode.OK, "Exam type successefully updated "));
+
+        }
     }
 }

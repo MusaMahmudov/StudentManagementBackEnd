@@ -344,7 +344,6 @@ namespace StudentManagement.DataAccess.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("AppUserId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreatedAt")
@@ -377,16 +376,18 @@ namespace StudentManagement.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("HomePhoneNumber")
-                        .HasColumnType("int");
+                    b.Property<string>("HomePhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
-                    b.Property<int>("PhoneNumber")
-                        .HasColumnType("int");
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TypeOfPayment")
                         .IsRequired()
@@ -406,7 +407,8 @@ namespace StudentManagement.DataAccess.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AppUserId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[AppUserId] IS NOT NULL");
 
                     b.ToTable("Students");
                 });
@@ -436,6 +438,69 @@ namespace StudentManagement.DataAccess.Migrations
                     b.HasIndex("StudentId");
 
                     b.ToTable("StudentGroup");
+                });
+
+            modelBuilder.Entity("StudentManagement.Core.Entities.Teacher", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("AppUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("DateOfBirth")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("EMail")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("Gender")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("MobileNumber")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppUserId")
+                        .IsUnique()
+                        .HasFilter("[AppUserId] IS NOT NULL");
+
+                    b.ToTable("Teachers");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -504,9 +569,7 @@ namespace StudentManagement.DataAccess.Migrations
                 {
                     b.HasOne("StudentManagement.Core.Entities.Identity.AppUser", "AppUser")
                         .WithOne("Student")
-                        .HasForeignKey("StudentManagement.Core.Entities.Student", "AppUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("StudentManagement.Core.Entities.Student", "AppUserId");
 
                     b.Navigation("AppUser");
                 });
@@ -530,6 +593,15 @@ namespace StudentManagement.DataAccess.Migrations
                     b.Navigation("Student");
                 });
 
+            modelBuilder.Entity("StudentManagement.Core.Entities.Teacher", b =>
+                {
+                    b.HasOne("StudentManagement.Core.Entities.Identity.AppUser", "AppUser")
+                        .WithOne("Teacher")
+                        .HasForeignKey("StudentManagement.Core.Entities.Teacher", "AppUserId");
+
+                    b.Navigation("AppUser");
+                });
+
             modelBuilder.Entity("StudentManagement.Core.Entities.Faculty", b =>
                 {
                     b.Navigation("Groups");
@@ -543,6 +615,8 @@ namespace StudentManagement.DataAccess.Migrations
             modelBuilder.Entity("StudentManagement.Core.Entities.Identity.AppUser", b =>
                 {
                     b.Navigation("Student");
+
+                    b.Navigation("Teacher");
                 });
 
             modelBuilder.Entity("StudentManagement.Core.Entities.Student", b =>

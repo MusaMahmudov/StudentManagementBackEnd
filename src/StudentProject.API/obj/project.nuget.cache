@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "LM96FOb1+dr60BgQ023b3fvu6h92w8T/BTcerK1LFkZdpg57dahbDMfpTxokRwNY2snHrg5ePjnsS4pC9ABlGg==",
+  "dgSpecHash": "Ofm5u3dmcLtK92mpwRndtSDfnv8VVwZ5p+covtnMTw4AnHOo/VdduJoMuMWW9fKAZCGWIJmP9KC9ZBGxX1YhVw==",
   "success": true,
   "projectFilePath": "C:\\Users\\binch\\OneDrive\\Рабочий стол\\FinalProject\\StudentManagementBackEnd\\src\\StudentProject.API\\StudentProject.API.csproj",
   "expectedPackageFiles": [
@@ -30,9 +30,9 @@
     "C:\\Users\\binch\\.nuget\\packages\\microsoft.entityframeworkcore\\6.0.22\\microsoft.entityframeworkcore.6.0.22.nupkg.sha512",
     "C:\\Users\\binch\\.nuget\\packages\\microsoft.entityframeworkcore.abstractions\\6.0.22\\microsoft.entityframeworkcore.abstractions.6.0.22.nupkg.sha512",
     "C:\\Users\\binch\\.nuget\\packages\\microsoft.entityframeworkcore.analyzers\\6.0.22\\microsoft.entityframeworkcore.analyzers.6.0.22.nupkg.sha512",
-    "C:\\Users\\binch\\.nuget\\packages\\microsoft.entityframeworkcore.design\\6.0.21\\microsoft.entityframeworkcore.design.6.0.21.nupkg.sha512",
+    "C:\\Users\\binch\\.nuget\\packages\\microsoft.entityframeworkcore.design\\6.0.22\\microsoft.entityframeworkcore.design.6.0.22.nupkg.sha512",
     "C:\\Users\\binch\\.nuget\\packages\\microsoft.entityframeworkcore.relational\\6.0.22\\microsoft.entityframeworkcore.relational.6.0.22.nupkg.sha512",
-    "C:\\Users\\binch\\.nuget\\packages\\microsoft.entityframeworkcore.sqlserver\\6.0.21\\microsoft.entityframeworkcore.sqlserver.6.0.21.nupkg.sha512",
+    "C:\\Users\\binch\\.nuget\\packages\\microsoft.entityframeworkcore.sqlserver\\6.0.22\\microsoft.entityframeworkcore.sqlserver.6.0.22.nupkg.sha512",
     "C:\\Users\\binch\\.nuget\\packages\\microsoft.extensions.apidescription.server\\3.0.0\\microsoft.extensions.apidescription.server.3.0.0.nupkg.sha512",
     "C:\\Users\\binch\\.nuget\\packages\\microsoft.extensions.caching.abstractions\\6.0.0\\microsoft.extensions.caching.abstractions.6.0.0.nupkg.sha512",
     "C:\\Users\\binch\\.nuget\\packages\\microsoft.extensions.caching.memory\\6.0.1\\microsoft.extensions.caching.memory.6.0.1.nupkg.sha512",

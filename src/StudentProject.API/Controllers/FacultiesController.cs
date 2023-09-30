@@ -42,7 +42,7 @@ namespace StudentProject.API.Controllers
            await _facultyService.DeleteFacultyAsync(Id);
             return StatusCode((int)HttpStatusCode.OK, new ResponseDTO(HttpStatusCode.OK,"Faculty Deleted"));
         }
-        [HttpPost("{Id}")]
+        [HttpPut("{Id}")]
         public async Task<IActionResult> UpdateFaculty(Guid Id,PostFacultyDTO postFacultyDTO)
         {
            await _facultyService.UpdateFacultyAsync(Id,postFacultyDTO);

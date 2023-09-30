@@ -14,6 +14,8 @@ namespace StudentManagement.Business.Mappers
         public UserMapper() 
         {
          CreateMap<PostUserDTO,AppUser>().ReverseMap();
+            CreateMap<AppUser, GetUserDTO>().ForMember(gu => gu.TeacherName, x => x.MapFrom(u=>u.Teacher.FullName)).ForMember(gu => gu.StudentName, x => x.MapFrom(u => u.Student.FullName)).ReverseMap();
+
         }
     }
 }
