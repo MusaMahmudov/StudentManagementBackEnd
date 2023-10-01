@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using StudentManagement.Business.DTOs.CommonDTOs;
 using StudentManagement.Business.DTOs.StudentDTOs;
 using StudentManagement.Business.Exceptions.StudentExceptions;
 using StudentManagement.Business.Services.Interfaces;
@@ -46,13 +47,13 @@ namespace StudentProject.API.Controllers
         public async Task<IActionResult> DeleteStudent(Guid Id)
         {
           await  _studentService.DeleteStudentAsync(Id);
-            return Ok();
+            return StatusCode((int)HttpStatusCode.OK,new ResponseDTO(HttpStatusCode.OK,"Student Deleted Successefully"));
         }
         [HttpPut("{Id}")]
-        public async Task<IActionResult> UpdateStudent(Guid Id,PostStudentDTO postStudentDTO)
+        public async Task<IActionResult> UpdateStudent(Guid Id,PutStudentDTO putStudentDTO)
         {
            
-               await _studentService.UpdateStudentAsync(Id, postStudentDTO);
+               await _studentService.UpdateStudentAsync(Id, putStudentDTO);
                 return Ok("Success");
           
            

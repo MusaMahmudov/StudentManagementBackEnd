@@ -7,15 +7,14 @@ using System.Threading.Tasks;
 
 namespace StudentManagement.Business.Exceptions.UserExceptions
 {
-    public class UserDTONullException : Exception, IBaseException
+    public class UserNotFoundByIdException : Exception, IBaseException
     {
-        public HttpStatusCode HttpStatusCode => HttpStatusCode.BadRequest;
+        public HttpStatusCode HttpStatusCode =>HttpStatusCode.NotFound;
 
         public string errorMessage { get; }
-        public UserDTONullException(string Message) : base(Message) 
+        public UserNotFoundByIdException(string Message) : base(Message) 
         {
         errorMessage = Message;
         }
-
     }
 }

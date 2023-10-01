@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using StudentManagement.Business.DTOs.CommonDTOs;
 using StudentManagement.Business.DTOs.UserDTOs;
 using StudentManagement.Business.Services.Interfaces;
 using StudentManagement.Core.Entities.Identity;
 using StudentManagement.DataAccess.Contexts;
+using System.Net;
 
 namespace StudentProject.API.Controllers
 {
@@ -38,6 +40,12 @@ namespace StudentProject.API.Controllers
 
 
           return Ok(users);
+        }
+        [HttpPut("{Id}")]
+        public async Task<IActionResult> UdpateUser(string Id,PutUserDTO putUserDTO)
+        {
+            await _userService.UpdateUserAsync(Id, putUserDTO);
+            return StatusCode((int)HttpStatusCode.OK,new ResponseDTO(HttpStatusCode.OK,"user updated successefully"));
         }
     }
 }

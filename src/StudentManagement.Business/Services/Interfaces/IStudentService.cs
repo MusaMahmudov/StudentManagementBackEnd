@@ -16,7 +16,8 @@ namespace StudentManagement.Business.Services.Interfaces
 
         public Task CreateStudentAsync(PostStudentDTO postStudentDTO);
         public Task DeleteStudentAsync(Guid Id);
-        public Task UpdateStudentAsync(Guid Id,PostStudentDTO postStudentDTO);
+        public Task UpdateStudentAsync(Guid Id,PutStudentDTO putStudentDTO);
+        public Task<bool> CheckStudentExistsByIdAsync(Guid Id);
 
     }
 }
