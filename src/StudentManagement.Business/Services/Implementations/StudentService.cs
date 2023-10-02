@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using StudentManagement.Business.DTOs.StudentDTOs;
 using StudentManagement.Business.Exceptions.StudentExceptions;
+using StudentManagement.Business.Exceptions.TeacherExceptions;
 using StudentManagement.Business.Exceptions.UserExceptions;
 using StudentManagement.Business.Services.Interfaces;
 using StudentManagement.Core.Entities;
@@ -45,6 +46,23 @@ namespace StudentManagement.Business.Services.Implementations
         }
         public async Task CreateStudentAsync(PostStudentDTO postStudentDTO)
         {
+            if(postStudentDTO.AppUserId is not null)
+            {
+                var user = await _context.Users.Include(u=>u.Student).FirstOrDefaultAsync(u=>u.Id == postStudentDTO.AppUserId);
+                if(user is null)
+                {
+                    throw new UserNotFoundByIdException("User not found");
+                }
+                if(user.Student is not null)
+                {
+                    throw new UserAlreadyHasStudentException("User is already taken");
+                }
+                if(user.Teacher is not null)
+                {
+                    throw new UserCannotBeStudentAndTeacherException("User  already belongs to the teacher");
+                }
+            }
+
             var student = _mapper.Map<Student>(postStudentDTO);
             await _studentRepository.CreateAsync(student);
             await _studentRepository.SaveChangesAsync();
@@ -63,7 +81,7 @@ namespace StudentManagement.Business.Services.Implementations
 
             if (student is null)
                 throw new StudentNotFoundByIdException("Student not found");
-            if (putStudentDTO is not null)
+            if (putStudentDTO.AppUserId is not null)
             {
                 var user =await  _context.Users.Include(u=>u.Student).FirstOrDefaultAsync(u=>u.Id == putStudentDTO.AppUserId);
                 if(user is null)

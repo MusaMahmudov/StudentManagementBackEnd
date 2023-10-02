@@ -28,5 +28,23 @@ namespace StudentProject.API.Controllers
           await  _teacherService.CreateTeacherAsync(postTeacherDTO);
             return StatusCode((int)HttpStatusCode.OK,new ResponseDTO(HttpStatusCode.OK,"Teacher created successefully"));
         }
+        [HttpPut("{Id}")]
+        public async Task<IActionResult> UpdateTeacher(Guid Id,PutTeacherDTO putTeacherDTO)
+        {
+          await  _teacherService.UpdateTeacherAsync(Id, putTeacherDTO);
+            return StatusCode((int)HttpStatusCode.OK, new ResponseDTO(HttpStatusCode.OK, "Teacher updated"));
+        }
+        [HttpGet("{Id}")]
+        public async Task<IActionResult> GetTeacherById(Guid Id)
+        {
+        var teacher =  await  _teacherService.GetTeacherByIdAsync(Id);
+            return Ok(teacher);
+        }
+        [HttpDelete("{Id}")]
+        public async Task<IActionResult> DeleteTeacherById(Guid Id)
+        {
+           await _teacherService.DeleteTeacherAsync(Id);
+            return StatusCode((int)HttpStatusCode.OK,new ResponseDTO(HttpStatusCode.OK,"Teacher deleted successefully"));
+        }
     }
 }

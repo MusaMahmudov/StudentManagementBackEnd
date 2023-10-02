@@ -24,9 +24,16 @@ public class AppDbContext : IdentityDbContext<AppUser>
     public DbSet<ExamType> ExamTypes { get; set; } = null!;
     public DbSet<Teacher> Teachers { get; set; } = null!;
 
+
+    public DbSet<TeacherRole> TeacherRoles { get; set; } = null!;
+    public DbSet<Subject> Subjects { get; set; } = null!;
+    public DbSet<TeacherSubject> TeacherSubjects { get; set; } = null!;
+    public DbSet<GroupSubject> GroupSubjects { get; set; } = null!;
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(StudentConfiguration).Assembly);
+        modelBuilder.Entity<Subject>().HasQueryFilter(s=>s.IsDeleted == false);
 
         
         modelBuilder.Entity<AppUser>().HasOne(u=>u.Student).WithOne(s => s.AppUser).HasForeignKey<Student>(s=>s.AppUserId);

@@ -1,9 +1,14 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using StudentManagement.Business.DTOs.StudentDTOs;
 using StudentManagement.Business.DTOs.TeacherDTOs;
 using StudentManagement.Business.Exceptions.TeacherExceptions;
+using StudentManagement.Business.Exceptions.UserExceptions;
 using StudentManagement.Business.Services.Interfaces;
 using StudentManagement.Core.Entities;
+using StudentManagement.Core.Entities.Identity;
+using StudentManagement.DataAccess.Contexts;
 using StudentManagement.DataAccess.Repositories.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -17,14 +22,18 @@ namespace StudentManagement.Business.Services.Implementations
     {
         private readonly ITeacherRepository _teacherRepository;
         private readonly IMapper _mapper;
-        public TeacherService(ITeacherRepository teacherRepository,IMapper mapper)
+        private readonly UserManager<AppUser> _userManager;
+        private readonly AppDbContext _context;
+        public TeacherService(ITeacherRepository teacherRepository,IMapper mapper,UserManager<AppUser> userManager,AppDbContext context)
         {
+            _context = context;
+            _userManager = userManager;
             _mapper = mapper;
             _teacherRepository = teacherRepository;
         }
         public async Task<List<GetTeacherDTO>> GetAllTeachersAsync(string? search)
         {
-            var Teachers =await _teacherRepository.GetFiltered(t=> search != null ? t.FullName.Contains(search) : true).ToListAsync();
+            var Teachers =await _teacherRepository.GetFiltered(t=> search != null ? t.FullName.Contains(search) : true,"AppUser").ToListAsync();
             var getTeachersDTO = _mapper.Map<List<GetTeacherDTO>>(Teachers);
             return getTeachersDTO;
         }
@@ -32,14 +41,36 @@ namespace StudentManagement.Business.Services.Implementations
         public async Task<GetTeacherDTO> GetTeacherByIdAsync(Guid id)
         {
          var teacher =  await _teacherRepository.GetSingleAsync(t=>t.Id == id);
+            if (teacher is null)
+                throw new TeacherNotFoundByIdException("Teacher not found");
+
             var getTeacherDTO =_mapper.Map<GetTeacherDTO>(teacher);
             return getTeacherDTO;
         }
 
         public async Task CreateTeacherAsync(PostTeacherDTO postTeacherDTO)
         {
+            if(postTeacherDTO.AppUserId is not null)
+            {
+              var user = await _context.Users.Include(u=>u.Teacher).Include(u=>u.Student).FirstOrDefaultAsync(u=>u.Id == postTeacherDTO.AppUserId);
+                if(user is null)
+                {
+                    throw new UserNotFoundByIdException("User not found");
+                }
+                if(user.Teacher is  not null)
+                {
+                    throw new UserAlreadyHasTeacherException("User is already taken");
+                }
+                if(user.Student is not null)
+                {
+                    throw new UserCannotBeStudentAndTeacherException("User  already belongs to the Student ");
+                }
+
+            }
+
+
             var newTeacher = _mapper.Map<Teacher>(postTeacherDTO);
-           await _teacherRepository.CreateAsync(newTeacher);
+            await _teacherRepository.CreateAsync(newTeacher);
             await _teacherRepository.SaveChangesAsync();
 
         }
@@ -56,14 +87,35 @@ namespace StudentManagement.Business.Services.Implementations
         }
 
        
-        public async Task UpdateTeacherAsync(Guid id, PostTeacherDTO postTeacherDTO)
+        public async Task UpdateTeacherAsync(Guid id, PutTeacherDTO putTeacherDTO)
         {
-            var teacher = await _teacherRepository.GetSingleAsync(t => t.Id == id);
+            var teacher = await _teacherRepository.GetSingleAsync(t => t.Id == id,"AppUser");
             if (teacher is null)
             {
                 throw new TeacherNotFoundByIdException("Teacher not Found");
             }
-            teacher = _mapper.Map(postTeacherDTO, teacher);
+
+            if (putTeacherDTO.AppUserId is not null)
+            {
+                var user = await _context.Users.Include(u => u.Teacher).Include(u=>u.Student).FirstOrDefaultAsync(u => u.Id == putTeacherDTO.AppUserId);
+                if (user is null)
+                {
+                    throw new UserNotFoundByIdException("User not found");
+                }
+                if (user.Teacher is not null)
+                {
+                    throw new UserAlreadyHasTeacherException("User is already taken");
+                }
+                if (user.Student is not null)
+                {
+                    throw new UserCannotBeStudentAndTeacherException("User  already belongs to the Student ");
+                    
+                }
+
+            }
+
+
+            teacher = _mapper.Map(putTeacherDTO, teacher);
             _teacherRepository.Update(teacher);
             await _teacherRepository.SaveChangesAsync();
         }

@@ -13,6 +13,6 @@ namespace StudentManagement.Business.Services.Interfaces
         Task<GetTeacherDTO> GetTeacherByIdAsync(Guid id);
         Task CreateTeacherAsync(PostTeacherDTO postTeacherDTO);
         Task DeleteTeacherAsync(Guid id);
-        Task UpdateTeacherAsync(Guid id,PostTeacherDTO postTeacherDTO);
+        Task UpdateTeacherAsync(Guid id,PutTeacherDTO putTeacherDTO);
     }
 }

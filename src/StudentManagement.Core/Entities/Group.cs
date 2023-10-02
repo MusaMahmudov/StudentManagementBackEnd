@@ -15,5 +15,6 @@ namespace StudentManagement.Core.Entities
         public Faculty Faculty { get; set; }
         public Guid FacultyId { get; set; }
         public List<StudentGroup>? studentGroups { get; set; }
+        public List<GroupSubject>? GroupSubjects { get; set; }
     }
 }

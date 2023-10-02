@@ -267,6 +267,39 @@ namespace StudentManagement.DataAccess.Migrations
                     b.HasCheckConstraint("Year", "Year BETWEEN 1 AND 10");
                 });
 
+            modelBuilder.Entity("StudentManagement.Core.Entities.GroupSubject", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<byte>("Credits")
+                        .HasColumnType("tinyint");
+
+                    b.Property<Guid>("GroupId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<byte>("Hours")
+                        .HasColumnType("tinyint");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("SubjectId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<byte>("TotalWeeks")
+                        .HasColumnType("tinyint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GroupId");
+
+                    b.HasIndex("SubjectId");
+
+                    b.ToTable("GroupSubjects");
+                });
+
             modelBuilder.Entity("StudentManagement.Core.Entities.Identity.AppUser", b =>
                 {
                     b.Property<string>("Id")
@@ -440,6 +473,39 @@ namespace StudentManagement.DataAccess.Migrations
                     b.ToTable("StudentGroup");
                 });
 
+            modelBuilder.Entity("StudentManagement.Core.Entities.Subject", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Subjects");
+                });
+
             modelBuilder.Entity("StudentManagement.Core.Entities.Teacher", b =>
                 {
                     b.Property<Guid>("Id")
@@ -501,6 +567,68 @@ namespace StudentManagement.DataAccess.Migrations
                         .HasFilter("[AppUserId] IS NOT NULL");
 
                     b.ToTable("Teachers");
+                });
+
+            modelBuilder.Entity("StudentManagement.Core.Entities.TeacherRole", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TeacherRoles");
+                });
+
+            modelBuilder.Entity("StudentManagement.Core.Entities.TeacherSubject", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("GroupSubjectId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("TeacherId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("TeacherRoleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GroupSubjectId");
+
+                    b.HasIndex("TeacherId");
+
+                    b.HasIndex("TeacherRoleId");
+
+                    b.ToTable("TeacherSubjects");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -565,6 +693,25 @@ namespace StudentManagement.DataAccess.Migrations
                     b.Navigation("Faculty");
                 });
 
+            modelBuilder.Entity("StudentManagement.Core.Entities.GroupSubject", b =>
+                {
+                    b.HasOne("StudentManagement.Core.Entities.Group", "Group")
+                        .WithMany("GroupSubjects")
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("StudentManagement.Core.Entities.Subject", "Subject")
+                        .WithMany("GroupSubjects")
+                        .HasForeignKey("SubjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Group");
+
+                    b.Navigation("Subject");
+                });
+
             modelBuilder.Entity("StudentManagement.Core.Entities.Student", b =>
                 {
                     b.HasOne("StudentManagement.Core.Entities.Identity.AppUser", "AppUser")
@@ -602,6 +749,33 @@ namespace StudentManagement.DataAccess.Migrations
                     b.Navigation("AppUser");
                 });
 
+            modelBuilder.Entity("StudentManagement.Core.Entities.TeacherSubject", b =>
+                {
+                    b.HasOne("StudentManagement.Core.Entities.GroupSubject", "GroupSubject")
+                        .WithMany("teacherSubjects")
+                        .HasForeignKey("GroupSubjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("StudentManagement.Core.Entities.Teacher", "Teacher")
+                        .WithMany("teacherSubjects")
+                        .HasForeignKey("TeacherId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("StudentManagement.Core.Entities.TeacherRole", "TeacherRole")
+                        .WithMany("teacherSubjects")
+                        .HasForeignKey("TeacherRoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("GroupSubject");
+
+                    b.Navigation("Teacher");
+
+                    b.Navigation("TeacherRole");
+                });
+
             modelBuilder.Entity("StudentManagement.Core.Entities.Faculty", b =>
                 {
                     b.Navigation("Groups");
@@ -609,7 +783,14 @@ namespace StudentManagement.DataAccess.Migrations
 
             modelBuilder.Entity("StudentManagement.Core.Entities.Group", b =>
                 {
+                    b.Navigation("GroupSubjects");
+
                     b.Navigation("studentGroups");
+                });
+
+            modelBuilder.Entity("StudentManagement.Core.Entities.GroupSubject", b =>
+                {
+                    b.Navigation("teacherSubjects");
                 });
 
             modelBuilder.Entity("StudentManagement.Core.Entities.Identity.AppUser", b =>
@@ -622,6 +803,21 @@ namespace StudentManagement.DataAccess.Migrations
             modelBuilder.Entity("StudentManagement.Core.Entities.Student", b =>
                 {
                     b.Navigation("studentGroups");
+                });
+
+            modelBuilder.Entity("StudentManagement.Core.Entities.Subject", b =>
+                {
+                    b.Navigation("GroupSubjects");
+                });
+
+            modelBuilder.Entity("StudentManagement.Core.Entities.Teacher", b =>
+                {
+                    b.Navigation("teacherSubjects");
+                });
+
+            modelBuilder.Entity("StudentManagement.Core.Entities.TeacherRole", b =>
+                {
+                    b.Navigation("teacherSubjects");
                 });
 #pragma warning restore 612, 618
         }

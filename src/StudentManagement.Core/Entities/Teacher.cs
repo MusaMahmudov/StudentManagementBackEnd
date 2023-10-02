@@ -22,5 +22,7 @@ namespace StudentManagement.Core.Entities
         [MinimumAge(18)]
         public DateTime DateOfBirth { get; set; }
         public string Address { get; set; }
+        public List<TeacherSubject>? teacherSubjects { get; set; }
+
     }
 }

@@ -79,7 +79,7 @@ namespace StudentManagement.Business.Services.Implementations
 
         public async Task<List<GetUserDTO>> GetAllUsersAsync()
         {
-            var Users = await _context.Users.Include(u=>u.Student).ToListAsync();
+            var Users = await _context.Users.Include(u=>u.Student).Include(u=>u.Teacher).ToListAsync();
             var usersDTO = new List<GetUserDTO>();
             foreach (var user in Users)
             {

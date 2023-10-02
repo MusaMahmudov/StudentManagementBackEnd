@@ -1,4 +1,5 @@
-﻿using StudentManagement.Core.Entities.Identity;
+﻿using StudentManagement.Business.DTOs.UserDTOs;
+using StudentManagement.Core.Entities.Identity;
 using StudentManagement.Core.ValidationAttributes;
 using System;
 using System.Collections.Generic;
@@ -11,8 +12,9 @@ namespace StudentManagement.Business.DTOs.TeacherDTOs
 {
     public class GetTeacherDTO
     {
+        public Guid Id { get; set; }
         public string FullName { get; set; }
-        public AppUser? AppUser { get; set; }
+        public GetUserDTO? AppUser { get; set; }
         public string MobileNumber { get; set; }
         public string EMail { get; set; }
         public string Gender { get; set; }

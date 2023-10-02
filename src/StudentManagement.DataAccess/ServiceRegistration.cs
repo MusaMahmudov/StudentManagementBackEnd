@@ -22,6 +22,9 @@ namespace StudentManagement.DataAccess
             service.AddScoped<IGroupRepository, GroupRepository>();
             service.AddScoped<IExamTypeRepository, ExamTypeRepository>();
             service.AddScoped<ITeacherRepository, TeacherRepository>();
+            service.AddScoped<ISubjectRepository, SubjectRepository>();
+
+
 
 
             service.AddDbContext<AppDbContext>(options =>
