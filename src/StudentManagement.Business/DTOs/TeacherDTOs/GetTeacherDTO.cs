@@ -1,4 +1,6 @@
-﻿using StudentManagement.Business.DTOs.UserDTOs;
+﻿using StudentManagement.Business.DTOs.TeacherSubjectDTOs;
+using StudentManagement.Business.DTOs.UserDTOs;
+using StudentManagement.Core.Entities;
 using StudentManagement.Core.Entities.Identity;
 using StudentManagement.Core.ValidationAttributes;
 using System;
@@ -21,5 +23,6 @@ namespace StudentManagement.Business.DTOs.TeacherDTOs
         
         public DateTime DateOfBirth { get; set; }
         public string Address { get; set; }
+        public List<GetTeacherSubjectForTeacherDTO>? teacherSubjects { get; set; }
     }
 }

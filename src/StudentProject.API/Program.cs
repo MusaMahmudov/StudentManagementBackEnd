@@ -19,7 +19,16 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDataAccessServices(builder.Configuration);
 builder.Services.AddScoped<AppDbContextInitializer>();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAllOrigin", builder =>
+    {
+        builder.AllowAnyHeader();
+        builder.AllowAnyMethod();
+        builder.AllowAnyOrigin();
+    });
 
+});
 builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
 {
     options.User.RequireUniqueEmail = true;
@@ -74,7 +83,7 @@ using (var scope = app.Services.CreateScope())
 };
     app.UseHttpsRedirection();
 app.UseAuthentication();
-
+app.UseCors("AllowAllOrigin");
 app.UseAuthorization();
 
 app.MapControllers();

@@ -29,5 +29,23 @@ namespace StudentProject.API.Controllers
             return StatusCode((int)HttpStatusCode.OK,new ResponseDTO(HttpStatusCode.OK,"Subject created successefully"));
 
         }
+        [HttpDelete("{Id}")]
+        public async Task<IActionResult> DeleteSybject(Guid Id)
+        {
+           await _subjectService.DeleteSubjectAsync(Id);
+            return StatusCode((int)HttpStatusCode.OK, new ResponseDTO(HttpStatusCode.OK, "Subject deleted successefully"));
+        }
+        [HttpPut]
+        public async Task<IActionResult> UpdateSubject(Guid Id,PutSubjectDTO putSubjectDTO)
+        {
+           await _subjectService.UpdateSubjectAsync(Id, putSubjectDTO);
+            return StatusCode((int)HttpStatusCode.OK, new ResponseDTO(HttpStatusCode.OK, "Subject updated successefully"));
+        }
+        [HttpGet("{Id}")]
+        public async Task<IActionResult> GetSubject(Guid Id)
+        {
+            var subject = await _subjectService.GetSubjectByIdAsync(Id);
+            return Ok(subject);
+        }
     }
 }

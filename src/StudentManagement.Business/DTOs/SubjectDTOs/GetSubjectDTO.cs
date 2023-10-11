@@ -8,6 +8,7 @@ namespace StudentManagement.Business.DTOs.SubjectDTOs
 {
     public class GetSubjectDTO
     {
+        public Guid Id { get; set; }
         public string Name { get; set; }
     }
 }

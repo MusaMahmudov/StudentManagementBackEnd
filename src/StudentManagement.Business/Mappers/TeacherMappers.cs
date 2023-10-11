@@ -13,7 +13,8 @@ namespace StudentManagement.Business.Mappers
     {
         public TeacherMappers() 
         {
-        CreateMap<Teacher,GetTeacherDTO>().ReverseMap();
+            CreateMap<Teacher, GetTeacherForGroupSubjectDTO>().ReverseMap();
+            CreateMap<Teacher,GetTeacherDTO>().ReverseMap();
             CreateMap<PostTeacherDTO,Teacher>().ReverseMap();
             CreateMap<PutTeacherDTO, Teacher>().ReverseMap();
         }

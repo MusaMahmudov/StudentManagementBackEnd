@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using StudentManagement.Business.HelperSevices.Implementations;
+using StudentManagement.Business.HelperSevices.Interfaces;
 using StudentManagement.Business.Mappers;
 using StudentManagement.Business.Services.Implementations;
 using StudentManagement.Business.Services.Interfaces;
@@ -26,8 +28,17 @@ namespace StudentManagement.Business
             services.AddScoped<IExamTypeService, ExamTypeService>();
             services.AddScoped<ITeacherService, TeacherService>();
             services.AddScoped<ISubjectService, SubjectService>();
+            services.AddScoped<ITeacherRoleService, TeacherRoleService>();  
+            services.AddScoped<IGroupSubjectService, GroupSubjectService>();
+            services.AddScoped<ITeacherSubjectService,TeacherSubjectService>();
+            services.AddScoped<ILessonTypeService, LessonTypeService>();
+            services.AddScoped<IExamService, ExamService>();
+            services.AddScoped<IExamResultService, ExamResultService>();
+            services.AddScoped<ISubjectHourService, SubjectHourService>();
+            services.AddScoped<IStudentGroupService, StudentGroupService>();    
 
-            
+
+
             return services;
         }
     }

@@ -15,6 +15,8 @@ namespace StudentManagement.Business.Mappers
         {
             CreateMap<Subject, GetSubjectDTO>().ReverseMap();
             CreateMap<PostSubjectDTO,Subject>().ReverseMap();
+            CreateMap<PutSubjectDTO, Subject>().ReverseMap();
+
         }
     }
 }

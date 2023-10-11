@@ -92,5 +92,16 @@ namespace StudentManagement.DataAccess.Repositories.Implementations
         {
            _context.Set<T>().Update(entity);
         }
+
+        public void DeleteList(List<T> entities)
+        {
+            _context.Set<T>().RemoveRange(entities);
+        }
+
+        public void AddList(List<T> entities)
+        {
+            _context.Set<T>().AddRange(entities);
+            
+        }
     }
 }

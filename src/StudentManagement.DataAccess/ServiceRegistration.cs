@@ -23,6 +23,17 @@ namespace StudentManagement.DataAccess
             service.AddScoped<IExamTypeRepository, ExamTypeRepository>();
             service.AddScoped<ITeacherRepository, TeacherRepository>();
             service.AddScoped<ISubjectRepository, SubjectRepository>();
+            service.AddScoped<ITeacherRoleRepository, TeacherRoleRepository>();
+            service.AddScoped<IGroupSubjectRepository, GroupSubjectRepository>();
+            service.AddScoped<ITeacherSubjectRepository, TeacherSubjectRepository>();
+            service.AddScoped<ILessonTypeRepository, LessonTypeRepository>();
+            service.AddScoped<IExamRepository, ExamRepository>();
+            service.AddScoped<IExamResultRepository, ExamResultRepository>();
+            service.AddScoped<ISubjectHourRepository, SubjectHourRepository>();
+            service.AddScoped<IStudentGroupRepository, StudentGroupRepository>();
+
+
+
 
 
 

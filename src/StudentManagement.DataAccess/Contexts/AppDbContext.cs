@@ -30,12 +30,30 @@ public class AppDbContext : IdentityDbContext<AppUser>
     public DbSet<TeacherSubject> TeacherSubjects { get; set; } = null!;
     public DbSet<GroupSubject> GroupSubjects { get; set; } = null!;
 
+    public DbSet<StudentGroup> StudentGroups { get; set; } = null!;
+    public DbSet<Exam> Exams { get; set; } = null!;
+    public DbSet<ExamResult> ExamsResults { get; set; } = null!;
+
+    public DbSet<SubjectHour> SubjectHours { get; set; } = null!;
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(StudentConfiguration).Assembly);
         modelBuilder.Entity<Subject>().HasQueryFilter(s=>s.IsDeleted == false);
+        modelBuilder.Entity<Teacher>().HasQueryFilter(t => t.IsDeleted == false);
+        modelBuilder.Entity<Group>().HasQueryFilter(g => g.IsDeleted == false);
+        modelBuilder.Entity<Student>().HasQueryFilter(s => s.IsDeleted == false);
+        modelBuilder.Entity<ExamType>().HasQueryFilter(et => et.IsDeleted == false);
+        modelBuilder.Entity<Faculty>().HasQueryFilter(f => f.IsDeleted == false);
+        modelBuilder.Entity<GroupSubject>().HasQueryFilter(gs => gs.IsDeleted == false);
+        modelBuilder.Entity<StudentGroup>().HasQueryFilter(sg => sg.IsDeleted == false);
+        modelBuilder.Entity<TeacherRole>().HasQueryFilter(tr=>tr.IsDeleted == false);
+        modelBuilder.Entity<TeacherSubject>().HasQueryFilter(ts => ts.IsDeleted == false);
+        modelBuilder.Entity<Exam>().HasQueryFilter(e=>e.IsDeleted == false);
+        modelBuilder.Entity<ExamResult>().HasQueryFilter(er => er.IsDeleted == false);
 
-        
+
+
         modelBuilder.Entity<AppUser>().HasOne(u=>u.Student).WithOne(s => s.AppUser).HasForeignKey<Student>(s=>s.AppUserId);
         modelBuilder.Entity<AppUser>().HasOne(u => u.Teacher).WithOne(s => s.AppUser).HasForeignKey<Teacher>(s => s.AppUserId);
 

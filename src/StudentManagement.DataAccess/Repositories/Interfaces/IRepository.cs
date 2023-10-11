@@ -15,10 +15,12 @@ namespace StudentManagement.DataAccess.Repositories.Interfaces
         Task<T> GetSingleAsync(Expression<Func<T,bool>> expression, params string[]? includes);
         Task CreateAsync(T entity);
         void Delete(T entity);
+        void DeleteList(List<T> entities);
         void DeleteSoft(T entity);
         void Update(T entity);
         Task<int> SaveChangesAsync();
-       Task<bool> IsExistsAsync(Expression<Func<T, bool>> expression);
+        Task<bool> IsExistsAsync(Expression<Func<T, bool>> expression);
+        void AddList(List<T> entities);
 
         
     }

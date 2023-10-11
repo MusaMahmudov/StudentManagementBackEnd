@@ -7,13 +7,12 @@ using System.Threading.Tasks;
 
 namespace StudentManagement.Core.Entities
 {
-    public class StudentGroup : BaseEntity
+    public class StudentGroup : BaseSectionEntity
     {
         public Student Student { get; set; }
         public Guid StudentId { get; set; }
         public Group Group { get; set; }
         public Guid GroupId { get; set; }
-        public bool IsSubGroup { get; set; } 
 
     }
 }

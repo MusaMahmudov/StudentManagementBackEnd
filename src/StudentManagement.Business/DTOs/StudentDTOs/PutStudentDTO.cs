@@ -20,5 +20,7 @@ namespace StudentManagement.Business.DTOs.StudentDTOs
         [DataType(DataType.EmailAddress)]
         public string Email { get; set; }
         public string? AppUserId { get; set; }
+        public Guid? MainGroup { get; set; }
+        public List<Guid>? GroupId { get; set; }
     }
 }

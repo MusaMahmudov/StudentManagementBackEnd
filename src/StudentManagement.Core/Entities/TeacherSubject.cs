@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace StudentManagement.Core.Entities
 {
-    public class TeacherSubject : BaseEntity
+    public class TeacherSubject : BaseSectionEntity
     {
         public Teacher Teacher { get; set; }
         public Guid TeacherId { get; set; }

@@ -33,14 +33,14 @@ namespace StudentManagement.Business.Services.Implementations
         }
         public async Task<List<GetTeacherDTO>> GetAllTeachersAsync(string? search)
         {
-            var Teachers =await _teacherRepository.GetFiltered(t=> search != null ? t.FullName.Contains(search) : true,"AppUser").ToListAsync();
+            var Teachers =await _teacherRepository.GetFiltered(t=> search != null ? t.FullName.Contains(search) : true,"AppUser", "teacherSubjects.GroupSubject.Group.Faculty", "teacherSubjects.GroupSubject.Subject", "teacherSubjects.TeacherRole").ToListAsync();
             var getTeachersDTO = _mapper.Map<List<GetTeacherDTO>>(Teachers);
             return getTeachersDTO;
         }
 
         public async Task<GetTeacherDTO> GetTeacherByIdAsync(Guid id)
         {
-         var teacher =  await _teacherRepository.GetSingleAsync(t=>t.Id == id);
+         var teacher =  await _teacherRepository.GetSingleAsync(t=>t.Id == id, "AppUser", "teacherSubjects.GroupSubject.Group.Faculty", "teacherSubjects.GroupSubject.Subject", "teacherSubjects.TeacherRole");
             if (teacher is null)
                 throw new TeacherNotFoundByIdException("Teacher not found");
 
@@ -98,6 +98,7 @@ namespace StudentManagement.Business.Services.Implementations
             if (putTeacherDTO.AppUserId is not null)
             {
                 var user = await _context.Users.Include(u => u.Teacher).Include(u=>u.Student).FirstOrDefaultAsync(u => u.Id == putTeacherDTO.AppUserId);
+                
                 if (user is null)
                 {
                     throw new UserNotFoundByIdException("User not found");

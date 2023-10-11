@@ -34,6 +34,9 @@ namespace StudentManagement.Business.Services.Implementations
         public async Task<GetSubjectDTO> GetSubjectByIdAsync(Guid id)
         {
             var subject = await _subjectRepository.GetSingleAsync(s=>s.Id == id);
+            if (subject is null)
+                throw new SubjectNotFoundByIdException("Subject not found");
+
             var getSubjectDTO = _mapper.Map<GetSubjectDTO>(subject);
             return getSubjectDTO;
 
@@ -42,6 +45,7 @@ namespace StudentManagement.Business.Services.Implementations
         public async Task CreateSubjectAsync(PostSubjectDTO postSubjectDTO)
         {
             var newSubject = _mapper.Map<Subject>(postSubjectDTO);
+
 
            await _subjectRepository.CreateAsync(newSubject);
             await _subjectRepository.SaveChangesAsync();

@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace StudentManagement.Business.Exceptions.GroupExceptions
 {
-    public class GroupNotFoundById : Exception, IBaseException
+    public class GroupNotFoundByIdException : Exception, IBaseException
     {
-        public GroupNotFoundById(string Message)  : base(Message)
+        public GroupNotFoundByIdException(string Message)  : base(Message)
         {
             errorMessage = Message;
         }

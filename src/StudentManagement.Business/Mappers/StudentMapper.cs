@@ -14,9 +14,9 @@ namespace StudentManagement.Business.Mappers
     {
         public StudentMapper() 
         {
-          CreateMap<Student,GetStudentDTO>().ForMember(gs=>gs.Groups,x=>x.MapFrom(s=>s.studentGroups.Select(sg => new GetGroupStudentDTO {Id = sg.GroupId,Name = sg.Group.Name }))).ReverseMap();
-          CreateMap<PostStudentDTO,Student>().ReverseMap();
-            CreateMap<PutStudentDTO, Student>().ReverseMap();
+          CreateMap<Student,GetStudentDTO>().ForMember(gs=>gs.MainGroup,x=>x.MapFrom(s=>s.Group)).ForMember(gt=>gt.examResults,x=>x.MapFrom(s=>s.examResults)).ForMember(gs=>gs.Groups,x=>x.MapFrom(s=>s.studentGroups.Select(sg => new GetGroupStudentDTO {Id = sg.GroupId,Name = sg.Group.Name }))).ReverseMap();
+          CreateMap<PostStudentDTO,Student>().ForMember(s=>s.GroupId,x=>x.MapFrom(ps=>ps.MainGroup)).ReverseMap();
+            CreateMap<PutStudentDTO, Student>().ForMember(s=>s.GroupId,x=>x.MapFrom(ps=>ps.MainGroup)).ReverseMap();
 
         }
     }

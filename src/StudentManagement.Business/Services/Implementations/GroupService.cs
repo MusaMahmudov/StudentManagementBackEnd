@@ -28,16 +28,16 @@ namespace StudentManagement.Business.Services.Implementations
         }
         public async Task<List<GetGroupDTO>> GetAllGroupsAsync(string? search)
         {
-            var Groups = await _groupRepository.GetFiltered(g=> search != null ? g.Name.Contains(search) : true,"Faculty", "studentGroups.Student").ToListAsync();
+            var Groups = await _groupRepository.GetFiltered(g=> search != null ? g.Name.Contains(search) : true,"Faculty", "studentGroups.Student", "GroupSubjects.Subject", "GroupSubjects.teacherSubjects.Teacher", "GroupSubjects.teacherSubjects.TeacherRole").ToListAsync();
             var getGroupDTO = _mapper.Map<List<GetGroupDTO>>(Groups);
             return getGroupDTO;
         }
 
         public async Task<GetGroupDTO> GetGroupByIdAsync(Guid id)
         {
-            var Group = await _groupRepository.GetSingleAsync(f=>f.Id == id,"Faculty");
+            var Group = await _groupRepository.GetSingleAsync(f=>f.Id == id,"Faculty","studentGroups.Student", "GroupSubjects.Subject", "GroupSubjects.teacherSubjects.Teacher", "GroupSubjects.teacherSubjects.TeacherRole");
             if (Group is null)
-                throw new GroupNotFoundById("Group not found");
+                throw new GroupNotFoundByIdException("Group not found");
 
             
             var getGroupDTO = _mapper.Map<GetGroupDTO>(Group);
@@ -67,7 +67,7 @@ namespace StudentManagement.Business.Services.Implementations
         {
             var Group = await _groupRepository.GetSingleAsync(g=>g.Id == id);
             if (Group is null)
-                throw new GroupNotFoundById("Group not found");
+                throw new GroupNotFoundByIdException("Group not found");
             _groupRepository.Delete(Group);
             await _groupRepository.SaveChangesAsync();
         }
@@ -78,7 +78,7 @@ namespace StudentManagement.Business.Services.Implementations
         {
             var Group = await _groupRepository.GetSingleAsync(g => g.Id == Id);
             if (Group is null)
-                throw new GroupNotFoundById("Group not found");
+                throw new GroupNotFoundByIdException("Group not found");
            
 
             

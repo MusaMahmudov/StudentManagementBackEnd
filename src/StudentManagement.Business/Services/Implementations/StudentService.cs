@@ -1,12 +1,16 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using StudentManagement.Business.DTOs.StudentDTOs;
+using StudentManagement.Business.Exceptions.GroupExceptions;
 using StudentManagement.Business.Exceptions.StudentExceptions;
 using StudentManagement.Business.Exceptions.TeacherExceptions;
 using StudentManagement.Business.Exceptions.UserExceptions;
 using StudentManagement.Business.Services.Interfaces;
 using StudentManagement.Core.Entities;
+using StudentManagement.Core.Entities.Identity;
 using StudentManagement.DataAccess.Contexts;
+using StudentManagement.DataAccess.Migrations;
 using StudentManagement.DataAccess.Repositories.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -20,17 +24,21 @@ namespace StudentManagement.Business.Services.Implementations
     {
         private readonly IStudentRepository _studentRepository;
         private readonly IMapper _mapper;
-        private readonly AppDbContext _context;
-        public StudentService(IStudentRepository studentRepository, IMapper mapper,AppDbContext context)
+        private readonly IGroupRepository _groupRepository;
+        private readonly UserManager<AppUser> _userManager;
+        private readonly IStudentGroupRepository _studentGroupRepository;
+        public StudentService(UserManager<AppUser> userManager,IStudentRepository studentRepository, IMapper mapper,AppDbContext context,IGroupRepository groupRepository,IGroupSubjectService groupSubjectService,IStudentGroupRepository studentGroupRepository)
         {
-            _context = context;
-            _mapper = mapper;
+            _userManager = userManager;
             _studentRepository = studentRepository;
+           _groupRepository = groupRepository;
+            _mapper = mapper;
+            _studentGroupRepository = studentGroupRepository;
         }
 
         public async Task<List<GetStudentDTO>> GetAllStudentsAsync(string? search)
         {
-            var students = await _studentRepository.GetFiltered(s => search != null ? s.FullName.Contains(search) : true,"studentGroups.Group.Faculty","AppUser").ToListAsync();
+            var students = await _studentRepository.GetFiltered(s => search != null ? s.FullName.Contains(search) : true,"studentGroups.Group.Faculty","AppUser","examResults.Exam.ExamType", "examResults.Exam.GroupSubject.Subject","Group").ToListAsync();
 
             return _mapper.Map<List<GetStudentDTO>>(students);
         }
@@ -38,7 +46,7 @@ namespace StudentManagement.Business.Services.Implementations
         public async Task<GetStudentDTO> GetStudentByIdAsync(Guid Id)
         {
 
-            var student = await _studentRepository.GetSingleAsync(s => s.Id == Id);
+            var student = await _studentRepository.GetSingleAsync(s => s.Id == Id, "studentGroups.Group.Faculty", "AppUser", "examResults.Exam.ExamType", "examResults.Exam.GroupSubject.Subject");
             if (student is null)
                 throw new StudentNotFoundByIdException("Student not found");
 
@@ -48,7 +56,7 @@ namespace StudentManagement.Business.Services.Implementations
         {
             if(postStudentDTO.AppUserId is not null)
             {
-                var user = await _context.Users.Include(u=>u.Student).FirstOrDefaultAsync(u=>u.Id == postStudentDTO.AppUserId);
+                var user = await _userManager.Users.Include(u=>u.Student).FirstOrDefaultAsync(u=>u.Id == postStudentDTO.AppUserId);
                 if(user is null)
                 {
                     throw new UserNotFoundByIdException("User not found");
@@ -62,10 +70,37 @@ namespace StudentManagement.Business.Services.Implementations
                     throw new UserCannotBeStudentAndTeacherException("User  already belongs to the teacher");
                 }
             }
+            if(postStudentDTO.MainGroup is not null && !(await _groupRepository.IsExistsAsync( g=>g.Id ==  postStudentDTO.MainGroup)))
+            {
+                throw new GroupNotFoundByIdException($"Main group not found");
+            }
 
-            var student = _mapper.Map<Student>(postStudentDTO);
-            await _studentRepository.CreateAsync(student);
+            var newStudent = _mapper.Map<Student>(postStudentDTO);
+
+            if (postStudentDTO.GroupId is not null)
+            {
+                List<StudentGroup> newStudentGroups = new List<StudentGroup>();
+
+                foreach (var id in postStudentDTO.GroupId)
+                {
+                    if (!await _groupRepository.IsExistsAsync(g => g.Id == id))
+                        throw new GroupNotFoundByIdException($"Group with Id:{id} not found");
+
+                    var studentGroup = new StudentGroup()
+                    {
+                        StudentId = newStudent.Id,
+                        GroupId = id,
+                    };
+                    newStudentGroups.Add(studentGroup);
+
+                }
+                newStudent.studentGroups = newStudentGroups;
+            }
+
+
+            await _studentRepository.CreateAsync(newStudent);
             await _studentRepository.SaveChangesAsync();
+
         }
 
         public async Task DeleteStudentAsync(Guid Id)
@@ -77,13 +112,14 @@ namespace StudentManagement.Business.Services.Implementations
 
         public async Task UpdateStudentAsync(Guid Id, PutStudentDTO putStudentDTO)
         {
-            var student = await _studentRepository.GetSingleAsync(s => s.Id == Id,"AppUser");
+            var student = await _studentRepository.GetSingleAsync(s => s.Id == Id,"AppUser", "studentGroups");
 
             if (student is null)
                 throw new StudentNotFoundByIdException("Student not found");
+
             if (putStudentDTO.AppUserId is not null)
             {
-                var user =await  _context.Users.Include(u=>u.Student).FirstOrDefaultAsync(u=>u.Id == putStudentDTO.AppUserId);
+                var user =await  _userManager.Users.Include(u=>u.Student).FirstOrDefaultAsync(u=>u.Id == putStudentDTO.AppUserId);
                 if(user is null)
                 {
                     throw new UserNotFoundByIdException("User not found");
@@ -94,10 +130,49 @@ namespace StudentManagement.Business.Services.Implementations
                 }
 
             }
-
-
-
+            if(putStudentDTO.MainGroup is not null && putStudentDTO.MainGroup != student.GroupId)
+            {
+                if (!await _groupRepository.IsExistsAsync(g => g.Id == putStudentDTO.MainGroup))
+                     throw new GroupNotFoundByIdException("Group not found");
+            }
             student = _mapper.Map(putStudentDTO, student);
+
+            if (putStudentDTO.GroupId is not null)
+            {
+                List<StudentGroup>? groupsToRemove = student.studentGroups?.Where(sg => !putStudentDTO.GroupId.Any(g=>g == sg.GroupId)).ToList();
+                if(groupsToRemove is not null && groupsToRemove.Count() != 0) 
+                {
+                    _studentGroupRepository.DeleteList(groupsToRemove);
+                  await  _studentGroupRepository.SaveChangesAsync();
+                  
+                }
+
+                List<Guid>? groupsToAdd = putStudentDTO.GroupId.Where(g => !student.studentGroups.Any(sg=>sg.GroupId == g)).ToList();
+                if(groupsToAdd is not null && groupsToAdd.Count() != 0)
+                {
+                    List<StudentGroup> newStudentGroups = new List<StudentGroup>();
+                    foreach(var groupId in groupsToAdd)
+                    {
+                        StudentGroup studentGroup = new StudentGroup()
+                        {
+                            GroupId = groupId,
+                            StudentId =student.Id,
+
+                        };
+                        newStudentGroups.Add(studentGroup);
+                    }
+
+                    _studentGroupRepository.AddList(newStudentGroups);
+                   await _studentGroupRepository.SaveChangesAsync();
+                   
+
+
+
+                }
+            }
+
+
+
             _studentRepository.Update(student);
             await _studentRepository.SaveChangesAsync();
 

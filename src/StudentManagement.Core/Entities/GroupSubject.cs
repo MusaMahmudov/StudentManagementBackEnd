@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace StudentManagement.Core.Entities
 {
-    public class GroupSubject : BaseEntity
+    public class GroupSubject : BaseSectionEntity
     {
         public Group Group { get; set; }
         public Guid GroupId { get; set; }
@@ -17,5 +17,7 @@ namespace StudentManagement.Core.Entities
         public byte Hours { get; set; }
         public byte TotalWeeks { get; set; }
         public List<TeacherSubject>? teacherSubjects { get; set; }
+        public List<Exam>? Exams { get; set; }
+
     }
 }
