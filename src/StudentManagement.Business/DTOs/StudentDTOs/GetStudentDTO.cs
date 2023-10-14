@@ -1,8 +1,10 @@
 ﻿using StudentManagement.Business.DTOs.ExamResultDTOs;
 using StudentManagement.Business.DTOs.GroupDtos;
 using StudentManagement.Business.DTOs.UserDTOs;
+using StudentManagement.Core.ValidationAttributes;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -22,6 +24,7 @@ namespace StudentManagement.Business.DTOs.StudentDTOs
         public string HomePhoneNumber { get; set; }
         public string PhoneNumber { get; set; }
         public string Email { get; set; }
+        public DateTime DateOfBirth { get; set; }
         public GetMainGroupForStudentDTO? MainGroup { get; set; }
         public GetUserDTO? AppUser { get; set; }
         public List<GetExamResultDTO>? examResults { get; set; }

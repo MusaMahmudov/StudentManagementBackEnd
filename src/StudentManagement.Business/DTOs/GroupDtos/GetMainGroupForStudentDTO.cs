@@ -9,6 +9,7 @@ namespace StudentManagement.Business.DTOs.GroupDtos
     public class GetMainGroupForStudentDTO
     {
         public Guid Id { get; set; }
+        public string facultyName { get; set; }
         public string Name { get; set; }
     }
 }

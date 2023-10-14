@@ -38,7 +38,7 @@ namespace StudentManagement.Business.Services.Implementations
 
         public async Task<List<GetStudentDTO>> GetAllStudentsAsync(string? search)
         {
-            var students = await _studentRepository.GetFiltered(s => search != null ? s.FullName.Contains(search) : true,"studentGroups.Group.Faculty","AppUser","examResults.Exam.ExamType", "examResults.Exam.GroupSubject.Subject","Group").ToListAsync();
+            var students = await _studentRepository.GetFiltered(s => search != null ? s.FullName.Contains(search) : true,"studentGroups.Group.Faculty","AppUser","examResults.Exam.ExamType", "examResults.Exam.GroupSubject.Subject","Group.Faculty").ToListAsync();
 
             return _mapper.Map<List<GetStudentDTO>>(students);
         }

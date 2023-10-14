@@ -35,7 +35,7 @@ namespace StudentManagement.DataAccess.Repositories.Implementations
 
         public IQueryable<T> GetFiltered(Expression<Func<T, bool>> expression,params string[]? includes)
         {
-            var query = _context.Set<T>().AsQueryable();
+            var query = _context.Set<T>().OrderByDescending(t=>t.CreatedAt).AsQueryable();
             if(includes is not null && includes.Length > 0)
             {
                foreach(var include in includes)
