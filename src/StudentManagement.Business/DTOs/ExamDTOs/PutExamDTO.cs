@@ -12,6 +12,8 @@ namespace StudentManagement.Business.DTOs.ExamDTOs
     {
         public string Name { get; set; }
         [DataType(DataType.DateTime)]
+        public byte maxScore { get; set; }
+
         public DateTime Date { get; set; }
         public Guid? ExamTypeId { get; set; }
         public Guid? GroupSubjectId { get; set; }

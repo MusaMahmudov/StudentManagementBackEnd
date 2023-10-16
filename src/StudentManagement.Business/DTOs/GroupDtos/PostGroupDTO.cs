@@ -10,7 +10,7 @@ namespace StudentManagement.Business.DTOs.GroupDtos
     {
         public string Name { get; set; }
         public byte Year { get; set; }
-        public Guid? FacultyId { get; set; }
+        public Guid FacultyId { get; set; }
         public List<Guid>? StudentsId { get; set; }
     }
 }

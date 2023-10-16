@@ -35,7 +35,7 @@ namespace StudentProject.API.Controllers
            await _subjectService.DeleteSubjectAsync(Id);
             return StatusCode((int)HttpStatusCode.OK, new ResponseDTO(HttpStatusCode.OK, "Subject deleted successefully"));
         }
-        [HttpPut]
+        [HttpPut("{Id}")]
         public async Task<IActionResult> UpdateSubject(Guid Id,PutSubjectDTO putSubjectDTO)
         {
            await _subjectService.UpdateSubjectAsync(Id, putSubjectDTO);

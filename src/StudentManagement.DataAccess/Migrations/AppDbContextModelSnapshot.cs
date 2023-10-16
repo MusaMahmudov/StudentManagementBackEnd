@@ -341,7 +341,7 @@ namespace StudentManagement.DataAccess.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");
 
-                    b.Property<byte>("StudentCount")
+                    b.Property<byte?>("StudentCount")
                         .HasColumnType("tinyint");
 
                     b.Property<DateTime>("UpdatedAt")

@@ -36,7 +36,7 @@ namespace StudentProject.API.Controllers
           var examType =   await _examTypeService.GetExamTypeByIdAsync(Id);
             return Ok(examType);
         }
-        [HttpDelete]
+        [HttpDelete("{Id}")]
         public async Task<IActionResult> DeleteExamTypeAsync(Guid Id)
         {
            await _examTypeService.DeleteExamTypeAsync(Id);

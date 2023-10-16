@@ -10,5 +10,5 @@ namespace StudentManagement.Core.Entities;
 public class ExamType : BaseSectionEntity
 {
     public string Name { get; set; }
-    public List<ExamType>? examTypes { get; set; } 
+    public List<Exam>? exams { get; set; } 
 }

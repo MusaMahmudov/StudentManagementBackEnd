@@ -14,6 +14,7 @@ namespace StudentManagement.Business.DTOs.GroupSubjectDTOs
     {
         public Guid Id { get; set; }
         public GetSubjectDTO Subject { get; set; }
+        public GetGroupForGroupSubjectDTO Group { get; set; }
         public List<GetTeacherForGroupSubjectDTO>? teachers { get; set; }
         public byte Credits { get; set; }
         public byte Hours { get; set; }

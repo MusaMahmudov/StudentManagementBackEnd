@@ -10,7 +10,7 @@ namespace StudentManagement.Core.Entities
     public class Group : BaseSectionEntity
     {
         public string Name { get;set; }
-        public byte StudentCount { get; set; }
+        public byte? StudentCount { get; set; }
         public byte Year { get; set; }
         public Faculty Faculty { get; set; }
         public Guid FacultyId { get; set; }

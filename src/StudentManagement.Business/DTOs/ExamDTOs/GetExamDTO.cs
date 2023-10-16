@@ -17,6 +17,7 @@ namespace StudentManagement.Business.DTOs.ExamDTOs
         [DataType(DataType.DateTime)]
         public DateTime Date { get; set; }
         public string ExamType { get; set; }
+        public byte maxScore { get; set; }
         public GetGroupSubjectForExam GroupSubject { get; set; }
         public List<GetExamResultForExam>? ExamResults { get; set; }
     }

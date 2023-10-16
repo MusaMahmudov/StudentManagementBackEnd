@@ -30,14 +30,14 @@ namespace StudentManagement.Business.Services.Implementations
         }
         public async Task<List<GetExamDTO>> GetAllExamsAsync(string? search)
         {
-            var exams = await _examRepository.GetFiltered(e=> search != null ? e.Name.Contains(search) : true, "ExamType", "GroupSubject.Group", "GroupSubject.Subject").ToListAsync();
+            var exams = await _examRepository.GetFiltered(e=> search != null ? e.Name.Contains(search) : true, "ExamType", "GroupSubject.Group", "GroupSubject.Subject", "ExamResults.Student").ToListAsync();
             var examsDTO = _mapper.Map<List<GetExamDTO>>(exams);
             return examsDTO;
         }
 
         public async Task<GetExamDTO> GetExamByIdAsync(Guid id)
         {
-            var exam = await _examRepository.GetSingleAsync(e=>e.Id == id, "ExamType", "GroupSubject.Group", "GroupSubject.Subject");
+            var exam = await _examRepository.GetSingleAsync(e=>e.Id == id, "ExamType", "GroupSubject.Group", "GroupSubject.Subject", "ExamResults.Student");
             if (exam is null)
                 throw new ExamNotFoundByIdException("Exam not found");
 

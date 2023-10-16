@@ -83,7 +83,15 @@ namespace StudentManagement.Business.Services.Implementations
 
             
             Group = _mapper.Map(postGroupDTO, Group);
-            Group.StudentCount = (byte)postGroupDTO.StudentsId.Count();
+            if(Group.studentGroups is not null)
+            {
+                Group.StudentCount = (byte)postGroupDTO.StudentsId?.Count();
+            }
+            else
+            {
+                Group.StudentCount = 0;
+
+            }
             _groupRepository.Update(Group);
            await _groupRepository.SaveChangesAsync();
         }
