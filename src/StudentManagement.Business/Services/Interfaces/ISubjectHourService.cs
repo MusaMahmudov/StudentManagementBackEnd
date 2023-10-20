@@ -10,6 +10,6 @@ namespace StudentManagement.Business.Services.Interfaces
 {
     public interface ISubjectHourService
     {
-        Task CreateSubjectHourAsync(PostSubjectHourDTO postSubjectHourDTO);
+        Task CreateSubjectHoursAsync(PostSubjectHourDTO postSubjectHourDTO);
     }
 }

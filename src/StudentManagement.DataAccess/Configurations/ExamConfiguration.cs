@@ -15,6 +15,11 @@ namespace StudentManagement.DataAccess.Configurations
         {
             builder.Property(e => e.Name).IsRequired(true).HasMaxLength(128);
             builder.Property(e => e.Date).IsRequired(true);
+
+            builder.HasCheckConstraint("NameExam", "Len(Name) >=3");
+            builder.HasCheckConstraint("MaxScore", "MaxScore Between 0 AND 100");
+
+
         }
     }
 }

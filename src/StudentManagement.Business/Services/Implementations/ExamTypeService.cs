@@ -44,6 +44,15 @@ namespace StudentManagement.Business.Services.Implementations
             var examTypeDTO = _mapper.Map<GetExamTypeDTO>(examType);
             return examTypeDTO;
         }
+        public async Task<GetExamTypeForUpdateDTO> GetExamTypeByIdForUpdateAsync(Guid id)
+        {
+            var examType = await _examTypeRepository.GetSingleAsync(e => e.Id == id);
+            if (examType is null)
+                throw new ExamTypeNotFoundByIdException("Exam type not found");
+
+            var examTypeDTO = _mapper.Map<GetExamTypeForUpdateDTO>(examType);
+            return examTypeDTO;
+        }
         public async Task CreateExamTypeAsync(PostExamTypeDTO postExamTypeDTO)
         {
 
@@ -66,17 +75,19 @@ namespace StudentManagement.Business.Services.Implementations
 
        
 
-        public async Task UpdateExamTypeAsync(Guid id, PostExamTypeDTO postExamTypeDTO)
+        public async Task UpdateExamTypeAsync(Guid id, PutExamTypeDTO putExamTypeDTO)
         {
             var examType = await _examTypeRepository.GetSingleAsync(e=>e.Id == id);
 
             if (examType is null)
                 throw new ExamTypeNotFoundByIdException("Exam type not found");
-            examType = _mapper.Map(postExamTypeDTO,examType);
+            examType = _mapper.Map(putExamTypeDTO, examType);
             _examTypeRepository.Update(examType);
            await _examTypeRepository.SaveChangesAsync();
 
 
         }
+
+        
     }
 }

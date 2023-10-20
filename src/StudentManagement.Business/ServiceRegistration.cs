@@ -1,9 +1,11 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using FluentValidation.AspNetCore;
+using Microsoft.Extensions.DependencyInjection;
 using StudentManagement.Business.HelperSevices.Implementations;
 using StudentManagement.Business.HelperSevices.Interfaces;
 using StudentManagement.Business.Mappers;
 using StudentManagement.Business.Services.Implementations;
 using StudentManagement.Business.Services.Interfaces;
+using StudentManagement.Business.Validators.StudentValidators;
 using StudentManagement.DataAccess.Repositories.Implementations;
 using StudentManagement.DataAccess.Repositories.Interfaces;
 using System;
@@ -36,6 +38,10 @@ namespace StudentManagement.Business
             services.AddScoped<IExamResultService, ExamResultService>();
             services.AddScoped<ISubjectHourService, SubjectHourService>();
             services.AddScoped<IStudentGroupService, StudentGroupService>();    
+            services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<IRoleService, RoleService>();
+            services.AddFluentValidation(o => o.RegisterValidatorsFromAssembly(typeof(PostStudentDTOValidator).Assembly));
+
 
 
 

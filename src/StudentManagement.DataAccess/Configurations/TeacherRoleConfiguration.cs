@@ -15,6 +15,10 @@ namespace StudentManagement.DataAccess.Configurations
         public void Configure(EntityTypeBuilder<TeacherRole> builder)
         {
             builder.Property(tr=>tr.Name).IsRequired(true).HasMaxLength(128);
+
+            builder.HasCheckConstraint("NameTeacherRole", "Len(Name) >=3");
+
+
         }
     }
 }

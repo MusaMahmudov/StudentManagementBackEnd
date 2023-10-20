@@ -17,6 +17,9 @@ namespace StudentManagement.DataAccess.Configurations
             builder.Property(g => g.Year).IsRequired(true);
             builder.HasCheckConstraint("Year","Year BETWEEN 1 AND 10");
             builder.HasOne(g => g.Faculty).WithMany(f => f.Groups);
+
+            builder.HasCheckConstraint("NameGroup", "Len(Name) >=3");
+
         }
     }
 }

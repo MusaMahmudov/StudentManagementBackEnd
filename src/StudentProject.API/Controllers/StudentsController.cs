@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using StudentManagement.Business.DTOs.CommonDTOs;
 using StudentManagement.Business.DTOs.StudentDTOs;
@@ -11,6 +12,7 @@ namespace StudentProject.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+  
     public class StudentsController : ControllerBase
     {
         private readonly IStudentService _studentService;
@@ -42,6 +44,14 @@ namespace StudentProject.API.Controllers
             
           
        
+        }
+        [HttpGet("update/{Id}")]
+        public async Task<IActionResult> GetStudentForUpdate(Guid Id)
+        {
+
+            var student = await _studentService.GetStudentByIdForUpdateAsync(Id);
+            return Ok(student);
+
         }
         [HttpDelete("{Id}")]
         public async Task<IActionResult> DeleteStudent(Guid Id)

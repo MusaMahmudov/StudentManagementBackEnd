@@ -14,5 +14,7 @@ namespace StudentManagement.Business.DTOs.GroupSubjectDTOs
         public byte Credits { get; set; }
         public byte Hours { get; set; }
         public byte TotalWeeks { get; set; }
+        public string Semester { get; set; }
+        public int Year { get; set; }
     }
 }

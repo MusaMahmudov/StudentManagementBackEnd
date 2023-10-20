@@ -25,7 +25,9 @@ namespace StudentManagement.DataAccess.Configurations
             builder.Property(s => s.PhoneNumber).IsRequired(true);
             builder.Property(s => s.Email).IsRequired(true);
 
-            //builder.HasCheckConstraint("Email", "Email LIKE '%_@__%.__%'");
+            builder.HasCheckConstraint("FullNameStudent", "Len(FullName) >=3");
+            builder.HasCheckConstraint("YearOfGraduation", $"YearOfGraduation Between 1900 and {DateTime.Now.Year}");
+
 
 
         }

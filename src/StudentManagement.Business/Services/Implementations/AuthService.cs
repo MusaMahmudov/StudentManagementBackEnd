@@ -7,6 +7,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 using Microsoft.AspNetCore.Identity;
+using StudentManagement.Business.Exceptions.AuthExceptions;
+using StudentManagement.Business.HelperSevices.Interfaces;
+using StudentManagement.Business.DTOs.AuthDTOs;
 
 namespace StudentManagement.Business.Services.Implementations
 {
@@ -14,11 +17,34 @@ namespace StudentManagement.Business.Services.Implementations
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
-        
-        public Task LoginAsync(string userName, string Password)
+        private readonly ITokenService _tokenService;
+        public AuthService(UserManager<AppUser> userManager,SignInManager<AppUser> signInManager,ITokenService tokenService)
+        {
+            _tokenService = tokenService;
+            _userManager = userManager;
+            _signInManager = signInManager;
+        }
+        public async Task<TokenResponseDTO> LoginAsync(LoginDTO loginDTO)
         {
            
-            throw new NotImplementedException();
+
+            var user = await _userManager.FindByNameAsync(loginDTO.Username);
+            if (user is null)
+            {
+                throw new LoginFailException("Sign in fail");
+            }
+
+             var singInResult = await _signInManager.CheckPasswordSignInAsync(user,loginDTO.Password,true);
+            if (!singInResult.Succeeded)
+            {
+                throw new LoginFailException("Sign in fail");
+            }
+
+
+            var token = await _tokenService.CreateToken(user);
+
+            return  token;
+
         }
     }
 

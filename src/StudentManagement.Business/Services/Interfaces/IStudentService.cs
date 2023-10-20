@@ -13,6 +13,8 @@ namespace StudentManagement.Business.Services.Interfaces
     {
         public Task<List<GetStudentDTO>> GetAllStudentsAsync(string? search);
         public Task<GetStudentDTO> GetStudentByIdAsync(Guid Id);
+        public Task<GetStudentForUpdateDTO> GetStudentByIdForUpdateAsync(Guid Id);
+
 
         public Task CreateStudentAsync(PostStudentDTO postStudentDTO);
         public Task DeleteStudentAsync(Guid Id);

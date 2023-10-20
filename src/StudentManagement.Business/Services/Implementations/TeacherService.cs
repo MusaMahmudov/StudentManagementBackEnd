@@ -47,6 +47,15 @@ namespace StudentManagement.Business.Services.Implementations
             var getTeacherDTO =_mapper.Map<GetTeacherDTO>(teacher);
             return getTeacherDTO;
         }
+        public async Task<GetTeacherForUpdateDTO> GetTeacherByIdForUpdate(Guid id)
+        {
+            var teacher = await _teacherRepository.GetSingleAsync(t => t.Id == id, "AppUser", "teacherSubjects.GroupSubject.Group.Faculty", "teacherSubjects.GroupSubject.Subject", "teacherSubjects.TeacherRole");
+            if (teacher is null)
+                throw new TeacherNotFoundByIdException("Teacher not found");
+
+            var getTeacherDTO = _mapper.Map<GetTeacherForUpdateDTO>(teacher);
+            return getTeacherDTO;
+        }
 
         public async Task CreateTeacherAsync(PostTeacherDTO postTeacherDTO)
         {
@@ -66,6 +75,10 @@ namespace StudentManagement.Business.Services.Implementations
                     throw new UserCannotBeStudentAndTeacherException("User  already belongs to the Student ");
                 }
 
+            }
+            if(postTeacherDTO.FullName.Trim().Length < 3)
+            {
+                throw new TeacherFullNameMinimumLength("Full Name must minimum 3 length");
             }
 
 
@@ -94,6 +107,10 @@ namespace StudentManagement.Business.Services.Implementations
             {
                 throw new TeacherNotFoundByIdException("Teacher not Found");
             }
+            if (putTeacherDTO.FullName.Trim().Length < 3)
+            {
+                throw new TeacherFullNameMinimumLength("Full Name must minimum 3 length");
+            }
 
             if (putTeacherDTO.AppUserId is not null)
             {
@@ -103,7 +120,7 @@ namespace StudentManagement.Business.Services.Implementations
                 {
                     throw new UserNotFoundByIdException("User not found");
                 }
-                if (user.Teacher is not null)
+                if (user.Teacher is not null && user.Teacher.Id != teacher.Id)
                 {
                     throw new UserAlreadyHasTeacherException("User is already taken");
                 }

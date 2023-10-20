@@ -14,6 +14,9 @@ namespace StudentManagement.DataAccess.Configurations
         public void Configure(EntityTypeBuilder<ExamResult> builder)
         {
             builder.Property(er=>er.Score).IsRequired(true);
+
+            builder.HasCheckConstraint("Score", "Score BETWEEN 1 AND 100");
+
         }
     }
 }

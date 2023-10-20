@@ -14,6 +14,9 @@ namespace StudentManagement.DataAccess.Configurations
         public void Configure(EntityTypeBuilder<LessonType> builder)
         {
             builder.Property(lt => lt.Name).IsRequired(true).HasMaxLength(128);
+
+            builder.HasCheckConstraint("NameLessonType", "Len(Name) >=3");
+
         }
     }
 }

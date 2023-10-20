@@ -44,6 +44,15 @@ namespace StudentManagement.Business.Services.Implementations
             var examDTO = _mapper.Map<GetExamDTO>(exam);
             return examDTO;
         }
+        public async Task<GetExamForUpdateDTO> GetExamByIdForUpdateAsync(Guid id)
+        {
+            var exam = await _examRepository.GetSingleAsync(e => e.Id == id, "ExamType", "GroupSubject.Group", "GroupSubject.Subject", "ExamResults.Student");
+            if (exam is null)
+                throw new ExamNotFoundByIdException("Exam not found");
+
+            var examDTO = _mapper.Map<GetExamForUpdateDTO>(exam);
+            return examDTO;
+        }
         public async Task CreateExamAsync(PostExamDTO postExamDTO)
         {
             if (!await _examTypeRepository.IsExistsAsync(et => et.Id == postExamDTO.ExamTypeId))
@@ -51,7 +60,6 @@ namespace StudentManagement.Business.Services.Implementations
 
             if( !await _groupSubjectRepository.IsExistsAsync(gs=>gs.Id == postExamDTO.GroupSubjectId))
                 throw new GroupSubjectNotFoundByIdException("group's subject not found");
-
 
             var newExam = _mapper.Map<Exam>(postExamDTO);
             

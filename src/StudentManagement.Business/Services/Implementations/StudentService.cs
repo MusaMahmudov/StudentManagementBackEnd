@@ -52,6 +52,14 @@ namespace StudentManagement.Business.Services.Implementations
 
             return _mapper.Map<GetStudentDTO>(student);
         }
+        public async Task<GetStudentForUpdateDTO> GetStudentByIdForUpdateAsync(Guid Id)
+        {
+            var student = await _studentRepository.GetSingleAsync(s => s.Id == Id, "studentGroups.Group.Faculty", "AppUser", "examResults.Exam.ExamType", "examResults.Exam.GroupSubject.Subject");
+            if (student is null)
+                throw new StudentNotFoundByIdException("Student not found");
+
+            return _mapper.Map<GetStudentForUpdateDTO>(student);
+        }
         public async Task CreateStudentAsync(PostStudentDTO postStudentDTO)
         {
             if(postStudentDTO.AppUserId is not null)
@@ -77,27 +85,45 @@ namespace StudentManagement.Business.Services.Implementations
 
             var newStudent = _mapper.Map<Student>(postStudentDTO);
 
-            if (postStudentDTO.GroupId is not null)
+            if (postStudentDTO.SubGroupsId is not null)
             {
+                foreach (var groupId in postStudentDTO.SubGroupsId)
+                {
+                    if(groupId == postStudentDTO.MainGroup)
+                    {
+                        throw new StudentCannotbeInTwoSameGroupsException("Student cannot be in two same groups");
+                    }
+
+                }
+
+
+
                 List<StudentGroup> newStudentGroups = new List<StudentGroup>();
 
-                foreach (var id in postStudentDTO.GroupId)
+                foreach (var id in postStudentDTO.SubGroupsId)
                 {
                     if (!await _groupRepository.IsExistsAsync(g => g.Id == id))
                         throw new GroupNotFoundByIdException($"Group with Id:{id} not found");
 
-                    var studentGroup = new StudentGroup()
-                    {
-                        StudentId = newStudent.Id,
-                        GroupId = id,
-                    };
-                    newStudentGroups.Add(studentGroup);
+                    //var studentGroup = new StudentGroup()
+                    //{
+                    //    StudentId = newStudent.Id,
+                    //    GroupId = id,
+                    //};
+                    //newStudentGroups.Add(studentGroup);
 
                 }
-                newStudent.studentGroups = newStudentGroups;
+                //newStudent.studentGroups = newStudentGroups;
             }
+            
 
 
+
+            if (DateTime.Now.Year - postStudentDTO.DateOfBirth.Year < 18)
+            {
+                throw new StudentCannotBeYounger("Date of birth must be at least 18 years ago");
+            }
+             
             await _studentRepository.CreateAsync(newStudent);
             await _studentRepository.SaveChangesAsync();
 
@@ -124,7 +150,7 @@ namespace StudentManagement.Business.Services.Implementations
                 {
                     throw new UserNotFoundByIdException("User not found");
                 }
-                if(user.Student is not null )
+                if(user.Student is not null  && user.Student.Id != student.Id)
                 {
                     throw new UserAlreadyHasStudentException("User is already taken");
                 }
@@ -139,6 +165,16 @@ namespace StudentManagement.Business.Services.Implementations
 
             if (putStudentDTO.GroupId is not null)
             {
+                foreach (var groupId in putStudentDTO.GroupId)
+                {
+                    if (groupId == putStudentDTO.MainGroup)
+                    {
+                        throw new StudentCannotbeInTwoSameGroupsException("Student cannot be in two same groups");
+                    }
+
+                }
+
+
                 List<StudentGroup>? groupsToRemove = student.studentGroups?.Where(sg => !putStudentDTO.GroupId.Any(g=>g == sg.GroupId)).ToList();
                 if(groupsToRemove is not null && groupsToRemove.Count() != 0) 
                 {
@@ -183,6 +219,6 @@ namespace StudentManagement.Business.Services.Implementations
           return  await _studentRepository.IsExistsAsync(s=>s.Id == id);
         }
 
-
+        
     }
 }

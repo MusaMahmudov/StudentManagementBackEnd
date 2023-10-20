@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using StudentManagement.Business.DTOs.GroupSubjectDTOs;
+using StudentManagement.Business.Exceptions.GroupExceptions;
 using StudentManagement.Business.Exceptions.GroupSubjectExceptions;
+using StudentManagement.Business.Exceptions.SubjectExceptions;
 using StudentManagement.Business.Services.Interfaces;
 using StudentManagement.Core.Entities;
 using StudentManagement.DataAccess.Contexts;
@@ -20,9 +22,12 @@ namespace StudentManagement.Business.Services.Implementations
         private readonly IMapper _mapper;
         private readonly AppDbContext _context;
         private readonly ITeacherSubjectService _teacherSubjectService;
-
-        public GroupSubjectService(IGroupSubjectRepository groupSubjectRepository,IMapper mapper,AppDbContext context, ITeacherSubjectService teacherSubjectService)
+        private readonly IGroupRepository _groupRepository;
+        private readonly ISubjectRepository _subjectRepository;
+        public GroupSubjectService(ISubjectRepository subjectRepository,IGroupRepository groupRepository,IGroupSubjectRepository groupSubjectRepository,IMapper mapper,AppDbContext context, ITeacherSubjectService teacherSubjectService)
         {
+            _subjectRepository = subjectRepository;
+            _groupRepository = groupRepository;
             _teacherSubjectService = teacherSubjectService;
             _context = context;
             _mapper = mapper;
@@ -44,6 +49,23 @@ namespace StudentManagement.Business.Services.Implementations
         public async Task CreateGroupSubjectAsync(PostGroupSubjectDTO postGroupSubjectDTO)
         {
             var newGroupSubject = _mapper.Map<GroupSubject>(postGroupSubjectDTO);
+            if (!await _groupRepository.IsExistsAsync(g=> g.Id == postGroupSubjectDTO.GroupId))
+            {
+                throw new GroupNotFoundByIdException("Group not found");
+            }
+            if(!await _subjectRepository.IsExistsAsync(s=>s.Id == postGroupSubjectDTO.SubjectId))
+            {
+                throw new SubjectNotFoundByIdException("Subject not found");
+            }
+            if(await  _groupSubjectRepository.IsExistsAsync(gs=>gs.GroupId == postGroupSubjectDTO.GroupId && gs.SubjectId == postGroupSubjectDTO.SubjectId))
+            {
+                throw new GroupSubjectAlreadyExistsException("Group with this subject already exists");
+            }
+
+            
+
+
+
             await _groupSubjectRepository.CreateAsync(newGroupSubject);
             await _groupSubjectRepository.SaveChangesAsync();
 
@@ -98,7 +120,10 @@ namespace StudentManagement.Business.Services.Implementations
             if (existingGroupSubject is null)
                 throw new GroupSubjectNotFoundByIdException("Group's subject not found");
 
-
+            if (await _groupSubjectRepository.IsExistsAsync(gs => gs.GroupId == putGroupSubjectDTO.GroupId && gs.SubjectId == putGroupSubjectDTO.SubjectId))
+            {
+                throw new GroupSubjectAlreadyExistsException("Group with this subject already exists");
+            }
             existingGroupSubject = _mapper.Map(putGroupSubjectDTO,existingGroupSubject);
             _groupSubjectRepository.Update(existingGroupSubject);
             await _groupSubjectRepository.SaveChangesAsync();

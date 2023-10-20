@@ -37,6 +37,13 @@ namespace StudentProject.API.Controllers
             return Ok(group);
 
         }
+        [HttpGet("update/{Id}")]
+        public async Task<IActionResult> GetGroupByIdForUpdate(Guid Id)
+        {
+            var group = await _groupService.GetGroupByIdForUpdateAsync(Id);
+            return Ok(group);
+
+        }
         [HttpDelete("{Id}")]
         public async Task<IActionResult> DeleteGroup(Guid Id) 
         { 
@@ -49,5 +56,6 @@ namespace StudentProject.API.Controllers
            await _groupService.UpdateGroupAsync(Id, postGroupDTO);
             return StatusCode((int)HttpStatusCode.OK, new ResponseDTO(HttpStatusCode.OK, "Group updated "));
         }
+
     }
 }

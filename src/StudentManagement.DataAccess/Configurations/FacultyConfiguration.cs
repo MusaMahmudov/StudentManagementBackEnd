@@ -15,6 +15,9 @@ namespace StudentManagement.DataAccess.Configurations
         {
             builder.Property(f => f.Name).IsRequired(true).HasMaxLength(256);
             builder.HasMany(f => f.Groups).WithOne(g => g.Faculty);
+
+            builder.HasCheckConstraint("NameFaculty", "Len(Name) >=3");
+
         }
     }
 }

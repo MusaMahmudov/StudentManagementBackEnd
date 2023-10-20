@@ -202,6 +202,10 @@ namespace StudentManagement.DataAccess.Migrations
                     b.HasIndex("GroupSubjectId");
 
                     b.ToTable("Exams");
+
+                    b.HasCheckConstraint("MaxScore", "MaxScore Between 0 AND 100");
+
+                    b.HasCheckConstraint("NameExam", "Len(Name) >=3");
                 });
 
             modelBuilder.Entity("StudentManagement.Core.Entities.ExamResult", b =>
@@ -244,6 +248,8 @@ namespace StudentManagement.DataAccess.Migrations
                     b.HasIndex("StudentId");
 
                     b.ToTable("ExamsResults");
+
+                    b.HasCheckConstraint("Score", "Score BETWEEN 1 AND 100");
                 });
 
             modelBuilder.Entity("StudentManagement.Core.Entities.ExamType", b =>
@@ -258,9 +264,6 @@ namespace StudentManagement.DataAccess.Migrations
                     b.Property<string>("CreatedBy")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("ExamTypeId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -279,9 +282,9 @@ namespace StudentManagement.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ExamTypeId");
-
                     b.ToTable("ExamTypes");
+
+                    b.HasCheckConstraint("NameExamType", "Len(Name) >=3");
                 });
 
             modelBuilder.Entity("StudentManagement.Core.Entities.Faculty", b =>
@@ -315,6 +318,8 @@ namespace StudentManagement.DataAccess.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Faculties");
+
+                    b.HasCheckConstraint("NameFaculty", "Len(Name) >=3");
                 });
 
             modelBuilder.Entity("StudentManagement.Core.Entities.Group", b =>
@@ -360,6 +365,8 @@ namespace StudentManagement.DataAccess.Migrations
 
                     b.ToTable("Groups");
 
+                    b.HasCheckConstraint("NameGroup", "Len(Name) >=3");
+
                     b.HasCheckConstraint("Year", "Year BETWEEN 1 AND 10");
                 });
 
@@ -388,6 +395,10 @@ namespace StudentManagement.DataAccess.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
+                    b.Property<string>("Semester")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<Guid>("SubjectId")
                         .HasColumnType("uniqueidentifier");
 
@@ -400,6 +411,9 @@ namespace StudentManagement.DataAccess.Migrations
                     b.Property<string>("UpdatedBy")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -511,6 +525,8 @@ namespace StudentManagement.DataAccess.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("LessonType");
+
+                    b.HasCheckConstraint("NameLessonType", "Len(Name) >=3");
                 });
 
             modelBuilder.Entity("StudentManagement.Core.Entities.Student", b =>
@@ -595,6 +611,10 @@ namespace StudentManagement.DataAccess.Migrations
                     b.HasIndex("GroupId");
 
                     b.ToTable("Students");
+
+                    b.HasCheckConstraint("FullNameStudent", "Len(FullName) >=3");
+
+                    b.HasCheckConstraint("YearOfGraduation", "YearOfGraduation Between 1900 and 2023");
                 });
 
             modelBuilder.Entity("StudentManagement.Core.Entities.StudentGroup", b =>
@@ -666,6 +686,8 @@ namespace StudentManagement.DataAccess.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Subjects");
+
+                    b.HasCheckConstraint("NameSubject", "Len(Name) >=3");
                 });
 
             modelBuilder.Entity("StudentManagement.Core.Entities.SubjectHour", b =>
@@ -779,6 +801,8 @@ namespace StudentManagement.DataAccess.Migrations
                         .HasFilter("[AppUserId] IS NOT NULL");
 
                     b.ToTable("Teachers");
+
+                    b.HasCheckConstraint("FullNameTeacher", "Len(FullName) >=3");
                 });
 
             modelBuilder.Entity("StudentManagement.Core.Entities.TeacherRole", b =>
@@ -812,6 +836,8 @@ namespace StudentManagement.DataAccess.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("TeacherRoles");
+
+                    b.HasCheckConstraint("NameTeacherRole", "Len(Name) >=3");
                 });
 
             modelBuilder.Entity("StudentManagement.Core.Entities.TeacherSubject", b =>
@@ -911,7 +937,7 @@ namespace StudentManagement.DataAccess.Migrations
             modelBuilder.Entity("StudentManagement.Core.Entities.Exam", b =>
                 {
                     b.HasOne("StudentManagement.Core.Entities.ExamType", "ExamType")
-                        .WithMany()
+                        .WithMany("exams")
                         .HasForeignKey("ExamTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -944,13 +970,6 @@ namespace StudentManagement.DataAccess.Migrations
                     b.Navigation("Exam");
 
                     b.Navigation("Student");
-                });
-
-            modelBuilder.Entity("StudentManagement.Core.Entities.ExamType", b =>
-                {
-                    b.HasOne("StudentManagement.Core.Entities.ExamType", null)
-                        .WithMany("examTypes")
-                        .HasForeignKey("ExamTypeId");
                 });
 
             modelBuilder.Entity("StudentManagement.Core.Entities.Group", b =>
@@ -1020,7 +1039,7 @@ namespace StudentManagement.DataAccess.Migrations
             modelBuilder.Entity("StudentManagement.Core.Entities.SubjectHour", b =>
                 {
                     b.HasOne("StudentManagement.Core.Entities.GroupSubject", "GroupSubject")
-                        .WithMany()
+                        .WithMany("subjectHours")
                         .HasForeignKey("GroupSubjectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1079,7 +1098,7 @@ namespace StudentManagement.DataAccess.Migrations
 
             modelBuilder.Entity("StudentManagement.Core.Entities.ExamType", b =>
                 {
-                    b.Navigation("examTypes");
+                    b.Navigation("exams");
                 });
 
             modelBuilder.Entity("StudentManagement.Core.Entities.Faculty", b =>
@@ -1099,6 +1118,8 @@ namespace StudentManagement.DataAccess.Migrations
             modelBuilder.Entity("StudentManagement.Core.Entities.GroupSubject", b =>
                 {
                     b.Navigation("Exams");
+
+                    b.Navigation("subjectHours");
 
                     b.Navigation("teacherSubjects");
                 });

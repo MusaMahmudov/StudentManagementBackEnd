@@ -12,9 +12,11 @@ namespace StudentManagement.Business.Services.Interfaces
     {
         Task<List<GetFacultyDTO>> GetAllFacultiesAsync(string? search);
         Task<GetFacultyDTO> GetFacultyByIdAsync(Guid id);
+        Task<GetFacultyForUpdateDTO> GetFacultyByIdForUpdateAsync(Guid id);
+
         Task CreateFacultyAsync(PostFacultyDTO postFacultyDTO);
         Task DeleteFacultyAsync(Guid id);
-        Task UpdateFacultyAsync(Guid id, PostFacultyDTO postFacultyDTO);
+        Task UpdateFacultyAsync(Guid id, PutFacultyDTO putFacultyDTO);
 
 
     }

@@ -22,6 +22,13 @@ namespace StudentProject.API.Controllers
           var  teachers = await _teacherService.GetAllTeachersAsync(search);
             return Ok(teachers);
         }
+        [HttpGet("update/{Id}")]
+        public async Task<IActionResult> GetTeacherForUpdate([FromRoute]Guid Id)
+        {
+            var teacher = await _teacherService.GetTeacherByIdForUpdate(Id);
+            return Ok(teacher);
+        }
+
         [HttpPost]
         public async Task<IActionResult> CreateTeacher(PostTeacherDTO postTeacherDTO)
         {

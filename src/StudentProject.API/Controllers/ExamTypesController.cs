@@ -36,6 +36,12 @@ namespace StudentProject.API.Controllers
           var examType =   await _examTypeService.GetExamTypeByIdAsync(Id);
             return Ok(examType);
         }
+        [HttpGet("update/{Id}")]
+        public async Task<IActionResult> GetExamTypeByIdForUpdate(Guid Id)
+        {
+            var examType = await _examTypeService.GetExamTypeByIdForUpdateAsync(Id);
+            return Ok(examType);
+        }
         [HttpDelete("{Id}")]
         public async Task<IActionResult> DeleteExamTypeAsync(Guid Id)
         {
@@ -43,9 +49,9 @@ namespace StudentProject.API.Controllers
             return StatusCode((int)HttpStatusCode.OK, new ResponseDTO(HttpStatusCode.OK, "Exam type successefully deleted "));
         }
         [HttpPut("{Id}")]
-        public async Task<IActionResult> UpdateExamTypeAsync(Guid Id,PostExamTypeDTO postExamTypeDTO)
+        public async Task<IActionResult> UpdateExamTypeAsync(Guid Id,PutExamTypeDTO putExamDTO)
         {
-           await _examTypeService.UpdateExamTypeAsync(Id, postExamTypeDTO);
+           await _examTypeService.UpdateExamTypeAsync(Id, putExamDTO);
             return StatusCode((int)HttpStatusCode.OK, new ResponseDTO(HttpStatusCode.OK, "Exam type successefully updated "));
 
         }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using StudentManagement.Business.DTOs.AuthDTOs;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,6 @@ namespace StudentManagement.Business.Services.Interfaces
 {
     public interface IAuthService
     {
-        Task LoginAsync(string userName,string Password);
+        Task<TokenResponseDTO> LoginAsync(LoginDTO loginDTO);
     }
 }

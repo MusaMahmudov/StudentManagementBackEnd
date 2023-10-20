@@ -11,7 +11,10 @@ namespace StudentManagement.Business.Services.Interfaces
     {
         Task CreateAccountAsync(PostUserDTO postUserDTO);
         Task<List<GetUserDTO>> GetAllUsersAsync();
+        Task<GetUserDetailsDTO> GetUserByIdAsync(string Id);
+        Task<GetUserForUpdateDTO> GetUserByIdForUpdateAsync(string Id);
         Task UpdateUserAsync(string id, PutUserDTO putUserDTO);
+        Task DeleteUserAsync(string id);
        
 
     }

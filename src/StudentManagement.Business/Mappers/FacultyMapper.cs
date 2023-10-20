@@ -15,6 +15,9 @@ namespace StudentManagement.Business.Mappers
         {
             CreateMap<Faculty,GetFacultyDTO>().ReverseMap();
             CreateMap<PostFacultyDTO, Faculty>().ReverseMap();
+            CreateMap<PutFacultyDTO, Faculty>().ReverseMap();
+            CreateMap<Faculty, GetFacultyForUpdateDTO>().ReverseMap();
+
         }
     }
 }

@@ -17,7 +17,8 @@ namespace StudentManagement.Business.DTOs.GroupDtos
         public byte StudentCount { get; set; }
         public byte Year { get; set; }
         public string FacultyName { get; set; }
-        public List<GetStudentGroupDTO>? Students { get; set; }
+        public List<GetStudentGroupDTO>? MainStudents { get; set; }
+        public List<GetStudentGroupDTO>? SubStudents { get; set; }
         public List<GetGroupSubjectForGroupDTO>? GroupSubjects { get; set; }
 
     }

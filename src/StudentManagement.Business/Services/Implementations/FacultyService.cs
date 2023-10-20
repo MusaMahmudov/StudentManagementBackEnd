@@ -38,6 +38,16 @@ namespace StudentManagement.Business.Services.Implementations
             }
             return _mapper.Map<GetFacultyDTO>(Faculty);
         }
+        public async Task<GetFacultyForUpdateDTO> GetFacultyByIdForUpdateAsync(Guid id)
+        {
+            var Faculty = await _facultyRepository.GetSingleAsync(f => f.Id == id);
+            if (Faculty is null)
+            {
+                throw new FacultyNotFoundByIdException("Faculty not found");
+
+            }
+            return _mapper.Map<GetFacultyForUpdateDTO>(Faculty);
+        }
         public async Task CreateFacultyAsync(PostFacultyDTO postFacultyDTO)
         {
             var newFaculty = _mapper.Map<Faculty>(postFacultyDTO);
@@ -58,16 +68,18 @@ namespace StudentManagement.Business.Services.Implementations
 
         
 
-        public async Task UpdateFacultyAsync(Guid id, PostFacultyDTO postFacultyDTO)
+        public async Task UpdateFacultyAsync(Guid id, PutFacultyDTO putFacultyDTO)
         {
             var Faculty = await _facultyRepository.GetSingleAsync(f => f.Id == id);
             if (Faculty is null)
             {
                 throw new FacultyNotFoundByIdException("Faculty not found");
             }
-            Faculty = _mapper.Map(postFacultyDTO, Faculty);
+            Faculty = _mapper.Map(putFacultyDTO, Faculty);
             _facultyRepository.Update(Faculty);
             await _facultyRepository.SaveChangesAsync();
         }
+
+       
     }
 }

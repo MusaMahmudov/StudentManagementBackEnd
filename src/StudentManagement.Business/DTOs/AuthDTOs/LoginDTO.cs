@@ -4,12 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace StudentManagement.Business.DTOs.LoginDTOs
+namespace StudentManagement.Business.DTOs.AuthDTOs
 {
     public class LoginDTO
     {
-        public string UserNameOrEmail { get; set; }
+        public string Username { get; set; }
         public string Password { get; set; }
-       
     }
 }

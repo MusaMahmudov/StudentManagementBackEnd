@@ -15,6 +15,8 @@ namespace StudentManagement.Business.Mappers
         {
             CreateMap<ExamType, GetExamTypeDTO>().ReverseMap();
             CreateMap<PostExamTypeDTO,ExamType>().ReverseMap();
+            CreateMap<PutExamTypeDTO, ExamType>().ReverseMap();
+            CreateMap<ExamType,GetExamTypeForUpdateDTO>().ReverseMap();
         }
     }
 }

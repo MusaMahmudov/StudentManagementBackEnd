@@ -20,6 +20,9 @@ namespace StudentManagement.DataAccess.Configurations
             builder.Property(t=>t.Gender).IsRequired(true).HasMaxLength(128);
             builder.Property(t => t.DateOfBirth).IsRequired(true);
             builder.Property(t=>t.Address).IsRequired(true).HasMaxLength(128);
+
+            builder.HasCheckConstraint("FullNameTeacher", "Len(FullName) >=3");
+
         }
     }
 }

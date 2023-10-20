@@ -16,6 +16,9 @@ namespace StudentManagement.Core.Entities
         public byte Credits { get; set; }
         public byte Hours { get; set; }
         public byte TotalWeeks { get; set; }
+        public string Semester {  get; set; }
+        public int Year { get; set; }
+        public List<SubjectHour>? subjectHours { get; set; }
         public List<TeacherSubject>? teacherSubjects { get; set; }
         public List<Exam>? Exams { get; set; }
 

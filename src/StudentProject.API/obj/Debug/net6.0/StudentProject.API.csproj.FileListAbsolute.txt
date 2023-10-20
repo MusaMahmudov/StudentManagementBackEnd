@@ -241,3 +241,7 @@ C:\Users\binch\OneDrive\Рабочий стол\FinalProject\StudentManagementBa
 C:\Users\binch\OneDrive\Рабочий стол\FinalProject\StudentManagementBackEnd\src\StudentProject.API\obj\Debug\net6.0\StudentProject.API.pdb
 C:\Users\binch\OneDrive\Рабочий стол\FinalProject\StudentManagementBackEnd\src\StudentProject.API\obj\Debug\net6.0\StudentProject.API.genruntimeconfig.cache
 C:\Users\binch\OneDrive\Рабочий стол\FinalProject\StudentManagementBackEnd\src\StudentProject.API\obj\Debug\net6.0\ref\StudentProject.API.dll
+C:\Users\binch\OneDrive\Рабочий стол\FinalProject\StudentManagementBackEnd\src\StudentProject.API\bin\Debug\net6.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\binch\OneDrive\Рабочий стол\FinalProject\StudentManagementBackEnd\src\StudentProject.API\bin\Debug\net6.0\FluentValidation.dll
+C:\Users\binch\OneDrive\Рабочий стол\FinalProject\StudentManagementBackEnd\src\StudentProject.API\bin\Debug\net6.0\FluentValidation.AspNetCore.dll
+C:\Users\binch\OneDrive\Рабочий стол\FinalProject\StudentManagementBackEnd\src\StudentProject.API\bin\Debug\net6.0\FluentValidation.DependencyInjectionExtensions.dll

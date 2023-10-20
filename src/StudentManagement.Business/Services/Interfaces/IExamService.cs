@@ -13,6 +13,8 @@ namespace StudentManagement.Business.Services.Interfaces
     {
         Task<List<GetExamDTO>> GetAllExamsAsync(string? search);
         Task<GetExamDTO> GetExamByIdAsync(Guid id);
+        Task<GetExamForUpdateDTO> GetExamByIdForUpdateAsync(Guid id);
+
         Task CreateExamAsync(PostExamDTO postExamDTO);
         Task DeleteExamAsync(Guid id);
         Task UpdateExamAsync(Guid id, PutExamDTO putExamDTO);

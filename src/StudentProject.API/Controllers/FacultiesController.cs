@@ -29,7 +29,12 @@ namespace StudentProject.API.Controllers
           var Faculty = await _facultyService.GetFacultyByIdAsync(Id);
             return Ok(Faculty);
         }
-
+        [HttpGet("update/{Id}")]
+        public async Task<IActionResult> GetFacultyByIdForUpdate(Guid Id)
+        {
+            var Faculty = await _facultyService.GetFacultyByIdForUpdateAsync(Id);
+            return Ok(Faculty);
+        }
         [HttpPost]
         public async Task<IActionResult> CreateFaculty(PostFacultyDTO postFacultyDTO)
         {
@@ -43,9 +48,9 @@ namespace StudentProject.API.Controllers
             return StatusCode((int)HttpStatusCode.OK, new ResponseDTO(HttpStatusCode.OK,"Faculty Deleted"));
         }
         [HttpPut("{Id}")]
-        public async Task<IActionResult> UpdateFaculty(Guid Id,PostFacultyDTO postFacultyDTO)
+        public async Task<IActionResult> UpdateFaculty(Guid Id,PutFacultyDTO putFacultyDTO)
         {
-           await _facultyService.UpdateFacultyAsync(Id,postFacultyDTO);
+           await _facultyService.UpdateFacultyAsync(Id, putFacultyDTO);
             return StatusCode((int)HttpStatusCode.OK,new ResponseDTO(HttpStatusCode.OK,"Faculty updated"));
 
 

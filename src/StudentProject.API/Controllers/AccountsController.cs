@@ -18,7 +18,7 @@ namespace StudentProject.API.Controllers
         private readonly IUserService _userService;
         private readonly AppDbContext _context;
         private readonly IMapper _mapper;
-        public AccountsController( AppDbContext context, IMapper mapper,IUserService userService)
+        public AccountsController(AppDbContext context, IMapper mapper, IUserService userService)
         {
             _userService = userService;
             _context = context;
@@ -28,24 +28,52 @@ namespace StudentProject.API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateUser(PostUserDTO postUserDTO)
         {
-           await _userService.CreateAccountAsync(postUserDTO);
+            await _userService.CreateAccountAsync(postUserDTO);
             return Ok("User created successefully");
 
         }
         [HttpGet]
         public async Task<IActionResult> GetAllUsers()
         {
-          var users = await _userService.GetAllUsersAsync();
-          
+            var user = await _userService.GetAllUsersAsync();
 
 
-          return Ok(users);
+
+            return Ok(user);
+        }
+        [HttpGet("{Id}")]
+        public async Task<IActionResult> GetUserDetails(string Id)
+        {
+            var user= await _userService.GetUserByIdAsync(Id);
+
+
+
+            return Ok(user);
+        }
+        [HttpGet("update/{Id}")]
+        public async Task<IActionResult> GetUserByIdForUpdate(string Id)
+        {
+            var user = await _userService.GetUserByIdForUpdateAsync(Id);
+
+
+
+            return Ok(user);
         }
         [HttpPut("{Id}")]
         public async Task<IActionResult> UdpateUser(string Id,PutUserDTO putUserDTO)
         {
             await _userService.UpdateUserAsync(Id, putUserDTO);
             return StatusCode((int)HttpStatusCode.OK,new ResponseDTO(HttpStatusCode.OK,"user updated successefully"));
+
         }
+        [HttpDelete("{Id}")]
+        public async Task<IActionResult> DeleteUser(string Id)
+        {
+            await _userService.DeleteUserAsync(Id);
+            return StatusCode((int)HttpStatusCode.OK, new ResponseDTO(HttpStatusCode.OK, "User Deleted successefully"));
+
+        }
+
+
     }
 }

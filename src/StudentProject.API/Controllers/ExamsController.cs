@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using StudentManagement.Business.DTOs.CommonDTOs;
 using StudentManagement.Business.DTOs.ExamDTOs;
@@ -17,6 +18,7 @@ namespace StudentProject.API.Controllers
         {
             _examService = examService;
         }
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetAllExams(string? Search)
         {
@@ -33,6 +35,13 @@ namespace StudentProject.API.Controllers
         public async Task<IActionResult> GetExamById(Guid Id)
         {
             var exam = await _examService.GetExamByIdAsync(Id);
+            return Ok(exam);
+
+        }
+        [HttpGet("update/{Id}")]
+        public async Task<IActionResult> GetExamByIdForUpdate(Guid Id)
+        {
+            var exam = await _examService.GetExamByIdForUpdateAsync(Id);
             return Ok(exam);
 
         }
