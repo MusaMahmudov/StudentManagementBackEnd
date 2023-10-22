@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using StudentManagement.Business.Services.Interfaces;
 
@@ -14,6 +15,7 @@ namespace StudentProject.API.Controllers
         _roleService = roleService;
         }
         [HttpGet]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,Moderator")]
         public IActionResult GetAllRoles() 
         {
          var roles = _roleService.GetRoles();

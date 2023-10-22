@@ -18,20 +18,22 @@ namespace StudentProject.API.Controllers
         {
             _examService = examService;
         }
-        [Authorize]
         [HttpGet]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,Moderator")]
         public async Task<IActionResult> GetAllExams(string? Search)
         {
             var exams = await _examService.GetAllExamsAsync(Search);
             return Ok(exams);
         }
         [HttpPost]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         public async Task<IActionResult> CreateExam(PostExamDTO postExamDTO)
         {
             await _examService.CreateExamAsync(postExamDTO);
             return StatusCode((int)HttpStatusCode.OK, new ResponseDTO(HttpStatusCode.OK, "Exam created successefully"));
         }
         [HttpGet("{Id}")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,Moderator")]
         public async Task<IActionResult> GetExamById(Guid Id)
         {
             var exam = await _examService.GetExamByIdAsync(Id);
@@ -39,6 +41,7 @@ namespace StudentProject.API.Controllers
 
         }
         [HttpGet("update/{Id}")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,Moderator")]
         public async Task<IActionResult> GetExamByIdForUpdate(Guid Id)
         {
             var exam = await _examService.GetExamByIdForUpdateAsync(Id);
@@ -46,6 +49,7 @@ namespace StudentProject.API.Controllers
 
         }
         [HttpPut("{Id}")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,Moderator")]
         public async Task<IActionResult> UpdateExam(Guid Id, PutExamDTO putExamDTO)
         {
             await _examService.UpdateExamAsync(Id, putExamDTO);
@@ -53,6 +57,7 @@ namespace StudentProject.API.Controllers
 
         }
         [HttpDelete("{Id}")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         public async Task<IActionResult> DeleteExam(Guid Id) 
         {
          await _examService.DeleteExamAsync(Id);

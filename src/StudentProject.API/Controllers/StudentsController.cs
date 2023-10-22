@@ -22,12 +22,15 @@ namespace StudentProject.API.Controllers
         }
 
         [HttpGet]
+        [Authorize(AuthenticationSchemes = "Bearer",Roles ="Admin,Moderator")]
+
         public async Task<IActionResult> GetStudents(string? search) 
         {
             var students =  await _studentService.GetAllStudentsAsync(search);
             return Ok(students);
         }
         [HttpPost]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         public async Task<IActionResult> CreateStudent(PostStudentDTO postStudentDTO)
         {
             
@@ -36,6 +39,7 @@ namespace StudentProject.API.Controllers
           
         }
         [HttpGet("{Id}")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,Moderator")]
         public async Task<IActionResult> GetStudentById(Guid Id)
         {
            
@@ -46,6 +50,7 @@ namespace StudentProject.API.Controllers
        
         }
         [HttpGet("update/{Id}")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,Moderator")]
         public async Task<IActionResult> GetStudentForUpdate(Guid Id)
         {
 
@@ -54,12 +59,14 @@ namespace StudentProject.API.Controllers
 
         }
         [HttpDelete("{Id}")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         public async Task<IActionResult> DeleteStudent(Guid Id)
         {
           await  _studentService.DeleteStudentAsync(Id);
             return StatusCode((int)HttpStatusCode.OK,new ResponseDTO(HttpStatusCode.OK,"Student Deleted Successefully"));
         }
         [HttpPut("{Id}")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,Moderator")]
         public async Task<IActionResult> UpdateStudent(Guid Id,PutStudentDTO putStudentDTO)
         {
            

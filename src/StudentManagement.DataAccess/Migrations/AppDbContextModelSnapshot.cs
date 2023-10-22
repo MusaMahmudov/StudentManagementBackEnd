@@ -422,6 +422,14 @@ namespace StudentManagement.DataAccess.Migrations
                     b.HasIndex("SubjectId");
 
                     b.ToTable("GroupSubjects");
+
+                    b.HasCheckConstraint("Credits", "Credits BETWEEN 1 AND 30");
+
+                    b.HasCheckConstraint("HoursOfSubject", "Hours BETWEEN 1 AND 200");
+
+                    b.HasCheckConstraint("TotalWeeksDuration", "TotalWeeks BETWEEN 1 AND 50");
+
+                    b.HasCheckConstraint("YearOfSubject", "Year BETWEEN 2010 AND 2023");
                 });
 
             modelBuilder.Entity("StudentManagement.Core.Entities.Identity.AppUser", b =>

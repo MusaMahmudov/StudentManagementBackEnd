@@ -28,16 +28,20 @@ namespace StudentManagement.Business.HelperSevices.Implementations
         public async Task<TokenResponseDTO> CreateToken(AppUser User)
         {
 
+
+            var roles =await _userManager.GetRolesAsync(User);
+
             List<Claim> claims = new List<Claim>()
         {
             new Claim(ClaimTypes.Name,User.UserName),
             new Claim(ClaimTypes.Email,User.Email),
             new Claim(ClaimTypes.NameIdentifier,User.Id),
         };
-            foreach (var role in await _userManager.GetRolesAsync(User))
+            foreach (var role in roles)
             {
-                claims.Add(new Claim(Enum.GetValues(typeof(Roles)).ToString(), role));
+                claims.Add(new Claim(ClaimTypes.Role, role));
             }
+            
             SymmetricSecurityKey symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:SecurityKey"]));
 
 

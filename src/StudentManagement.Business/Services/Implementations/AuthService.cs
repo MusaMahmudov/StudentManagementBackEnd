@@ -34,7 +34,7 @@ namespace StudentManagement.Business.Services.Implementations
                 throw new LoginFailException("Sign in fail");
             }
 
-             var singInResult = await _signInManager.CheckPasswordSignInAsync(user,loginDTO.Password,true);
+             var singInResult = await _signInManager.PasswordSignInAsync(user,loginDTO.Password,loginDTO.RememberMe,true);
             if (!singInResult.Succeeded)
             {
                 throw new LoginFailException("Sign in fail");
@@ -44,6 +44,12 @@ namespace StudentManagement.Business.Services.Implementations
             var token = await _tokenService.CreateToken(user);
 
             return  token;
+
+        }
+
+        public async Task LogOutAsync()
+        {
+            await _signInManager.SignOutAsync();
 
         }
     }

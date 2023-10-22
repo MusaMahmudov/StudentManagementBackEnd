@@ -106,8 +106,9 @@ using (var scope = app.Services.CreateScope())
 
 };
     app.UseHttpsRedirection();
-app.UseAuthentication();
 app.UseCors("AllowAllOrigin");
+app.UseAuthentication();
+
 app.UseAuthorization();
 
 app.MapControllers();

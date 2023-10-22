@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using StudentManagement.Business.DTOs.CommonDTOs;
@@ -7,11 +8,13 @@ using StudentManagement.Business.Services.Interfaces;
 using StudentManagement.Core.Entities.Identity;
 using StudentManagement.DataAccess.Contexts;
 using System.Net;
+using System.Runtime.InteropServices;
 
 namespace StudentProject.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+
     public class AccountsController : ControllerBase
     {
         private readonly SignInManager<AppUser> signInManager;
@@ -24,8 +27,8 @@ namespace StudentProject.API.Controllers
             _context = context;
             _mapper = mapper;
         }
-
         [HttpPost]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         public async Task<IActionResult> CreateUser(PostUserDTO postUserDTO)
         {
             await _userService.CreateAccountAsync(postUserDTO);
@@ -33,15 +36,14 @@ namespace StudentProject.API.Controllers
 
         }
         [HttpGet]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,Moderator")]
         public async Task<IActionResult> GetAllUsers()
         {
             var user = await _userService.GetAllUsersAsync();
-
-
-
             return Ok(user);
         }
         [HttpGet("{Id}")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,Moderator")]
         public async Task<IActionResult> GetUserDetails(string Id)
         {
             var user= await _userService.GetUserByIdAsync(Id);
@@ -51,6 +53,7 @@ namespace StudentProject.API.Controllers
             return Ok(user);
         }
         [HttpGet("update/{Id}")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         public async Task<IActionResult> GetUserByIdForUpdate(string Id)
         {
             var user = await _userService.GetUserByIdForUpdateAsync(Id);
@@ -60,6 +63,7 @@ namespace StudentProject.API.Controllers
             return Ok(user);
         }
         [HttpPut("{Id}")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         public async Task<IActionResult> UdpateUser(string Id,PutUserDTO putUserDTO)
         {
             await _userService.UpdateUserAsync(Id, putUserDTO);
@@ -67,6 +71,7 @@ namespace StudentProject.API.Controllers
 
         }
         [HttpDelete("{Id}")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         public async Task<IActionResult> DeleteUser(string Id)
         {
             await _userService.DeleteUserAsync(Id);

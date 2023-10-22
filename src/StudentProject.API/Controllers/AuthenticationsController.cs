@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using StudentManagement.Business.DTOs.AuthDTOs;
+using StudentManagement.Business.DTOs.CommonDTOs;
 using StudentManagement.Business.Services.Interfaces;
+using System.Net;
 
 namespace StudentProject.API.Controllers
 {
@@ -18,14 +21,26 @@ namespace StudentProject.API.Controllers
         [HttpPost("[Action]")]
         public async Task<IActionResult> Login(LoginDTO loginDTO)
         {
-            if (User.Identity.IsAuthenticated)
+            if(User.Identity.IsAuthenticated)
             {
-
+                return StatusCode((int)HttpStatusCode.BadRequest, new ResponseDTO(HttpStatusCode.BadRequest, "Already authenticated"));
             }
 
 
             var token  = await _authService.LoginAsync(loginDTO);
             return Ok(token);
         }
+        [HttpPost("[Action]")]
+        public async Task<IActionResult> LogOut()
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return StatusCode((int)HttpStatusCode.BadRequest, new ResponseDTO(HttpStatusCode.BadRequest, "User is not authenticated"));
+            }
+           await _authService.LogOutAsync();
+            return Ok();
+
+        }
+
     }
 }

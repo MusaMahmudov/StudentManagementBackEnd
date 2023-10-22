@@ -10,5 +10,6 @@ namespace StudentManagement.Business.Services.Interfaces
     public interface IAuthService
     {
         Task<TokenResponseDTO> LoginAsync(LoginDTO loginDTO);
+        Task LogOutAsync();
     }
 }

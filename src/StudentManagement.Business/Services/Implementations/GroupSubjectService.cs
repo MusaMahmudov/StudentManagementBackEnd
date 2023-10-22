@@ -119,11 +119,14 @@ namespace StudentManagement.Business.Services.Implementations
             
             if (existingGroupSubject is null)
                 throw new GroupSubjectNotFoundByIdException("Group's subject not found");
-
-            if (await _groupSubjectRepository.IsExistsAsync(gs => gs.GroupId == putGroupSubjectDTO.GroupId && gs.SubjectId == putGroupSubjectDTO.SubjectId))
+            if(putGroupSubjectDTO.GroupId !=existingGroupSubject.GroupId || putGroupSubjectDTO.SubjectId !=existingGroupSubject.SubjectId) 
             {
-                throw new GroupSubjectAlreadyExistsException("Group with this subject already exists");
+                if (await _groupSubjectRepository.IsExistsAsync(gs => gs.GroupId == putGroupSubjectDTO.GroupId && gs.SubjectId == putGroupSubjectDTO.SubjectId))
+                {
+                    throw new GroupSubjectAlreadyExistsException("Group with this subject already exists");
+                }
             }
+           
             existingGroupSubject = _mapper.Map(putGroupSubjectDTO,existingGroupSubject);
             _groupSubjectRepository.Update(existingGroupSubject);
             await _groupSubjectRepository.SaveChangesAsync();
