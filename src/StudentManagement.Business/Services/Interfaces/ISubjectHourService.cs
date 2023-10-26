@@ -11,5 +11,6 @@ namespace StudentManagement.Business.Services.Interfaces
     public interface ISubjectHourService
     {
         Task CreateSubjectHoursAsync(PostSubjectHourDTO postSubjectHourDTO);
+        Task<List<GetSubjectHourForStudentScheduleDTO>> GetSubjectHoursForStudentScheduleAsync(List<Guid> groupSubjecstId);
     }
 }

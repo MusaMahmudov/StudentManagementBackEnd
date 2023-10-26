@@ -1,4 +1,8 @@
 ﻿using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using StudentManagement.Business.HelperSevices.Implementations;
 using StudentManagement.Business.HelperSevices.Interfaces;
@@ -41,6 +45,16 @@ namespace StudentManagement.Business
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IRoleService, RoleService>();
             services.AddFluentValidation(o => o.RegisterValidatorsFromAssembly(typeof(PostStudentDTOValidator).Assembly));
+            services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
+            services.AddHttpContextAccessor();
+            services.AddScoped<IUrlHelper>(x =>
+            {
+                var actionContext = x.GetRequiredService<IActionContextAccessor>().ActionContext;
+                var factory = x.GetRequiredService<IUrlHelperFactory>();
+                return new UrlHelper(actionContext);
+            });
+            services.AddScoped<IMailService, MailService>();
+            services.AddScoped<IGetEmailTemplate,GetEmailTemplate>();
 
 
 

@@ -291,6 +291,16 @@ namespace StudentManagement.Business.Services.Implementations
 
                 }
             }
+            if(putUserDTO.Password is not null && putUserDTO.ConfirmPassword is not null) 
+            {
+                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+             var resetResult =  await _userManager.ResetPasswordAsync(user, token, putUserDTO.Password);
+                if(!resetResult.Succeeded) 
+                {
+                    throw new UserUpdateFailException(resetResult.Errors);
+                }
+
+            }
 
             var result = await _userManager.UpdateAsync(user);
             if (!result.Succeeded)

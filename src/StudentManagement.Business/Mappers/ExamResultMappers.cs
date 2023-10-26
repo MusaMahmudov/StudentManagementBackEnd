@@ -16,7 +16,7 @@ namespace StudentManagement.Business.Mappers
           CreateMap<ExamResult,GetExamResultDTO>().ForMember(ge=>ge.studentName,x=>x.MapFrom(er=>er.Student.FullName)).ReverseMap();
             CreateMap<PostExamResultDTO,ExamResult>().ReverseMap();
             CreateMap<PutExamResultDTO, ExamResult>().ReverseMap();
-
+            CreateMap<ExamResult,GetExamResultForExamForStudentPageDTO>().ForMember(ge=>ge.studentName,x=>x.MapFrom(er=>er.Student.FullName)).ForMember(ge=>ge.studentId,x=>x.MapFrom(ge=>ge.StudentId)).ReverseMap();
 
 
             CreateMap<ExamResult,GetExamResultForExam>()

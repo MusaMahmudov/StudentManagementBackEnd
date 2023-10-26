@@ -25,7 +25,7 @@ namespace StudentManagement.Business.HelperSevices.Implementations
             _userManager = userManager;
             _configuration = configuration;
         }
-        public async Task<TokenResponseDTO> CreateToken(AppUser User)
+        public async Task<TokenResponseDTO> CreateToken(AppUser User,string? studentFullName,string? teacherFullName)
         {
 
 
@@ -41,7 +41,16 @@ namespace StudentManagement.Business.HelperSevices.Implementations
             {
                 claims.Add(new Claim(ClaimTypes.Role, role));
             }
-            
+            if(studentFullName is not null)
+            {
+                claims.Add(new Claim("FullName",studentFullName));
+            }
+            if(teacherFullName is not null)
+            {
+                claims.Add(new Claim("FullName", teacherFullName));
+
+            }
+
             SymmetricSecurityKey symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:SecurityKey"]));
 
 
@@ -54,7 +63,7 @@ namespace StudentManagement.Business.HelperSevices.Implementations
                 claims: claims,
                 signingCredentials: signingCredentials,
                 notBefore: DateTime.UtcNow,
-                expires: DateTime.UtcNow.AddHours(4)
+                expires: DateTime.UtcNow.AddHours(6)
                 );
             JwtSecurityTokenHandler jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
             string token = jwtSecurityTokenHandler.WriteToken(jwt);

@@ -34,7 +34,7 @@ namespace StudentProject.API.Controllers
 
 
         [HttpPost]
-        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
+        //[Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         public async Task<IActionResult> CreateExamResult(PostExamResultDTO postExamResultDTO)
         {
             await _examResultService.CreateExamResultAsync(postExamResultDTO);
@@ -42,7 +42,7 @@ namespace StudentProject.API.Controllers
 
         }
         [HttpPut("{Id}")]
-        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,Moderator")]
+        //[Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,Moderator")]
         public async Task<IActionResult> UpdateExamResult(Guid Id, PutExamResultDTO putExamResultDTO)
         {
         

@@ -39,6 +39,15 @@ namespace StudentManagement.Business.Services.Implementations
             return lessonTypeDTO;
 
         }
+        public async Task<GetLessonTypeForUpdateDTO> GetLessonTypeByIdForUpdateAsync(Guid Id)
+        {
+            var lessonType = await _lessonTypeRepository.GetSingleAsync(lt => lt.Id == Id);
+            if (lessonType is null)
+                throw new LessonTypeNotFoundByIdException("Lesson's type not found");
+
+            GetLessonTypeForUpdateDTO lessonTypeDTO = _mapper.Map<GetLessonTypeForUpdateDTO>(lessonType);
+            return lessonTypeDTO;
+        }
 
 
         public async Task CreateLessonTypeAsync(PostLessonTypeDTO postLessonTypeDTO)
@@ -69,5 +78,7 @@ namespace StudentManagement.Business.Services.Implementations
             _lessonTypeRepository.Update(lessonType);
             await _lessonTypeRepository.SaveChangesAsync();
         }
+
+      
     }
 }

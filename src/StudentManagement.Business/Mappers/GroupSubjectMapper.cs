@@ -20,7 +20,10 @@ namespace StudentManagement.Business.Mappers
             CreateMap<PostGroupSubjectDTO, GroupSubject>().ForMember(gs=>gs.teacherSubjects,x=>x.Ignore()).ReverseMap();
             CreateMap<PutGroupSubjectDTO, GroupSubject>().ForMember(gs => gs.teacherSubjects, x => x.Ignore()).ReverseMap();
                 CreateMap<GroupSubject,GetGroupSubjectForTeacherDTO>().ReverseMap();
-            CreateMap<GroupSubject, GetGroupSubjectForGroupDTO>().ForMember(ggs=>ggs.Teachers,x=>x.MapFrom(gs=>gs.teacherSubjects.Select(ts=> new GetTeacherForGroupDTO {Id=ts.Id,TeacherRoleName = ts.TeacherRole.Name,FullName= ts.Teacher.FullName }))).ReverseMap();
+            CreateMap<GroupSubject,GetGroupSubjectForStudentScheduleDTO>().ForMember(gg=>gg.subjectName,x=>x.MapFrom(gs=>gs.Subject.Name)).ForMember(gg=>gg.groupName,x=>x.MapFrom(gs=>gs.Group.Name)).ReverseMap();
+
+            CreateMap<GroupSubject, GetGroupSubjectForGroupDTO>().ForMember(ggs=>ggs.TeacherRoles,x=>x.MapFrom(gs=>gs.teacherSubjects)).ForMember(gg=>gg.groupName,x=>x.MapFrom(gs=>gs.Group.Name)).ReverseMap();
+            //CreateMap<GroupSubject, GetGroupSubjectForGroupDTO>().ForMember(ggs=>ggs.TeacherRoles,x=>x.MapFrom(gs=>gs.teacherSubjects.Select(ts => new GetTeacherSubjectForGroupDTO { Id = ts.Id, teacherRole = ts.TeacherRole.Name, teacherName = ts.Teacher.FullName }))).ReverseMap();
             CreateMap<GroupSubject, GetGroupSubjectForExam>().ForMember(gg=>gg.subjectName,x=>x.MapFrom(gs=>gs.Subject.Name)).ForMember(gg=>gg.groupName,x=>x.MapFrom(gs=>gs.Group.Name)).ReverseMap();
 
         }

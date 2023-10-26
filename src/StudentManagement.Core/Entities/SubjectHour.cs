@@ -22,6 +22,8 @@ namespace StudentManagement.Core.Entities
         public TimeSpan StartTime { get; set; }
         [DataType(DataType.Time)]
         public TimeSpan EndTime { get; set; }
+        [DataType(DataType.Date)]
+        public DateTime Date { get; set; }
 
     }
 }

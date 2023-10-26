@@ -13,9 +13,11 @@ namespace StudentManagement.Business.Mappers
     {
         public LessonTypeMappers() 
         {
+            CreateMap<LessonType,GetLessonTypeForUpdateDTO>().ReverseMap();
             CreateMap<LessonType,GetLessonTypeDTO>().ReverseMap();
             CreateMap<PostLessonTypeDTO,LessonType>().ReverseMap();
             CreateMap<PutLessonTypeDTO, LessonType>().ReverseMap();
+            CreateMap<LessonType,GetLessonTypeForSubjectHourForStudentPageDTO>().ReverseMap();
         }
     }
 }

@@ -1,0 +1,25 @@
+{
+  "Files": [
+    {
+      "Id": "C:\\Users\\binch\\OneDrive\\Рабочий стол\\FinalProject\\StudentManagementBackEnd\\src\\StudentProject.API\\wwwroot\\assets\\Templates\\reset-password.html",
+      "PackagePath": "staticwebassets\\assets\\Templates\\reset-password.html"
+    },
+    {
+      "Id": "obj\\Debug\\net6.0\\staticwebassets\\msbuild.StudentProject.API.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net6.0\\staticwebassets\\msbuild.build.StudentProject.API.props",
+      "PackagePath": "build\\StudentProject.API.props"
+    },
+    {
+      "Id": "obj\\Debug\\net6.0\\staticwebassets\\msbuild.buildMultiTargeting.StudentProject.API.props",
+      "PackagePath": "buildMultiTargeting\\StudentProject.API.props"
+    },
+    {
+      "Id": "obj\\Debug\\net6.0\\staticwebassets\\msbuild.buildTransitive.StudentProject.API.props",
+      "PackagePath": "buildTransitive\\StudentProject.API.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

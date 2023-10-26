@@ -18,7 +18,7 @@ namespace StudentProject.API.Controllers
             _teacherService = teacherService;
         }
         [HttpGet]
-        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,Moderator")]
+        //[Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,Moderator")]
         public async Task<IActionResult> GetAllTeachers(string? search) 
         {
           var  teachers = await _teacherService.GetAllTeachersAsync(search);

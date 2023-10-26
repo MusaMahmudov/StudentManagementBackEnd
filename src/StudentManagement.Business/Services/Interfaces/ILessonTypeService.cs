@@ -11,6 +11,8 @@ namespace StudentManagement.Business.Services.Interfaces
     {
         Task<List<GetLessonTypeDTO>> GetAllLessonTypesAsync(string? search);
         Task<GetLessonTypeDTO> GetLessonTypeByIdAsync(Guid Id);
+        Task<GetLessonTypeForUpdateDTO> GetLessonTypeByIdForUpdateAsync(Guid Id);
+
         Task DeleteLessonTypeAsync(Guid Id);
         Task UpdateLessonTypeAsync(Guid Id,PutLessonTypeDTO putLessonTypeDTO);
         Task CreateLessonTypeAsync(PostLessonTypeDTO postLessonTypeDTO);

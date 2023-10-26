@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using StudentManagement.Business.DTOs.ExamDTOs;
+using StudentManagement.Business.DTOs.ExamResultDTOs;
 using StudentManagement.Core.Entities;
 using System;
 using System.Collections.Generic;
@@ -18,6 +19,7 @@ namespace StudentManagement.Business.Mappers
             CreateMap<Exam, GetExamForUpdateDTO>().ForMember(ge => ge.ExamTypeId, x => x.MapFrom(e => e.ExamType.Id));
             CreateMap<PostExamDTO,Exam>().ReverseMap();
             CreateMap<PutExamDTO,Exam>().ReverseMap();
+            CreateMap<Exam, GetExamForStudentPageDTO>().ForMember(ge=>ge.ExamType,x=>x.MapFrom(e=>e.ExamType.Name)).ForMember(ge=>ge.examResults,x=>x.MapFrom(e=>e.ExamResults.Select(er=>new GetExamResultForExamForStudentPageDTO{studentId= er.StudentId,studentName = er.Student.FullName,score = er.Score   }))).ReverseMap();
         }
     }
 }

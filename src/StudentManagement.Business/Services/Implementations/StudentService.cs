@@ -38,7 +38,7 @@ namespace StudentManagement.Business.Services.Implementations
 
         public async Task<List<GetStudentDTO>> GetAllStudentsAsync(string? search)
         {
-            var students = await _studentRepository.GetFiltered(s => search != null ? s.FullName.Contains(search) : true,"studentGroups.Group.Faculty","AppUser","examResults.Exam.ExamType", "examResults.Exam.GroupSubject.Subject","Group.Faculty").ToListAsync();
+            var students = await _studentRepository.GetFiltered(s => search != null ? s.FullName.Contains(search) : true,"studentGroups.Group.Faculty","Group","AppUser","examResults.Exam.ExamType", "examResults.Exam.GroupSubject.Subject","Group.Faculty").ToListAsync();
 
             return _mapper.Map<List<GetStudentDTO>>(students);
         }
@@ -46,7 +46,7 @@ namespace StudentManagement.Business.Services.Implementations
         public async Task<GetStudentDTO> GetStudentByIdAsync(Guid Id)
         {
 
-            var student = await _studentRepository.GetSingleAsync(s => s.Id == Id, "studentGroups.Group.Faculty", "AppUser", "examResults.Exam.ExamType", "examResults.Exam.GroupSubject.Subject");
+            var student = await _studentRepository.GetSingleAsync(s => s.Id == Id, "studentGroups.Group.Faculty", "AppUser", "examResults.Exam.ExamType","Group.Faculty", "examResults.Exam.GroupSubject.Subject");
             if (student is null)
                 throw new StudentNotFoundByIdException("Student not found");
 
@@ -59,6 +59,13 @@ namespace StudentManagement.Business.Services.Implementations
                 throw new StudentNotFoundByIdException("Student not found");
 
             return _mapper.Map<GetStudentForUpdateDTO>(student);
+        }
+        public async Task<GetStudentForStudentPageDTO> GetStudentForStudentPageAsync(Guid Id)
+        {
+            var student = await _studentRepository.GetSingleAsync(s => s.Id == Id, "studentGroups.Group.Faculty", "Group.Faculty","Group.Students","Group.GroupSubjects.subjectHours.LessonType", "Group.GroupSubjects.Subject", "Group.GroupSubjects.teacherSubjects.TeacherRole", "Group.GroupSubjects.Exams.ExamResults", "Group.GroupSubjects.Exams.ExamType", "Group.GroupSubjects.teacherSubjects.Teacher", "AppUser");
+            if (student is null)
+                throw new StudentNotFoundByIdException("Student not found");
+            return _mapper.Map<GetStudentForStudentPageDTO>(student);
         }
         public async Task CreateStudentAsync(PostStudentDTO postStudentDTO)
         {

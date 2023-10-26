@@ -18,7 +18,6 @@ namespace StudentProject.API.Controllers
             _groupSubjectService = groupSubjectService;
         }
         [HttpGet]
-        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,Moderator")]
         public async Task<IActionResult> GetAllGroupSubjects()
         {
             var groupSubjects = await _groupSubjectService.GetAllGroupSubjectsAsync();
@@ -33,14 +32,13 @@ namespace StudentProject.API.Controllers
 
         }
         [HttpGet("{Id}")]
-        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,Moderator")]
+        //[Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,Moderator")]
         public async Task<IActionResult> GetGroupSubjectById(Guid Id)
         {
             var groupSubject = await _groupSubjectService.GetGroupSubjectByIdAsync(Id);
             return Ok(groupSubject);
         }
         [HttpPut("{Id}")]
-        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,Moderator")]
         public async Task<IActionResult> UpdateGroupSubject(Guid Id, PutGroupSubjectDTO putGroupSubjectDTO)
         {
            await _groupSubjectService.UpdateGroupSubjectAsync(Id, putGroupSubjectDTO);

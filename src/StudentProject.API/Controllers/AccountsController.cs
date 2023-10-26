@@ -43,7 +43,7 @@ namespace StudentProject.API.Controllers
             return Ok(user);
         }
         [HttpGet("{Id}")]
-        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,Moderator")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,Moderator,Student")]
         public async Task<IActionResult> GetUserDetails(string Id)
         {
             var user= await _userService.GetUserByIdAsync(Id);

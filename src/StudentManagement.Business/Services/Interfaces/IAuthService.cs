@@ -11,5 +11,7 @@ namespace StudentManagement.Business.Services.Interfaces
     {
         Task<TokenResponseDTO> LoginAsync(LoginDTO loginDTO);
         Task LogOutAsync();
+        Task ResetPassword(ForgotPasswordDTO forgotPasswordDTO);
+
     }
 }

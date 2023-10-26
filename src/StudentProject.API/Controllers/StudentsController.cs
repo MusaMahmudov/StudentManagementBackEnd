@@ -39,7 +39,7 @@ namespace StudentProject.API.Controllers
           
         }
         [HttpGet("{Id}")]
-        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,Moderator")]
+        //[Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,Moderator,Student")]
         public async Task<IActionResult> GetStudentById(Guid Id)
         {
            
@@ -57,6 +57,12 @@ namespace StudentProject.API.Controllers
             var student = await _studentService.GetStudentByIdForUpdateAsync(Id);
             return Ok(student);
 
+        }
+        [HttpGet("[Action]/{Id}")]
+        public async Task<IActionResult> GetStudentForStudentPage(Guid Id)
+        {
+            var student = await _studentService.GetStudentForStudentPageAsync(Id);
+            return Ok(student);
         }
         [HttpDelete("{Id}")]
         [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]

@@ -13,7 +13,8 @@ namespace StudentManagement.Business.Mappers
     {
         public SubjectHourMappers() 
         {
-            CreateMap<PostSubjectHourDTO, SubjectHour>().ForMember(sh => sh.StartTime, x => x.Ignore()).ForMember(sh=>sh.EndTime,x=>x.Ignore());
+            CreateMap<PostSubjectHourDTO, SubjectHour>().ForMember(sh=>sh.Date,x=>x.Ignore()).ForMember(sh => sh.StartTime, x => x.Ignore()).ForMember(sh=>sh.EndTime,x=>x.Ignore());
+            CreateMap<SubjectHour, GetSubjectHourForStudentScheduleDTO>().ReverseMap();
         }
 
     }

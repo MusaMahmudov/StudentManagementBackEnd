@@ -19,4 +19,8 @@
     <ProjectReference Include="..\StudentManagement.Business\StudentManagement.Business.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\assets\Templates\" />
+  </ItemGroup>
+
 </Project>

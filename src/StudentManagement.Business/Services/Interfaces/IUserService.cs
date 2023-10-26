@@ -1,4 +1,5 @@
-﻿using StudentManagement.Business.DTOs.UserDTOs;
+﻿using StudentManagement.Business.DTOs.AuthDTOs;
+using StudentManagement.Business.DTOs.UserDTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,6 @@ namespace StudentManagement.Business.Services.Interfaces
         Task<GetUserForUpdateDTO> GetUserByIdForUpdateAsync(string Id);
         Task UpdateUserAsync(string id, PutUserDTO putUserDTO);
         Task DeleteUserAsync(string id);
-       
 
     }
 }

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using StudentManagement.Business.DTOs.SubjectHourDTOs;
 using StudentManagement.Business.Exceptions.GroupSubjectExceptions;
 using StudentManagement.Business.Exceptions.LessonTypeExceptions;
@@ -35,16 +36,37 @@ namespace StudentManagement.Business.Services.Implementations
 
             var groupSubject = await _groupSubjectRepository.GetSingleAsync(gs=>gs.Id == postSubjectHourDTO.GroupSubjectId);
             var subjectHours = new List<SubjectHour>();
+            var startTime = new TimeSpan(postSubjectHourDTO.StartTime.Hours,postSubjectHourDTO.StartTime.Minutes,postSubjectHourDTO.StartTime.Seconds);
+            var endTime = new TimeSpan(postSubjectHourDTO.EndTime.Hours, postSubjectHourDTO.EndTime.Minutes, postSubjectHourDTO.EndTime.Seconds);
+
             for ( var i = 0;i<groupSubject.TotalWeeks;i++)
             {
+                
                 var subjectHour = _mapper.Map<SubjectHour>(postSubjectHourDTO);
+                subjectHour.StartTime = startTime;
+                subjectHour.EndTime = endTime;
+                subjectHour.Date = postSubjectHourDTO.StartDate.AddDays(7 * i);
                 subjectHours.Add(subjectHour);
-             
-
-
             }
             _subjectHourRepository.AddList(subjectHours);
             await _subjectHourRepository.SaveChangesAsync();
         }
+        public async Task<List<GetSubjectHourForStudentScheduleDTO>> GetSubjectHoursForStudentScheduleAsync(List<Guid> groupSubjecstId)
+        {
+            List<SubjectHour> subjectHours = new List<SubjectHour>();
+            foreach (var groupSubjectId in groupSubjecstId)
+            {
+                var groupSubjectHours = await _subjectHourRepository.GetFiltered(sh => sh.GroupSubjectId == groupSubjectId, "LessonType","GroupSubject.Subject", "GroupSubject.Group").ToListAsync();
+                foreach (var subjectHour in groupSubjectHours)
+                {
+                    subjectHours.Add(subjectHour);
+                }
+            }
+
+            var subjectHoursDTO = _mapper.Map<List<GetSubjectHourForStudentScheduleDTO>>(subjectHours);
+            return subjectHoursDTO;
+
+        }
+
     }
 }
