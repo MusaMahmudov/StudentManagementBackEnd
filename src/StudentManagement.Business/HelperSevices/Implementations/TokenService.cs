@@ -2,6 +2,8 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using StudentManagement.Business.DTOs.AuthDTOs;
+using StudentManagement.Business.DTOs.StudentDTOs;
+using StudentManagement.Business.DTOs.TeacherDTOs;
 using StudentManagement.Business.HelperSevices.Interfaces;
 using StudentManagement.Core.Entities.Identity;
 using StudentManagement.DataAccess.Enums;
@@ -25,7 +27,7 @@ namespace StudentManagement.Business.HelperSevices.Implementations
             _userManager = userManager;
             _configuration = configuration;
         }
-        public async Task<TokenResponseDTO> CreateToken(AppUser User,string? studentFullName,string? teacherFullName)
+        public async Task<TokenResponseDTO> CreateToken(AppUser User,StudentForTokenDTO? student,TeacherForTokenDTO? teacher)
         {
 
 
@@ -41,13 +43,17 @@ namespace StudentManagement.Business.HelperSevices.Implementations
             {
                 claims.Add(new Claim(ClaimTypes.Role, role));
             }
-            if(studentFullName is not null)
+            if(student is not null)
             {
-                claims.Add(new Claim("FullName",studentFullName));
+                claims.Add(new Claim("FullName",student.FullName));
+                claims.Add(new Claim("Id", student.Id.ToString()));
+
             }
-            if(teacherFullName is not null)
+            if (teacher is not null)
             {
-                claims.Add(new Claim("FullName", teacherFullName));
+                claims.Add(new Claim("FullName", teacher.FullName));
+                claims.Add(new Claim("Id", teacher.Id.ToString()));
+
 
             }
 

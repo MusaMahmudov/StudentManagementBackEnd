@@ -24,7 +24,7 @@ namespace StudentProject.API.Controllers
             return Ok(groupSubjects);
         }
         [HttpPost]
-        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
+        //[Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         public async Task<IActionResult> CreateGroupSubject(PostGroupSubjectDTO postGroupSubjectDTO)
         {
            await _groupSubjectService.CreateGroupSubjectAsync(postGroupSubjectDTO);
@@ -50,6 +50,20 @@ namespace StudentProject.API.Controllers
         { 
         await _groupSubjectService.DeleteGroupSubjectAsync(Id);
             return StatusCode((int)HttpStatusCode.OK,new ResponseDTO(HttpStatusCode.OK,"Group Subject deleted successefully"));
+        }
+
+        [HttpGet("[Action]/{teacherId}")]
+        public IActionResult GetGroupSubjectsForTeacherPageDTO(Guid teacherId)
+        {
+          var groupSubjects =  _groupSubjectService.GetGroupSubjectForTeacherPageDTO(teacherId);
+            return Ok(groupSubjects);
+        }
+
+        [HttpGet("[Action]/{studentId}")]
+        public async Task<IActionResult> GetGroupSubjectsForSubjectsForStudentPage(Guid studentId)
+        {
+            var groupSubjects = await _groupSubjectService.GetGroupSubjectForSubjectsForStudentPageAsync(studentId);
+            return Ok(groupSubjects);
         }
     }
 }

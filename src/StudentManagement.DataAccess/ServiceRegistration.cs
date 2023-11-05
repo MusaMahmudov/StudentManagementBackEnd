@@ -31,6 +31,7 @@ namespace StudentManagement.DataAccess
             service.AddScoped<IExamResultRepository, ExamResultRepository>();
             service.AddScoped<ISubjectHourRepository, SubjectHourRepository>();
             service.AddScoped<IStudentGroupRepository, StudentGroupRepository>();
+            service.AddScoped<IAttendanceRepository, AttendanceRepository>();
 
 
 

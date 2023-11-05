@@ -27,8 +27,10 @@ namespace StudentManagement.Business.Services.Implementations
         private readonly IGroupRepository _groupRepository;
         private readonly UserManager<AppUser> _userManager;
         private readonly IStudentGroupRepository _studentGroupRepository;
-        public StudentService(UserManager<AppUser> userManager,IStudentRepository studentRepository, IMapper mapper,AppDbContext context,IGroupRepository groupRepository,IGroupSubjectService groupSubjectService,IStudentGroupRepository studentGroupRepository)
+        private readonly IGroupSubjectRepository _groupSubjectRepository;
+        public StudentService(IGroupSubjectRepository groupSubjectRepository,UserManager<AppUser> userManager,IStudentRepository studentRepository, IMapper mapper,AppDbContext context,IGroupRepository groupRepository,IGroupSubjectService groupSubjectService,IStudentGroupRepository studentGroupRepository)
         {
+            _groupSubjectRepository = groupSubjectRepository;
             _userManager = userManager;
             _studentRepository = studentRepository;
            _groupRepository = groupRepository;
@@ -62,10 +64,33 @@ namespace StudentManagement.Business.Services.Implementations
         }
         public async Task<GetStudentForStudentPageDTO> GetStudentForStudentPageAsync(Guid Id)
         {
-            var student = await _studentRepository.GetSingleAsync(s => s.Id == Id, "studentGroups.Group.Faculty", "Group.Faculty","Group.Students","Group.GroupSubjects.subjectHours.LessonType", "Group.GroupSubjects.Subject", "Group.GroupSubjects.teacherSubjects.TeacherRole", "Group.GroupSubjects.Exams.ExamResults", "Group.GroupSubjects.Exams.ExamType", "Group.GroupSubjects.teacherSubjects.Teacher", "AppUser");
+            var student = await _studentRepository.GetSingleAsync(s => s.Id == Id,"Group.GroupSubjects.subjectHours", "studentGroups.Group.Faculty", "Group.Faculty","Group.Students","Group.GroupSubjects.subjectHours.LessonType", "Group.GroupSubjects.Subject", "Group.GroupSubjects.teacherSubjects.TeacherRole", "Group.GroupSubjects.Exams.ExamResults", "Group.GroupSubjects.Exams.ExamType", "Group.GroupSubjects.teacherSubjects.Teacher", "AppUser");
+            
+            
             if (student is null)
                 throw new StudentNotFoundByIdException("Student not found");
             return _mapper.Map<GetStudentForStudentPageDTO>(student);
+        }
+        public async Task<List<GetStudentForAttendanceForTeacherPageDTO>> GetStudentForAttendanceForTeacherPageAsync(Guid groupSubjectId)
+        {
+            var students = await _studentRepository.GetFiltered(s=>s.Group.GroupSubjects.Any(gs=>gs.Id == groupSubjectId), "Attendances.SubjectHour.GroupSubject", "Attendances.SubjectHour.LessonType").ToListAsync();
+            var studentsDTO = _mapper.Map<List<GetStudentForAttendanceForTeacherPageDTO>>(students);
+            return studentsDTO;
+
+        }
+        public async Task<List<GetStudentForExamsForTeacherPageDTO>> GetStudentsForExamsForTeacherPageAsync(Guid groupSubjectId)
+        {
+            List<Student>? students = await _studentRepository.GetFiltered(s => s.Group.GroupSubjects.Any(gs=>gs.Id == groupSubjectId), "examResults").ToListAsync();
+            var studentsDTO = _mapper.Map<List<GetStudentForExamsForTeacherPageDTO>>(students);
+            return studentsDTO;
+
+        }
+
+        public async Task<List<GetStudentForCreateOrUpdateForExamResultDTO>> GetStudentsForCreateOrUpdateForExamResultAsync()
+        {
+            var students= await _studentRepository.GetAll("Group").ToListAsync();
+            var studentsDTO = _mapper.Map<List<GetStudentForCreateOrUpdateForExamResultDTO>>(students);
+            return studentsDTO;
         }
         public async Task CreateStudentAsync(PostStudentDTO postStudentDTO)
         {
@@ -85,13 +110,43 @@ namespace StudentManagement.Business.Services.Implementations
                     throw new UserCannotBeStudentAndTeacherException("User  already belongs to the teacher");
                 }
             }
-            if(postStudentDTO.MainGroup is not null && !(await _groupRepository.IsExistsAsync( g=>g.Id ==  postStudentDTO.MainGroup)))
+            //if(postStudentDTO.MainGroup is not null && !(await _groupRepository.IsExistsAsync( g=>g.Id ==  postStudentDTO.MainGroup)))
+            //{
+            //    throw new GroupNotFoundByIdException($"Main group not found");
+            //}
+            List<Attendance>? attendances = new List<Attendance>();
+            if(postStudentDTO.MainGroup is not null)
             {
-                throw new GroupNotFoundByIdException($"Main group not found");
+                var mainGroup = await _groupRepository.GetSingleAsync(mg=>mg.Id == postStudentDTO.MainGroup, "GroupSubjects");
+                if(mainGroup is null)
+                {
+                    throw new GroupNotFoundByIdException("Group not found");
+                }
+                if (mainGroup.GroupSubjects is not null)
+                {
+                    var groupSubjects = _groupSubjectRepository.GetFiltered(gs=>gs.GroupId == mainGroup.Id,"subjectHours").ToList();
+                    
+                    foreach(var groupSubject in groupSubjects)
+                    {
+                        if(groupSubject.subjectHours is not  null)
+                        {
+                            foreach(var subjectHour in groupSubject.subjectHours)
+                            {
+                                var newAttendance = new Attendance()
+                                {
+                                    SubjectHourId = subjectHour.Id,
+                                };
+                                attendances.Add(newAttendance);
+                            }
+
+                        }
+                    }
+                }
+
+
             }
-
             var newStudent = _mapper.Map<Student>(postStudentDTO);
-
+            newStudent.Attendances = attendances;
             if (postStudentDTO.SubGroupsId is not null)
             {
                 foreach (var groupId in postStudentDTO.SubGroupsId)
@@ -145,7 +200,7 @@ namespace StudentManagement.Business.Services.Implementations
 
         public async Task UpdateStudentAsync(Guid Id, PutStudentDTO putStudentDTO)
         {
-            var student = await _studentRepository.GetSingleAsync(s => s.Id == Id,"AppUser", "studentGroups");
+            var student = await _studentRepository.GetSingleAsync(s => s.Id == Id,"AppUser", "studentGroups","Attendances");
 
             if (student is null)
                 throw new StudentNotFoundByIdException("Student not found");
@@ -163,12 +218,40 @@ namespace StudentManagement.Business.Services.Implementations
                 }
 
             }
+            List<Attendance> attendances = new List<Attendance>();
             if(putStudentDTO.MainGroup is not null && putStudentDTO.MainGroup != student.GroupId)
             {
-                if (!await _groupRepository.IsExistsAsync(g => g.Id == putStudentDTO.MainGroup))
+                //if (!await _groupRepository.IsExistsAsync(g => g.Id == putStudentDTO.MainGroup))
+                var mainGroup = await _groupRepository.GetSingleAsync(g=>g.Id == putStudentDTO.MainGroup);
+                if(mainGroup is null)
                      throw new GroupNotFoundByIdException("Group not found");
+
+                var groupSubjects = _groupSubjectRepository.GetFiltered(gs => gs.GroupId == mainGroup.Id, "subjectHours").ToList();
+                if(groupSubjects is not null)
+                {
+
+                    foreach (var groupSubject in groupSubjects)
+                    {
+                        if (groupSubject.subjectHours is not null)
+                        {
+                            foreach (var subjectHour in groupSubject.subjectHours)
+                            {
+                                var newAttendance = new Attendance()
+                                {
+                                    SubjectHourId = subjectHour.Id,
+                                };
+                                attendances.Add(newAttendance);
+                            }
+
+                        }
+                    }
+                }
+                
+
+
             }
             student = _mapper.Map(putStudentDTO, student);
+            student.Attendances?.AddRange(attendances);
 
             if (putStudentDTO.GroupId is not null)
             {
@@ -226,6 +309,17 @@ namespace StudentManagement.Business.Services.Implementations
           return  await _studentRepository.IsExistsAsync(s=>s.Id == id);
         }
 
-        
+        public async Task<GetStudentForStudentAttendancePageDTO> GetStudentForStudentAttendancePageDTOAsync(Guid studentId ,Guid groupSubjectId)
+        {
+            var student =await _studentRepository.GetSingleAsync(s => s.Id == studentId && s.Attendances.Any(a => a.SubjectHour.GroupSubjectId == groupSubjectId), "Attendances.SubjectHour.GroupSubject", "Attendances.SubjectHour.LessonType") ;
+            if (student is null)
+            {
+                throw new StudentNotFoundByIdException("Student not found");
+            }
+            var studentDTO = _mapper.Map<GetStudentForStudentAttendancePageDTO>(student);
+            return studentDTO;
+
+        }
+
     }
 }

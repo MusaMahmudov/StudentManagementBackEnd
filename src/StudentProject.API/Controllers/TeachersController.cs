@@ -24,6 +24,13 @@ namespace StudentProject.API.Controllers
           var  teachers = await _teacherService.GetAllTeachersAsync(search);
             return Ok(teachers);
         }
+        [HttpGet("GroupSubjectCreate")]
+
+        public async Task<IActionResult> GetTeachersForCreateGroupSubject()
+        {
+            var teachers = await _teacherService.GetTeachersForCreateGroupSubjectAsync();
+            return Ok(teachers);
+        }
         [HttpGet("update/{Id}")]
         [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,Moderator")]
         public async Task<IActionResult> GetTeacherForUpdate([FromRoute]Guid Id)

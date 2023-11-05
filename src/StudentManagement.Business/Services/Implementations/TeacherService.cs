@@ -56,6 +56,13 @@ namespace StudentManagement.Business.Services.Implementations
             var getTeacherDTO = _mapper.Map<GetTeacherForUpdateDTO>(teacher);
             return getTeacherDTO;
         }
+        public async Task<List<GetTeacherForCreateGroupSubjectDTO>> GetTeachersForCreateGroupSubjectAsync()
+        {
+           var teachers = await _teacherRepository.GetAll().ToListAsync();
+            var teachersDTO = _mapper.Map<List<GetTeacherForCreateGroupSubjectDTO>>(teachers);
+            return teachersDTO;
+
+        }
 
         public async Task CreateTeacherAsync(PostTeacherDTO postTeacherDTO)
         {
@@ -137,5 +144,7 @@ namespace StudentManagement.Business.Services.Implementations
             _teacherRepository.Update(teacher);
             await _teacherRepository.SaveChangesAsync();
         }
+
+        
     }
 }

@@ -53,6 +53,18 @@ namespace StudentManagement.Business.Services.Implementations
             var examDTO = _mapper.Map<GetExamForUpdateDTO>(exam);
             return examDTO;
         }
+        public async Task<GetExamForExamsForTeacherPageAssign> GetExamForExamsForTeacherPageAssignAsync(Guid id)
+        {
+            var exam = await _examRepository.GetSingleAsync(e => e.Id == id);
+            var examDTO = _mapper.Map<GetExamForExamsForTeacherPageAssign>(exam);
+            return examDTO;
+        }
+        public async Task<List<GetExamForSubjectsForStudentPageDTO>> GetExamsForSubjectsForStudentPageAsync(Guid groupSubjectId)
+        {
+           var exams = await _examRepository.GetFiltered(e=>e.GroupSubjectId == groupSubjectId,"ExamResults.Student","ExamType").ToListAsync();
+            var examsDTO = _mapper.Map<List<GetExamForSubjectsForStudentPageDTO>>(exams);
+            return examsDTO;
+        }
         public async Task CreateExamAsync(PostExamDTO postExamDTO)
         {
             if (!await _examTypeRepository.IsExistsAsync(et => et.Id == postExamDTO.ExamTypeId))
@@ -104,7 +116,5 @@ namespace StudentManagement.Business.Services.Implementations
         }
 
       
-
-        
     }
 }

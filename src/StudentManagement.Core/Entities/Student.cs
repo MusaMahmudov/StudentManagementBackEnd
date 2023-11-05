@@ -31,5 +31,6 @@ public class Student : BaseSectionEntity
     public Guid? GroupId { get; set; }
     public List<StudentGroup>? studentGroups { get; set; }
     public List<ExamResult>? examResults { get; set; }
+    public List<Attendance>? Attendances { get; set; }   
 
 }

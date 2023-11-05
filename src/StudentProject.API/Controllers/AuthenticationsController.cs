@@ -37,9 +37,9 @@ namespace StudentProject.API.Controllers
             {
                 return StatusCode((int)HttpStatusCode.BadRequest, new ResponseDTO(HttpStatusCode.BadRequest, "User is not authenticated"));
             }
-            var link = Url.Action("ResetPassword", "Auth", HttpContext.Request.Scheme);
+            //var link = Url.Action("ResetPassword", "Auth", HttpContext.Request.Scheme);
             await _authService.LogOutAsync();
-            Path.Combine();
+            //Path.Combine();
             return Ok();
 
         }

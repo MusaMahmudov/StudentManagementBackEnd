@@ -49,6 +49,28 @@ namespace StudentProject.API.Controllers
           
        
         }
+        [HttpGet("[Action]/{groupSubjectId}")]
+        //[Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,Moderator,Student")]
+        public async Task<IActionResult> GetStudentsForAttendanceForTeacherPage(Guid groupSubjectId)
+        {
+
+            var student =  await _studentService.GetStudentForAttendanceForTeacherPageAsync(groupSubjectId);
+            return Ok(student);
+
+
+
+        }
+        [HttpGet("[Action]")]
+        //[Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,Moderator,Student")]
+        public async Task<IActionResult> GetStudentsForCreateOrUpdateForExamResult()
+        {
+
+            var student = await _studentService.GetStudentsForCreateOrUpdateForExamResultAsync();
+            return Ok(student);
+
+
+
+        }
         [HttpGet("update/{Id}")]
         [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,Moderator")]
         public async Task<IActionResult> GetStudentForUpdate(Guid Id)
@@ -62,6 +84,18 @@ namespace StudentProject.API.Controllers
         public async Task<IActionResult> GetStudentForStudentPage(Guid Id)
         {
             var student = await _studentService.GetStudentForStudentPageAsync(Id);
+            return Ok(student);
+        }
+        [HttpGet("[Action]/{groupSubjectId}")]
+        public async Task<IActionResult> GetStudentsForExamForTeacherPage(Guid groupSubjectId)
+        {
+            var students = await _studentService.GetStudentsForExamsForTeacherPageAsync(groupSubjectId);
+            return Ok(students);
+        }
+        [HttpGet("[Action]/{studentId}/{groupSubjectId}")]
+        public async Task<IActionResult> GetStudentForStudentAttendancePage(Guid studentId,[FromRoute]Guid groupSubjectId) 
+        {
+          var student = await _studentService.GetStudentForStudentAttendancePageDTOAsync(studentId, groupSubjectId);
             return Ok(student);
         }
         [HttpDelete("{Id}")]

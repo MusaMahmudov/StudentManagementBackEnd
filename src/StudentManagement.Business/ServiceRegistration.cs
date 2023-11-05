@@ -56,6 +56,7 @@ namespace StudentManagement.Business
             services.AddScoped<IMailService, MailService>();
             services.AddScoped<IGetEmailTemplate,GetEmailTemplate>();
 
+            services.AddScoped<IAttendanceService, AttendanceService>();
 
 
 

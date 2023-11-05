@@ -12,6 +12,12 @@ namespace StudentManagement.Business.Services.Interfaces
     {
         Task<List<GetExamResultDTO>> GetAllExamResultsAsync(string? studentName);
         Task<GetExamResultDTO> GetExamResultByIdAsync(Guid id);
+
+        Task<GetExamResultForExamForStudentPageDTO> GetExamResultForExamForStudentPageAsync(Guid examId,Guid studentId);
+        Task<List<GetExamResultForExamForStudentPageDTO>> GetExamResultsForFinalExamForStudentPageAsync(Guid studentId);
+
+        Task<GetExamResultForUpdateDTO> GetExamResultForUpdateAsync(Guid Id);
+
         Task CreateExamResultAsync(PostExamResultDTO postExamResultDTO);
         Task DeleteExamResultAsync(Guid id);
         Task UpdateExamResultAsync(Guid id, PutExamResultDTO putExamResultDTO);

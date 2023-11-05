@@ -19,7 +19,6 @@ namespace StudentManagement.Business.DTOs.SubjectHourDTOs
         public TimeSpan StartTime { get; set; }
         [DataType(DataType.Time)]
         public TimeSpan EndTime { get; set; }
-        [DataType(DataType.Date)]
-        public DateTime StartDate { get; set; }
+        //public DateTime StartDate { get; set; }
     }
 }

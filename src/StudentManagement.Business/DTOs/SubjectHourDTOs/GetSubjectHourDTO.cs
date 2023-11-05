@@ -1,4 +1,6 @@
-﻿using StudentManagement.Core.Entities;
+﻿using StudentManagement.Business.DTOs.GroupSubjectDTOs;
+using StudentManagement.Business.DTOs.LessonTypeDTOs;
+using StudentManagement.Core.Entities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -10,9 +12,10 @@ namespace StudentManagement.Business.DTOs.SubjectHourDTOs
 {
     public class GetSubjectHourDTO
     {
-        public GroupSubject GroupSubject { get; set; }
+        public Guid Id { get; set; }
+        public GetGroupSubjectForStudentScheduleDTO GroupSubject { get; set; }
 
-        public LessonType LessonType { get; set; }
+        public GetLessonTypeForSubjectHourForStudentPageDTO LessonType { get; set; }
 
         public DayOfWeek DayOfWeek { get; set; }
         public int Room { get; set; }

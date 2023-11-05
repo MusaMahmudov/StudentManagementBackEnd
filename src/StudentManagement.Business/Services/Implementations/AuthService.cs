@@ -19,6 +19,9 @@ using System.Security.Cryptography.Xml;
 using Microsoft.EntityFrameworkCore;
 using StudentManagement.DataAccess.Repositories.Interfaces;
 using StudentManagement.Core.Entities;
+using AutoMapper;
+using StudentManagement.Business.DTOs.TeacherDTOs;
+using StudentManagement.Business.DTOs.StudentDTOs;
 
 namespace StudentManagement.Business.Services.Implementations
 {
@@ -31,8 +34,10 @@ namespace StudentManagement.Business.Services.Implementations
        private readonly ITeacherRepository _teacherRepository;
         private readonly IGetEmailTemplate _getEmailTemplate;
         private readonly IMailService _mailService;
-        public AuthService(ITeacherRepository teacherRepository,IStudentRepository studentRepository,IMailService mailService,IGetEmailTemplate getEmailTemplate,UserManager<AppUser> userManager,SignInManager<AppUser> signInManager,ITokenService tokenService)
+        private readonly IMapper _mapper;
+        public AuthService(IMapper mapper,ITeacherRepository teacherRepository,IStudentRepository studentRepository,IMailService mailService,IGetEmailTemplate getEmailTemplate,UserManager<AppUser> userManager,SignInManager<AppUser> signInManager,ITokenService tokenService)
         {
+            _mapper = mapper;
             _studentRepository = studentRepository;
             _mailService = mailService;
             _getEmailTemplate = getEmailTemplate;
@@ -59,8 +64,21 @@ namespace StudentManagement.Business.Services.Implementations
             }
             Student? student = await _studentRepository.GetSingleAsync(s => s.AppUserId == user.Id);
             Teacher? teacher = await _teacherRepository.GetSingleAsync(t => t.AppUserId == user.Id);
-            
-            var token = await _tokenService.CreateToken(user,student?.FullName,teacher?.FullName);
+            TeacherForTokenDTO? teacherDTO = null;
+            StudentForTokenDTO? studentDTO = null;
+
+            if (teacher is not null)
+            {
+               teacherDTO = _mapper.Map<TeacherForTokenDTO>(teacher);
+            }
+            if (student is not null)
+            {
+                studentDTO = _mapper.Map<StudentForTokenDTO>(student);
+            }
+
+
+
+            var token = await _tokenService.CreateToken(user,studentDTO,teacherDTO);
             
             return  token;
 

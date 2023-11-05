@@ -1,4 +1,5 @@
-﻿using StudentManagement.Business.DTOs.ExamResultDTOs;
+﻿using StudentManagement.Business.DTOs.Attendance;
+using StudentManagement.Business.DTOs.ExamResultDTOs;
 using StudentManagement.Business.DTOs.GroupDtos;
 using StudentManagement.Business.DTOs.UserDTOs;
 using System;

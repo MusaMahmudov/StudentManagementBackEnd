@@ -14,6 +14,9 @@ namespace StudentManagement.Business.Services.Interfaces
         Task<List<GetExamDTO>> GetAllExamsAsync(string? search);
         Task<GetExamDTO> GetExamByIdAsync(Guid id);
         Task<GetExamForUpdateDTO> GetExamByIdForUpdateAsync(Guid id);
+        Task<List<GetExamForSubjectsForStudentPageDTO>> GetExamsForSubjectsForStudentPageAsync(Guid groupSubjectId);
+
+        Task<GetExamForExamsForTeacherPageAssign> GetExamForExamsForTeacherPageAssignAsync(Guid id);
 
         Task CreateExamAsync(PostExamDTO postExamDTO);
         Task DeleteExamAsync(Guid id);

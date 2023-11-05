@@ -46,19 +46,49 @@ namespace StudentManagement.Business.Services.Implementations
 
 
         }
+        public async Task<GetExamResultForExamForStudentPageDTO> GetExamResultForExamForStudentPageAsync(Guid examId, Guid studentId)
+        {
+          var examResult =  await _examResultRepository.GetSingleAsync(er=>er.ExamId == examId && er.StudentId == studentId,"Exam.ExamType","Student");
+            if(examResult is null)
+            {
+                throw new ExamResultNotFoundByIdException($"Exam's result not found");
+            }
+            var examResultDTO = _mapper.Map<GetExamResultForExamForStudentPageDTO>(examResult);
+            return examResultDTO;
+        }
+        public async Task<List<GetExamResultForExamForStudentPageDTO>> GetExamResultsForFinalExamForStudentPageAsync(Guid studentId)
+        {
+           var examResults = await _examResultRepository.GetFiltered(er=>er.StudentId == studentId && er.Exam.ExamType.Name != "Final", "Exam.ExamType", "Student").ToListAsync();
+            var examResultsDTO = _mapper.Map<List<GetExamResultForExamForStudentPageDTO>>(examResults);
+            return examResultsDTO;
 
+        }
+        public async Task<GetExamResultForUpdateDTO> GetExamResultForUpdateAsync(Guid Id)
+        {
+           var examResult = await _examResultRepository.GetSingleAsync(er=>er.Id == Id);
+            var examResultDTO = _mapper.Map<GetExamResultForUpdateDTO>(examResult);
+            return examResultDTO;
+        }
         public async Task CreateExamResultAsync(PostExamResultDTO postExamResultDTO)
         {
-            if (!await _examRepository.IsExistsAsync(e => e.Id == postExamResultDTO.ExamId))
-                throw new ExamNotFoundByIdException("Exam not found");
-            if (postExamResultDTO.Score > (await _examRepository.GetSingleAsync(e => e.Id == postExamResultDTO.ExamId)).MaxScore)
-                throw new ExamResultScoreCannotBeMoreThanMaxScoreException("Result more than max score");
-
-            if (!await _studentRepository.IsExistsAsync(s => s.Id == postExamResultDTO.StudentId))
-                throw new StudentNotFoundByIdException("Student bot found");
+            var exam = await _examRepository.GetSingleAsync(e => e.Id == postExamResultDTO.ExamId,"GroupSubject.Group.Students");
             
 
+            if (exam is null)
+                throw new ExamNotFoundByIdException("Exam not found");
+            if (postExamResultDTO.Score > exam.MaxScore || postExamResultDTO.Score < 0)
+                throw new ExamResultScoreCannotBeMoreThanMaxScoreException("Invalid value for score");
 
+            var student = await _studentRepository.GetSingleAsync(s=>s.Id == postExamResultDTO.StudentId);
+            if (student is null)
+                throw new StudentNotFoundByIdException("Student not found");
+            if (await _examResultRepository.IsExistsAsync(er => er.Exam.Id == postExamResultDTO.ExamId && er.StudentId == postExamResultDTO.StudentId))
+                throw new ExamResultAlreadyExistsException("Student already has result of this exam");
+            if(!exam.GroupSubject.Group.Students.Any(s=>s.Id == postExamResultDTO.StudentId))
+            {
+                throw new StudentDoNotHasThisExamException("Student do not has this exam");
+            }
+            
 
 
             var newExamResult = _mapper.Map<ExamResult>(postExamResultDTO);
@@ -69,20 +99,32 @@ namespace StudentManagement.Business.Services.Implementations
         }
         public async Task UpdateExamResultAsync(Guid id, PutExamResultDTO putExamResultDTO)
         {
-            var examResult = await _examResultRepository.GetSingleAsync(e => e.Id == id);
+            var examResult = await _examResultRepository.GetSingleAsync(e => e.Id == id,"Student","Exam");
             if (examResult is null)
                 throw new ExamResultNotFoundByIdException("Exam's result not found");
+            var exam = await _examRepository.GetSingleAsync(e=>e.Id == putExamResultDTO.ExamId,"GroupSubject.Group.Students");
 
 
-            if (!await _examRepository.IsExistsAsync(e => e.Id == putExamResultDTO.ExamId))
+            if (exam is null)
                 throw new ExamNotFoundByIdException("Exam not found");
-            if (putExamResultDTO.Score > (await _examRepository.GetSingleAsync(e => e.Id == putExamResultDTO.ExamId)).MaxScore)
-                throw new ExamResultScoreCannotBeMoreThanMaxScoreException("Result more than max score");
 
-            if (!await _studentRepository.IsExistsAsync(s => s.Id == putExamResultDTO.StudentId))
-                throw new StudentNotFoundByIdException("Student bot found");
+            if (putExamResultDTO.Score > exam.MaxScore || putExamResultDTO.Score < 0)
+                throw new ExamResultScoreCannotBeMoreThanMaxScoreException("Invalid value for score");
 
-            
+            var student = await _studentRepository.GetSingleAsync(s=>s.Id == putExamResultDTO.StudentId);
+
+            if (student is null)
+                throw new StudentNotFoundByIdException("Student not found");
+
+            if (await _examResultRepository.IsExistsAsync(er => er.Exam.Id == putExamResultDTO.ExamId && er.StudentId == putExamResultDTO.StudentId) && examResult.ExamId != putExamResultDTO.ExamId) 
+                throw new ExamResultAlreadyExistsException("Student already has result of this exam");  
+
+            if (!exam.GroupSubject.Group.Students.Any(s => s.Id == putExamResultDTO.StudentId))
+            {
+                throw new StudentDoNotHasThisExamException("Student do not has this exam");
+            }
+
+
 
             examResult = _mapper.Map(putExamResultDTO,examResult);
             _examResultRepository.Update(examResult);
@@ -103,7 +145,6 @@ namespace StudentManagement.Business.Services.Implementations
 
         }
 
-      
-       
+     
     }
 }

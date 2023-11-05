@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using StudentManagement.Business.DTOs.GroupSubjectDTOs;
 using StudentManagement.Business.Exceptions.GroupExceptions;
 using StudentManagement.Business.Exceptions.GroupSubjectExceptions;
+using StudentManagement.Business.Exceptions.StudentExceptions;
 using StudentManagement.Business.Exceptions.SubjectExceptions;
 using StudentManagement.Business.Services.Interfaces;
 using StudentManagement.Core.Entities;
@@ -22,10 +23,14 @@ namespace StudentManagement.Business.Services.Implementations
         private readonly IMapper _mapper;
         private readonly AppDbContext _context;
         private readonly ITeacherSubjectService _teacherSubjectService;
+        private readonly ITeacherSubjectRepository _teacherSubjectRepository;
         private readonly IGroupRepository _groupRepository;
         private readonly ISubjectRepository _subjectRepository;
-        public GroupSubjectService(ISubjectRepository subjectRepository,IGroupRepository groupRepository,IGroupSubjectRepository groupSubjectRepository,IMapper mapper,AppDbContext context, ITeacherSubjectService teacherSubjectService)
+        private readonly IStudentRepository _studentRepository;
+        public GroupSubjectService(IStudentRepository studentRepository,ITeacherSubjectRepository teacherSubjectRepository,ISubjectRepository subjectRepository,IGroupRepository groupRepository,IGroupSubjectRepository groupSubjectRepository,IMapper mapper,AppDbContext context, ITeacherSubjectService teacherSubjectService)
         {
+            _studentRepository = studentRepository;
+            _teacherSubjectRepository = teacherSubjectRepository;
             _subjectRepository = subjectRepository;
             _groupRepository = groupRepository;
             _teacherSubjectService = teacherSubjectService;
@@ -45,6 +50,43 @@ namespace StudentManagement.Business.Services.Implementations
             var groupSubjects = await _groupSubjectRepository.GetSingleAsync(g=>g.Id == id,"teacherSubjects.Teacher.teacherSubjects.TeacherRole", "Group.Faculty", "Subject");
             var getGroupSubjects = _mapper.Map<GetGroupSubjectDTO>(groupSubjects);
             return getGroupSubjects;
+        }
+        public async Task<List<GetGroupSubjectForSubjectsForStudentPageDTO>> GetGroupSubjectForSubjectsForStudentPageAsync(Guid studentId)
+        {
+          var student = await _studentRepository.GetSingleAsync(s => s.Id == studentId,"Group.GroupSubjects.Subject", "Group.GroupSubjects.teacherSubjects.TeacherRole", "Group.GroupSubjects.teacherSubjects.Teacher", /*"Group.GroupSubjects.subjectHours"*/ "Group.GroupSubjects.Exams", "studentGroups");
+            if(student is null)
+            {
+                throw new StudentNotFoundByIdException("Student not found");
+            }
+            List<GroupSubject> groupSubjects = new List<GroupSubject>();
+          
+            if(student.Group is not null)
+            {
+                if(student.Group.GroupSubjects.Count() > 0)
+                {
+                    foreach(var groupSubject in student.Group.GroupSubjects)
+                    {
+                        groupSubjects.Add(groupSubject);
+                    }
+                }
+
+            }
+            if(student.studentGroups.Count() > 0)
+            {
+                foreach(var studentGroup in  student.studentGroups)
+                {
+                    if(studentGroup.Group.GroupSubjects.Count() > 0)
+                    {
+                        foreach(var groupSubject in studentGroup.Group.GroupSubjects)
+                        {
+                            groupSubjects.Add(groupSubject);
+                        }
+                    }
+                }
+            }
+            var groupSubjectsDTO = _mapper.Map<List<GetGroupSubjectForSubjectsForStudentPageDTO>>(groupSubjects);
+            return groupSubjectsDTO;
+
         }
         public async Task CreateGroupSubjectAsync(PostGroupSubjectDTO postGroupSubjectDTO)
         {
@@ -84,9 +126,10 @@ namespace StudentManagement.Business.Services.Implementations
                      };
                     teacherSubjects.Add(teacherSubject);
                 }
-                await _context.TeacherSubjects.AddRangeAsync(teacherSubjects);
+                //await _context.TeacherSubjects.AddRangeAsync(teacherSubjects);
+                _teacherSubjectRepository.AddList(teacherSubjects);
                 newGroupSubject.teacherSubjects = teacherSubjects;
-                await _context.SaveChangesAsync();
+                await _teacherSubjectRepository.SaveChangesAsync();
 
             }
 
@@ -173,5 +216,15 @@ namespace StudentManagement.Business.Services.Implementations
                 }
             }
         }
+
+        public List<GetGroupSubjectForTeacherPageDTO> GetGroupSubjectForTeacherPageDTO(Guid teacherId)
+        {
+           var groupSubject = _groupSubjectRepository.GetFiltered(gs=>gs.teacherSubjects.Any(ts=>ts.TeacherId == teacherId),"Exams.ExamType", "Exams.ExamResults", "Group","Subject", "teacherSubjects.TeacherRole", "teacherSubjects.Teacher","Exams").ToList();
+            var groupSubjectDTO = _mapper.Map<List<GetGroupSubjectForTeacherPageDTO>>(groupSubject);
+            return groupSubjectDTO;
+
+        }
+
+        
     }
 }

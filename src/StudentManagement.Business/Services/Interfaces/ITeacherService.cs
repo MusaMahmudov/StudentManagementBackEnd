@@ -12,6 +12,7 @@ namespace StudentManagement.Business.Services.Interfaces
         Task<List<GetTeacherDTO>> GetAllTeachersAsync(string? search);
         Task<GetTeacherDTO> GetTeacherByIdAsync(Guid id);
         Task<GetTeacherForUpdateDTO> GetTeacherByIdForUpdate(Guid id);
+        Task<List<GetTeacherForCreateGroupSubjectDTO>> GetTeachersForCreateGroupSubjectAsync();
         Task CreateTeacherAsync(PostTeacherDTO postTeacherDTO);
         Task DeleteTeacherAsync(Guid id);
         Task UpdateTeacherAsync(Guid id,PutTeacherDTO putTeacherDTO);

@@ -18,6 +18,8 @@ namespace StudentManagement.Business.Mappers
             CreateMap<PostLessonTypeDTO,LessonType>().ReverseMap();
             CreateMap<PutLessonTypeDTO, LessonType>().ReverseMap();
             CreateMap<LessonType,GetLessonTypeForSubjectHourForStudentPageDTO>().ReverseMap();
+            CreateMap<LessonType, GetLessonTypeForSubjectHourForTeacherPageDTO>().ReverseMap();
+
         }
     }
 }

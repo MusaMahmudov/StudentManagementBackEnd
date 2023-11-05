@@ -11,6 +11,7 @@ namespace StudentManagement.Business.DTOs.ExamDTOs
 {
     public class GetExamForExamResultDTO
     {
+        public Guid Id { get; set; }
         public string Name { get; set; }
         [DataType(DataType.DateTime)]
         public DateTime Date { get; set; }

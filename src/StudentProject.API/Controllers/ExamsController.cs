@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using StudentManagement.Business.DTOs.CommonDTOs;
 using StudentManagement.Business.DTOs.ExamDTOs;
+using StudentManagement.Business.Services.Implementations;
 using StudentManagement.Business.Services.Interfaces;
 using StudentManagement.Core.Entities;
 using System.Net;
@@ -48,6 +49,19 @@ namespace StudentProject.API.Controllers
             return Ok(exam);
 
         }
+        [HttpGet("[action]/{Id}")]
+        public async Task<IActionResult> GetExamForExamsForTeacherPageAssign(Guid Id)
+        {
+            var exam = await _examService.GetExamForExamsForTeacherPageAssignAsync(Id);
+            return Ok(exam);
+        }
+        [HttpGet("[action]/{groupSubjectId}")]
+        public async Task<IActionResult> GetExamForSubjectsForStudentPage(Guid groupSubjectId)
+        {
+            var examResult = await _examService.GetExamsForSubjectsForStudentPageAsync(groupSubjectId);
+            return Ok(examResult);
+        }
+
         [HttpPut("{Id}")]
         [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,Moderator")]
         public async Task<IActionResult> UpdateExam(Guid Id, PutExamDTO putExamDTO)

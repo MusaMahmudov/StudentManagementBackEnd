@@ -10,6 +10,7 @@ namespace StudentManagement.Business.DTOs.ExamResultDTOs
 {
     public class GetExamResultDTO
     {
+        public Guid Id { get; set; }
         public string studentName { get; set; }
         public GetExamForExamResultDTO Exam { get; set; }
         public byte? Score { get; set; }

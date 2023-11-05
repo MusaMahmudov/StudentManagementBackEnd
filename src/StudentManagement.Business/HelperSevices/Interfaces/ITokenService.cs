@@ -1,4 +1,6 @@
 ﻿using StudentManagement.Business.DTOs.AuthDTOs;
+using StudentManagement.Business.DTOs.StudentDTOs;
+using StudentManagement.Business.DTOs.TeacherDTOs;
 using StudentManagement.Core.Entities.Identity;
 using System;
 using System.Collections.Generic;
@@ -10,6 +12,6 @@ namespace StudentManagement.Business.HelperSevices.Interfaces
 {
     public interface ITokenService
     {
-        Task<TokenResponseDTO> CreateToken(AppUser User,string? studentFullName,string? teacherFullName);
+        Task<TokenResponseDTO> CreateToken(AppUser User,StudentForTokenDTO? student,TeacherForTokenDTO? teacher);
     }
 }

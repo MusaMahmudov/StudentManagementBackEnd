@@ -36,6 +36,9 @@ public class AppDbContext : IdentityDbContext<AppUser>
 
     public DbSet<SubjectHour> SubjectHours { get; set; } = null!;
 
+    public DbSet<Attendance> Attendances { get; set; } = null!;
+
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(StudentConfiguration).Assembly);
