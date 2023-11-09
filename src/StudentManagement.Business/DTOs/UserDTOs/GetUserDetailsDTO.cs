@@ -17,5 +17,6 @@ namespace StudentManagement.Business.DTOs.UserDTOs
         public GetStudentForUser? Student { get; set; }
         public GetTeacherForUser? Teacher { get; set; }
         public List<string> Roles { get; set; }
+        public bool EmailConfirmed { get; set; }
     }
 }

@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using StudentManagement.Business.DTOs.AuthDTOs;
+using StudentManagement.Business.DTOs;
 using StudentManagement.Business.DTOs.StudentDTOs;
 using StudentManagement.Business.DTOs.UserDTOs;
+using StudentManagement.Business.Exceptions.AuthExceptions;
 using StudentManagement.Business.Exceptions.RoleExceptions;
 using StudentManagement.Business.Exceptions.StudentExceptions;
 using StudentManagement.Business.Exceptions.TeacherExceptions;
@@ -18,6 +21,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
+using StudentManagement.Business.HelperSevices.Interfaces;
+using System.Security.Policy;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.Http;
 
 namespace StudentManagement.Business.Services.Implementations
 {
@@ -29,10 +37,20 @@ namespace StudentManagement.Business.Services.Implementations
         private readonly RoleManager<IdentityRole> _roleManager; 
         private readonly IStudentRepository _studentRepository;
         private readonly ITeacherRepository _teacherRepository;
-        
-        
-        public UserService(ITeacherRepository teacherRepository,RoleManager<IdentityRole> roleManager,IStudentRepository studentRepository,AppDbContext context, IMapper mapper,UserManager<AppUser> userManager)
+        private readonly IWebHostEnvironment _webHost;
+        private readonly IMailService _mailService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly LinkGenerator _linkGenerator;
+
+
+
+        public UserService(LinkGenerator linkGenerator,IHttpContextAccessor httpContextAccessor,IMailService mailService,IWebHostEnvironment webHost,ITeacherRepository teacherRepository,RoleManager<IdentityRole> roleManager,IStudentRepository studentRepository,AppDbContext context, IMapper mapper,UserManager<AppUser> userManager)
         {
+            _linkGenerator = linkGenerator;
+
+            _httpContextAccessor = httpContextAccessor;
+            _mailService = mailService;
+            _webHost = webHost;
             _teacherRepository = teacherRepository;
             _roleManager = roleManager;
             _studentRepository = studentRepository;
@@ -40,7 +58,7 @@ namespace StudentManagement.Business.Services.Implementations
             _context = context;
             _mapper = mapper;
         }
-        public async Task CreateAccountAsync(PostUserDTO postUserDTO)
+        public async Task<AppUser> CreateAccountAsync(PostUserDTO postUserDTO)
         {
 
             
@@ -63,14 +81,20 @@ namespace StudentManagement.Business.Services.Implementations
 
 
             var newUser = _mapper.Map<AppUser>(postUserDTO);
-            newUser.IsActive = true;
             newUser.Student = student;
 
+            
+
             var result = await _userManager.CreateAsync(newUser, postUserDTO.Password);
+            
             if (!result.Succeeded)
             {
                 throw new CreateUserFailException(result.Errors);
             }
+            newUser.IsActive = false;
+
+
+
 
             foreach (var roleId in postUserDTO.RoleId)
             {
@@ -84,6 +108,21 @@ namespace StudentManagement.Business.Services.Implementations
 
                 }
             }
+
+
+            //var link = await GetEmailConfirmationLinkAsync(newUser);
+            //var mailRequestDTO = new MailRequestDTO()
+            //{
+            //    Subject = "Confirm Email",
+            //    ToEmail = postUserDTO.Email,
+            //    Body = $"<h1>Please confirm your email {link} <h1>"
+            //};
+            //await _mailService.SendEmail(mailRequestDTO);
+
+            
+
+        
+            return  newUser;
 
         }
 
@@ -194,7 +233,45 @@ namespace StudentManagement.Business.Services.Implementations
             return userDTO;
 
         }
+        public async Task ConfirmEmailAsync(string token, string email)
+        {
+            if(string.IsNullOrEmpty(token) || string.IsNullOrEmpty(email))
+            {
+                throw new UserNotFoundByEmailException("Something went wrong"); 
+            }
+            var user = await _userManager.FindByEmailAsync(email);
+            if(user is null)
+            {
+                throw new UserNotFoundByEmailException("Something went wrong");
 
+            }
+         var result =   await _userManager.ConfirmEmailAsync(user,token);
+            if (!result.Succeeded)
+            {
+                throw new CreateUserFailException(result.Errors);
+            }
+            user.IsActive = true;
+          await  _userManager.UpdateAsync(user);
+            
+
+        }
+        //private async Task<string?> GetEmailConfirmationLinkAsync(AppUser user)
+        //{
+        //    string token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+        //    var httpContext = _httpContextAccessor.HttpContext;
+        //    var request = httpContext.Request;
+
+        //    string? url = _linkGenerator.GetUriByAction(
+        //        httpContext,
+        //        action: "ConfirmEmail",
+        //        controller: "Accounts",
+        //        values: new { token, email = user.Email },
+        //        scheme: request.Scheme,
+        //        host: request.Host
+        //    );
+
+        //    return url;
+        //}
         public async Task UpdateUserAsync(string Id,PutUserDTO putUserDTO)
         {
             //var user = await _context.Users.Include(u=>u.Student).FirstOrDefaultAsync(u => u.Id == Id);
@@ -311,6 +388,40 @@ namespace StudentManagement.Business.Services.Implementations
            await _context.SaveChangesAsync();
 
 
+        }
+        public async Task ForgotPassword(ForgotPasswordDTO forgotPasswordDTO, string link)
+        {
+            if (forgotPasswordDTO.Email is null)
+            {
+                throw new EmailRequiredException("Email is required");
+            }
+            var user = await _userManager.FindByEmailAsync(forgotPasswordDTO.Email);
+            if (user is null)
+            {
+                throw new UserNotFoundByEmailException("User not found by email");
+            }
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            string path = Path.Combine(_webHost.WebRootPath, "assets", "Templates", "reset-password.html");
+            StreamReader str = new StreamReader(path);
+            var result = await str.ReadToEndAsync();
+           var body = result.Replace("[link]",link);
+
+            MailRequestDTO mailRequest = new MailRequestDTO()
+            {
+                ToEmail = forgotPasswordDTO.Email,
+                Subject = "Reset password",
+                Body = body,
+            };
+            await _mailService.SendEmail(mailRequest);
+
+
+        }
+
+        public async Task<List<GetUsersForStudentAndTeacherUpdateDTO>> GetUsersForTeacherAndStudentUpdateAsync()
+        {
+            var users = await _userManager.Users.ToListAsync();
+            var usersDTO = _mapper.Map<List<GetUsersForStudentAndTeacherUpdateDTO>>(users);
+            return usersDTO;
         }
     }
 }

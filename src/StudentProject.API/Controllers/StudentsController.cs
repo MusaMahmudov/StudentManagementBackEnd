@@ -71,6 +71,28 @@ namespace StudentProject.API.Controllers
 
 
         }
+        [HttpGet("[Action]/{groupId}")]
+        //[Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,Moderator,Student")]
+        public async Task<IActionResult> GetStudentsForGroupForUpdate(Guid groupId)
+        {
+
+            var students = await _studentService.GetStudentsForGoupUpdateAsync(groupId);
+            return Ok(students);
+
+
+
+        }
+        [HttpGet("[Action]/{groupId}")]
+        //[Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,Moderator,Student")]
+        public async Task<IActionResult> GetStudentsForGroupForDetails(Guid groupId)
+        {
+
+            var students = await _studentService.GetStudentsForGroupForDetailsAsync(groupId);
+            return Ok(students);
+
+
+
+        }
         [HttpGet("update/{Id}")]
         [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,Moderator")]
         public async Task<IActionResult> GetStudentForUpdate(Guid Id)

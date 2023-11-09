@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using StudentManagement.Core.Entities;
 using StudentManagement.Core.Entities.Common;
@@ -14,9 +15,10 @@ namespace StudentManagement.DataAccess.Contexts;
 
 public class AppDbContext : IdentityDbContext<AppUser>
 {
-    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+    private readonly IHttpContextAccessor _httpContextAccessor;
+    public AppDbContext(IHttpContextAccessor httpContextAccessor,DbContextOptions<AppDbContext> options) : base(options)
     {
-
+        _httpContextAccessor = httpContextAccessor;
     }
     public DbSet<Student> Students { get; set; } = null!;
     public DbSet<Faculty> Faculties { get; set; } = null!;
@@ -65,7 +67,16 @@ public class AppDbContext : IdentityDbContext<AppUser>
     }
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
+        string userName = "Admin";
+        var identity = _httpContextAccessor?.HttpContext?.User.Identity;
+        if(identity is not null)
+        {
+            userName = identity.IsAuthenticated ? identity.Name : "Admin";
+        }
+
+
         var entries = ChangeTracker.Entries<BaseSectionEntity>();
+
         foreach (var entry in entries)
         {
             switch(entry.State)
@@ -74,16 +85,16 @@ public class AppDbContext : IdentityDbContext<AppUser>
                     entry.Entity.CreatedAt = DateTime.UtcNow;
                     entry.Entity.UpdatedAt = DateTime.UtcNow;
 
-                    entry.Entity.CreatedBy = "Musa";
+                    entry.Entity.CreatedBy = userName;
 
-                    entry.Entity.UpdatedBy = "Musa";
+                    entry.Entity.UpdatedBy = userName;
 
                     break;
                    case EntityState.Modified:
                     entry.Entity.UpdatedAt = DateTime.UtcNow;
 
 
-                    entry.Entity.UpdatedBy = "Musa";
+                    entry.Entity.UpdatedBy = userName;
 
                     break;
                     

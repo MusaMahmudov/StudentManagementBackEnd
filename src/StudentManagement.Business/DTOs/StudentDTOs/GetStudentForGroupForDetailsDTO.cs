@@ -1,0 +1,14 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace StudentManagement.Business.DTOs.StudentDTOs
+{
+    public class GetStudentForGroupForDetailsDTO
+    {
+        public Guid Id { get; set; }
+        public string fullName { get; set; }
+    }
+}

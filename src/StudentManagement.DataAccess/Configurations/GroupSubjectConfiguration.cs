@@ -20,11 +20,12 @@ namespace StudentManagement.DataAccess.Configurations
             builder.Property(gs => gs.Year).IsRequired();
 
 
-
+            builder.HasCheckConstraint("Semester","Len(Semester) >= 3");
             builder.HasCheckConstraint("Credits", "Credits BETWEEN 1 AND 30");
             builder.HasCheckConstraint("YearOfSubject", $"Year BETWEEN 2010 AND {DateTime.Now.Year}");
             builder.HasCheckConstraint("HoursOfSubject", "Hours BETWEEN 1 AND 200");
             builder.HasCheckConstraint("TotalWeeksDuration", "TotalWeeks BETWEEN 1 AND 50");
+
 
 
 

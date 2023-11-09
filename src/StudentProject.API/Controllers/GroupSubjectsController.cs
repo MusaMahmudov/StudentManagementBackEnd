@@ -38,6 +38,20 @@ namespace StudentProject.API.Controllers
             var groupSubject = await _groupSubjectService.GetGroupSubjectByIdAsync(Id);
             return Ok(groupSubject);
         }
+        [HttpGet("[Action]")]
+        //[Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,Moderator")]
+        public async Task<IActionResult> GetGroupSubjectsForExamUpdate()
+        {
+            var groupSubjects = await _groupSubjectService.GetGroupSubjectsForExamUpdateAsync();
+            return Ok(groupSubjects);
+        }
+        [HttpGet("[Action]/{Id}")]
+        //[Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,Moderator")]
+        public async Task<IActionResult> GetGroupSubjectForUpdate(Guid Id)
+        {
+            var groupSubject = await _groupSubjectService.GetGroupSubjectForUpdateAsync(Id);
+            return Ok(groupSubject);
+        }
         [HttpPut("{Id}")]
         public async Task<IActionResult> UpdateGroupSubject(Guid Id, PutGroupSubjectDTO putGroupSubjectDTO)
         {

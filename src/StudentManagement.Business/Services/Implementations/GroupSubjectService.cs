@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using StudentManagement.Business.DTOs.GroupSubjectDTOs;
+using StudentManagement.Business.DTOs.TeacherRoleDTOs;
+using StudentManagement.Business.DTOs.TeacherSubjectDTOs;
 using StudentManagement.Business.Exceptions.GroupExceptions;
 using StudentManagement.Business.Exceptions.GroupSubjectExceptions;
 using StudentManagement.Business.Exceptions.StudentExceptions;
@@ -50,6 +52,27 @@ namespace StudentManagement.Business.Services.Implementations
             var groupSubjects = await _groupSubjectRepository.GetSingleAsync(g=>g.Id == id,"teacherSubjects.Teacher.teacherSubjects.TeacherRole", "Group.Faculty", "Subject");
             var getGroupSubjects = _mapper.Map<GetGroupSubjectDTO>(groupSubjects);
             return getGroupSubjects;
+        }
+        public async Task<GetGroupSubjectForUpdateDTO> GetGroupSubjectForUpdateAsync(Guid id)
+        {
+           var groupSubject = await _groupSubjectRepository.GetSingleAsync(gs=>gs.Id == id, "teacherSubjects.TeacherRole", "teacherSubjects.Teacher");
+            if(groupSubject is null)
+            {
+                throw new GroupSubjectNotFoundByIdException("Group's Subject not found");
+            }
+           
+            var groupSubjectDTO = _mapper.Map<GetGroupSubjectForUpdateDTO>(groupSubject);
+            var teacherRoles = new List<GetTeacherRoleForGroupSubjectForUpdateDTO>();
+            if (groupSubject.teacherSubjects?.Count() > 0)
+            {
+                foreach(var teacherRole in groupSubject.teacherSubjects)
+                {
+                    var teacherRoleDTO = _mapper.Map<GetTeacherRoleForGroupSubjectForUpdateDTO>(teacherRole);
+                    teacherRoles.Add(teacherRoleDTO);
+                }
+            }
+            groupSubjectDTO.teacherRole = teacherRoles;
+            return groupSubjectDTO;
         }
         public async Task<List<GetGroupSubjectForSubjectsForStudentPageDTO>> GetGroupSubjectForSubjectsForStudentPageAsync(Guid studentId)
         {
@@ -225,6 +248,11 @@ namespace StudentManagement.Business.Services.Implementations
 
         }
 
-        
+        public async Task<List<GetGroupSubjectForExamUpdateDTO>> GetGroupSubjectsForExamUpdateAsync()
+        {
+            var groupSubjects = await _groupSubjectRepository.GetAll("Group","Subject").ToListAsync();
+            var groupSubjectsDTO = _mapper.Map<List<GetGroupSubjectForExamUpdateDTO>>(groupSubjects);
+            return groupSubjectsDTO;
+        }
     }
 }

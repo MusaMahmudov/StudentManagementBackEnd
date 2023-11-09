@@ -468,6 +468,8 @@ namespace StudentManagement.DataAccess.Migrations
 
                     b.HasCheckConstraint("HoursOfSubject", "Hours BETWEEN 1 AND 200");
 
+                    b.HasCheckConstraint("Semester", "Len(Semester) >= 3");
+
                     b.HasCheckConstraint("TotalWeeksDuration", "TotalWeeks BETWEEN 1 AND 50");
 
                     b.HasCheckConstraint("YearOfSubject", "Year BETWEEN 2010 AND 2023");
@@ -661,7 +663,19 @@ namespace StudentManagement.DataAccess.Migrations
 
                     b.ToTable("Students");
 
+                    b.HasCheckConstraint("EducationDegreeStudent", "Len(EducationDegree) >=3");
+
+                    b.HasCheckConstraint("EmailStudent", "Len(Email) >=3");
+
+                    b.HasCheckConstraint("FormOfEducationStudent", "Len(FormOfEducation) >=3");
+
                     b.HasCheckConstraint("FullNameStudent", "Len(FullName) >=3");
+
+                    b.HasCheckConstraint("HomePhoneNumberStudent", "Len(HomePhoneNumber) >=3");
+
+                    b.HasCheckConstraint("PhoneNumberStudent", "Len(PhoneNumber) >=3");
+
+                    b.HasCheckConstraint("TypeOfPaymentStudent", "Len(TypeOfPayment) >=3");
 
                     b.HasCheckConstraint("YearOfGraduation", "YearOfGraduation Between 1900 and 2023");
                 });
@@ -854,7 +868,13 @@ namespace StudentManagement.DataAccess.Migrations
 
                     b.ToTable("Teachers");
 
+                    b.HasCheckConstraint("AddressTeacher", "Len(Address) >=3");
+
+                    b.HasCheckConstraint("EmailTeacher", "Len(Email) >=5");
+
                     b.HasCheckConstraint("FullNameTeacher", "Len(FullName) >=3");
+
+                    b.HasCheckConstraint("MobileNumberTeacher", "Len(MobileNumber) >=3");
                 });
 
             modelBuilder.Entity("StudentManagement.Core.Entities.TeacherRole", b =>
@@ -989,13 +1009,13 @@ namespace StudentManagement.DataAccess.Migrations
             modelBuilder.Entity("StudentManagement.Core.Entities.Attendance", b =>
                 {
                     b.HasOne("StudentManagement.Core.Entities.Student", "Student")
-                        .WithMany()
+                        .WithMany("Attendances")
                         .HasForeignKey("StudentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("StudentManagement.Core.Entities.SubjectHour", "SubjectHour")
-                        .WithMany()
+                        .WithMany("Attendances")
                         .HasForeignKey("SubjectHourId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1204,6 +1224,8 @@ namespace StudentManagement.DataAccess.Migrations
 
             modelBuilder.Entity("StudentManagement.Core.Entities.Student", b =>
                 {
+                    b.Navigation("Attendances");
+
                     b.Navigation("examResults");
 
                     b.Navigation("studentGroups");
@@ -1212,6 +1234,11 @@ namespace StudentManagement.DataAccess.Migrations
             modelBuilder.Entity("StudentManagement.Core.Entities.Subject", b =>
                 {
                     b.Navigation("GroupSubjects");
+                });
+
+            modelBuilder.Entity("StudentManagement.Core.Entities.SubjectHour", b =>
+                {
+                    b.Navigation("Attendances");
                 });
 
             modelBuilder.Entity("StudentManagement.Core.Entities.Teacher", b =>

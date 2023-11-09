@@ -24,7 +24,7 @@ namespace StudentManagement.Business.DTOs.StudentDTOs
         [MinimumAge(18)]
         public DateTime DateOfBirth { get; set; }
         public string? AppUserId { get; set; }
-        public Guid? MainGroup { get; set; }
-        public List<Guid>? GroupId { get; set; }
+        public Guid? groupId { get; set; }
+        //public List<Guid>? GroupId { get; set; }
     }
 }

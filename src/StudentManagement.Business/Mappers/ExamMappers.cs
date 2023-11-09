@@ -14,8 +14,10 @@ namespace StudentManagement.Business.Mappers
     {
         public ExamMappers() 
         {
-            CreateMap<Exam,GetExamForExamsForTeacherPageAssign>().ReverseMap();
+            CreateMap<Exam, GetExamsForExamResultUpdateDTO>().ForMember(ge => ge.examTypeName, x => x.MapFrom(e => e.ExamType.Name)).ForMember(ge => ge.groupName, x => x.MapFrom(e => e.GroupSubject.Group.Name)).ForMember(ge => ge.subjectName, x => x.MapFrom(e => e.GroupSubject.Subject.Name)).ReverseMap();
 
+            CreateMap<Exam,GetExamForExamsForTeacherPageAssign>().ReverseMap();
+            CreateMap<Exam,GetExamForExamsScheduleForUserPage>().ForMember(ge=>ge.ExamTypeName,x=>x.MapFrom(e=>e.ExamType.Name)).ReverseMap();
             CreateMap<Exam,GetExamForTeacherPageDTO>().ForMember(ge=>ge.ExamType,x=>x.MapFrom(e=>e.ExamType.Name)).ReverseMap();
             CreateMap<Exam,GetExamForExamResultDTO>().ForMember(ge=>ge.ExamTypeName,x=>x.MapFrom(e=>e.ExamType.Name)).ReverseMap();
            CreateMap<Exam,GetExamDTO>().ForMember(ge=>ge.ExamType,x=>x.MapFrom(e=>e.ExamType.Name)).ReverseMap();

@@ -92,6 +92,19 @@ namespace StudentManagement.Business.Services.Implementations
             var studentsDTO = _mapper.Map<List<GetStudentForCreateOrUpdateForExamResultDTO>>(students);
             return studentsDTO;
         }
+        public async Task<List<GetStudentForGroupForDetailsDTO>> GetStudentsForGroupForDetailsAsync(Guid groupId)
+        {
+          List<Student>? students =await   _studentRepository.GetFiltered(s=>s.GroupId == groupId).ToListAsync();
+          var studentsDTO =_mapper.Map<List<GetStudentForGroupForDetailsDTO>>(students);
+          return studentsDTO;
+
+        }
+        public async Task<List<GetStudentForGroupUpdateDTO>> GetStudentsForGoupUpdateAsync(Guid groupId)
+        {
+            var students = await _studentRepository.GetAll().ToListAsync();
+            var studentsDTO = _mapper.Map<List<GetStudentForGroupUpdateDTO>>(students);
+            return studentsDTO;
+        }
         public async Task CreateStudentAsync(PostStudentDTO postStudentDTO)
         {
             if(postStudentDTO.AppUserId is not null)
@@ -122,6 +135,8 @@ namespace StudentManagement.Business.Services.Implementations
                 {
                     throw new GroupNotFoundByIdException("Group not found");
                 }
+                mainGroup.StudentCount += 1;
+                _groupRepository.Update(mainGroup);
                 if (mainGroup.GroupSubjects is not null)
                 {
                     var groupSubjects = _groupSubjectRepository.GetFiltered(gs=>gs.GroupId == mainGroup.Id,"subjectHours").ToList();
@@ -147,36 +162,36 @@ namespace StudentManagement.Business.Services.Implementations
             }
             var newStudent = _mapper.Map<Student>(postStudentDTO);
             newStudent.Attendances = attendances;
-            if (postStudentDTO.SubGroupsId is not null)
-            {
-                foreach (var groupId in postStudentDTO.SubGroupsId)
-                {
-                    if(groupId == postStudentDTO.MainGroup)
-                    {
-                        throw new StudentCannotbeInTwoSameGroupsException("Student cannot be in two same groups");
-                    }
+            //if (postStudentDTO.SubGroupsId is not null)
+            //{
+            //    foreach (var groupId in postStudentDTO.SubGroupsId)
+            //    {
+            //        if(groupId == postStudentDTO.MainGroup)
+            //        {
+            //            throw new StudentCannotbeInTwoSameGroupsException("Student cannot be in two same groups");
+            //        }
 
-                }
+            //    }
 
 
 
-                List<StudentGroup> newStudentGroups = new List<StudentGroup>();
+            //    List<StudentGroup> newStudentGroups = new List<StudentGroup>();
 
-                foreach (var id in postStudentDTO.SubGroupsId)
-                {
-                    if (!await _groupRepository.IsExistsAsync(g => g.Id == id))
-                        throw new GroupNotFoundByIdException($"Group with Id:{id} not found");
+            //    foreach (var id in postStudentDTO.SubGroupsId)
+            //    {
+            //        if (!await _groupRepository.IsExistsAsync(g => g.Id == id))
+            //            throw new GroupNotFoundByIdException($"Group with Id:{id} not found");
 
-                    //var studentGroup = new StudentGroup()
-                    //{
-                    //    StudentId = newStudent.Id,
-                    //    GroupId = id,
-                    //};
-                    //newStudentGroups.Add(studentGroup);
+            //        //var studentGroup = new StudentGroup()
+            //        //{
+            //        //    StudentId = newStudent.Id,
+            //        //    GroupId = id,
+            //        //};
+            //        //newStudentGroups.Add(studentGroup);
 
-                }
-                //newStudent.studentGroups = newStudentGroups;
-            }
+            //    }
+            //    //newStudent.studentGroups = newStudentGroups;
+            //}
             
 
 
@@ -193,14 +208,24 @@ namespace StudentManagement.Business.Services.Implementations
 
         public async Task DeleteStudentAsync(Guid Id)
         {
-            var student = await _studentRepository.GetSingleAsync(s => s.Id == Id);
+            var student = await _studentRepository.GetSingleAsync(s => s.Id == Id,"Group");
+            if (student is null) 
+            {
+                throw new StudentNotFoundByIdException("Student not found");
+            }
+            if(student.Group is not null)
+            {
+                var group = await _groupRepository.GetSingleAsync(g=>g.Id == student.GroupId);
+                group.StudentCount -= 1;
+                _groupRepository.Update(group);
+            }
             _studentRepository.Delete(student);
             await _studentRepository.SaveChangesAsync();
         }
 
         public async Task UpdateStudentAsync(Guid Id, PutStudentDTO putStudentDTO)
         {
-            var student = await _studentRepository.GetSingleAsync(s => s.Id == Id,"AppUser", "studentGroups","Attendances");
+            var student = await _studentRepository.GetSingleAsync(s => s.Id == Id,"AppUser", "studentGroups","Attendances","Group");
 
             if (student is null)
                 throw new StudentNotFoundByIdException("Student not found");
@@ -219,13 +244,24 @@ namespace StudentManagement.Business.Services.Implementations
 
             }
             List<Attendance> attendances = new List<Attendance>();
-            if(putStudentDTO.MainGroup is not null && putStudentDTO.MainGroup != student.GroupId)
+            if(putStudentDTO.groupId is not null && putStudentDTO.groupId != student.GroupId)
             {
+                if(student.Group is not null)
+                {
+                  var oldGroup = await _groupRepository.GetSingleAsync(g => g.Id == student.GroupId);
+                    if(oldGroup is null)
+                    {
+                        throw new GroupNotFoundByIdException("Group Not Found");
+                    }
+                    oldGroup.StudentCount -= 1;
+                    _groupRepository.Update(oldGroup);
+                }
                 //if (!await _groupRepository.IsExistsAsync(g => g.Id == putStudentDTO.MainGroup))
-                var mainGroup = await _groupRepository.GetSingleAsync(g=>g.Id == putStudentDTO.MainGroup);
+                var mainGroup = await _groupRepository.GetSingleAsync(g=>g.Id == putStudentDTO.groupId);
                 if(mainGroup is null)
                      throw new GroupNotFoundByIdException("Group not found");
-
+                mainGroup.StudentCount += 1;
+                _groupRepository.Update(mainGroup);
                 var groupSubjects = _groupSubjectRepository.GetFiltered(gs => gs.GroupId == mainGroup.Id, "subjectHours").ToList();
                 if(groupSubjects is not null)
                 {
@@ -253,49 +289,49 @@ namespace StudentManagement.Business.Services.Implementations
             student = _mapper.Map(putStudentDTO, student);
             student.Attendances?.AddRange(attendances);
 
-            if (putStudentDTO.GroupId is not null)
-            {
-                foreach (var groupId in putStudentDTO.GroupId)
-                {
-                    if (groupId == putStudentDTO.MainGroup)
-                    {
-                        throw new StudentCannotbeInTwoSameGroupsException("Student cannot be in two same groups");
-                    }
+            //if (putStudentDTO.GroupId is not null)
+            //{
+            //    foreach (var groupId in putStudentDTO.GroupId)
+            //    {
+            //        if (groupId == putStudentDTO.MainGroup)
+            //        {
+            //            throw new StudentCannotbeInTwoSameGroupsException("Student cannot be in two same groups");
+            //        }
 
-                }
+            //    }
 
 
-                List<StudentGroup>? groupsToRemove = student.studentGroups?.Where(sg => !putStudentDTO.GroupId.Any(g=>g == sg.GroupId)).ToList();
-                if(groupsToRemove is not null && groupsToRemove.Count() != 0) 
-                {
-                    _studentGroupRepository.DeleteList(groupsToRemove);
-                  await  _studentGroupRepository.SaveChangesAsync();
+            //    List<StudentGroup>? groupsToRemove = student.studentGroups?.Where(sg => !putStudentDTO.GroupId.Any(g=>g == sg.GroupId)).ToList();
+            //    if(groupsToRemove is not null && groupsToRemove.Count() != 0) 
+            //    {
+            //        _studentGroupRepository.DeleteList(groupsToRemove);
+            //      await  _studentGroupRepository.SaveChangesAsync();
                   
-                }
+            //    }
 
-                List<Guid>? groupsToAdd = putStudentDTO.GroupId.Where(g => !student.studentGroups.Any(sg=>sg.GroupId == g)).ToList();
-                if(groupsToAdd is not null && groupsToAdd.Count() != 0)
-                {
-                    List<StudentGroup> newStudentGroups = new List<StudentGroup>();
-                    foreach(var groupId in groupsToAdd)
-                    {
-                        StudentGroup studentGroup = new StudentGroup()
-                        {
-                            GroupId = groupId,
-                            StudentId =student.Id,
+            //    List<Guid>? groupsToAdd = putStudentDTO.GroupId.Where(g => !student.studentGroups.Any(sg=>sg.GroupId == g)).ToList();
+            //    if(groupsToAdd is not null && groupsToAdd.Count() != 0)
+            //    {
+            //        List<StudentGroup> newStudentGroups = new List<StudentGroup>();
+            //        foreach(var groupId in groupsToAdd)
+            //        {
+            //            StudentGroup studentGroup = new StudentGroup()
+            //            {
+            //                GroupId = groupId,
+            //                StudentId =student.Id,
 
-                        };
-                        newStudentGroups.Add(studentGroup);
-                    }
+            //            };
+            //            newStudentGroups.Add(studentGroup);
+            //        }
 
-                    _studentGroupRepository.AddList(newStudentGroups);
-                   await _studentGroupRepository.SaveChangesAsync();
+            //        _studentGroupRepository.AddList(newStudentGroups);
+            //       await _studentGroupRepository.SaveChangesAsync();
                    
 
 
 
-                }
-            }
+            //    }
+            //}
 
 
 
@@ -321,5 +357,6 @@ namespace StudentManagement.Business.Services.Implementations
 
         }
 
+      
     }
 }

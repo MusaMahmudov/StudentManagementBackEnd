@@ -41,6 +41,13 @@ namespace StudentProject.API.Controllers
             return Ok(exam);
 
         }
+        [HttpGet("[Action]")]
+        public async Task<IActionResult> GetAllExamsForExamResultUpdate()
+        {
+            var exams = await _examService.GetAllExamsForExamResultUpdateAsync();
+            return Ok(exams);
+
+        }
         [HttpGet("update/{Id}")]
         [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,Moderator")]
         public async Task<IActionResult> GetExamByIdForUpdate(Guid Id)
@@ -58,8 +65,20 @@ namespace StudentProject.API.Controllers
         [HttpGet("[action]/{groupSubjectId}")]
         public async Task<IActionResult> GetExamForSubjectsForStudentPage(Guid groupSubjectId)
         {
-            var examResult = await _examService.GetExamsForSubjectsForStudentPageAsync(groupSubjectId);
-            return Ok(examResult);
+            var exams= await _examService.GetExamsForSubjectsForStudentPageAsync(groupSubjectId);
+            return Ok(exams);
+        }
+        [HttpGet("[Action]/{studentId}")]
+        public async Task<IActionResult> GetExamsForExamScheduleForStudentPage(Guid studentId)
+        {
+            var exams = await _examService.GetExamsForExamScheduleForStudentPageAsync(studentId);
+            return Ok(exams);
+        }
+        [HttpGet("[Action]/{teacherId}")]
+        public async Task<IActionResult> GetExamsForExamScheduleForTeacherPage(Guid teacherId)
+        {
+            var exams = await _examService.GetExamsForExamScheduleForTeacherPageAsync(teacherId);
+            return Ok(exams);
         }
 
         [HttpPut("{Id}")]

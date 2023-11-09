@@ -25,6 +25,13 @@ namespace StudentManagement.DataAccess.Configurations
             builder.Property(s => s.PhoneNumber).IsRequired(true);
             builder.Property(s => s.Email).IsRequired(true);
 
+
+            builder.HasCheckConstraint("FormOfEducationStudent", "Len(FormOfEducation) >=3");
+            builder.HasCheckConstraint("EducationDegreeStudent", "Len(EducationDegree) >=3");
+            builder.HasCheckConstraint("TypeOfPaymentStudent", "Len(TypeOfPayment) >=3");
+            builder.HasCheckConstraint("HomePhoneNumberStudent", "Len(HomePhoneNumber) >=3");
+            builder.HasCheckConstraint("PhoneNumberStudent", "Len(PhoneNumber) >=3");
+            builder.HasCheckConstraint("EmailStudent", "Len(Email) >=3");
             builder.HasCheckConstraint("FullNameStudent", "Len(FullName) >=3");
             builder.HasCheckConstraint("YearOfGraduation", $"YearOfGraduation Between 1900 and {DateTime.Now.Year}");
 

@@ -15,8 +15,8 @@ namespace StudentManagement.Business.Services.Interfaces
         Task<GetGroupSubjectDTO> GetGroupSubjectByIdAsync(Guid id);
         List<GetGroupSubjectForTeacherPageDTO> GetGroupSubjectForTeacherPageDTO(Guid teacherId);
         Task<List<GetGroupSubjectForSubjectsForStudentPageDTO>> GetGroupSubjectForSubjectsForStudentPageAsync(Guid studentId);
-
-
+        Task<List<GetGroupSubjectForExamUpdateDTO>> GetGroupSubjectsForExamUpdateAsync();
+        Task<GetGroupSubjectForUpdateDTO> GetGroupSubjectForUpdateAsync(Guid id);
         Task CreateGroupSubjectAsync(PostGroupSubjectDTO postGroupSubjectDTO);
         Task DeleteGroupSubjectAsync(Guid id);
         Task UpdateGroupSubjectAsync(Guid id, PutGroupSubjectDTO putGroupSubjectDTO);

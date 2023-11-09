@@ -17,7 +17,7 @@ namespace StudentManagement.Business.Mappers
             CreateMap<PutUserDTO, AppUser>().ReverseMap();
             CreateMap<AppUser, GetUserForUpdateDTO>().ForMember(gu => gu.TeacherId, x => x.MapFrom(u => u.Teacher.Id)).ForMember(gu => gu.StudentId, x => x.MapFrom(u => u.Student.Id)).ReverseMap();
             CreateMap<AppUser, GetUserDetailsDTO>().ForMember(gu => gu.Teacher, x => x.MapFrom(u => u.Teacher)).ForMember(gu => gu.Student, x => x.MapFrom(u => u.Student)).ReverseMap();
-
+            CreateMap<AppUser, GetUsersForStudentAndTeacherUpdateDTO>().ReverseMap();
             CreateMap<AppUser, GetUserDTO>().ForMember(gu => gu.TeacherName, x => x.MapFrom(u=>u.Teacher.FullName)).ForMember(gu => gu.StudentName, x => x.MapFrom(u => u.Student.FullName)).ReverseMap();
 
         }

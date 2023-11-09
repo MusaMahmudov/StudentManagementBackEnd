@@ -22,6 +22,8 @@ using StudentManagement.Core.Entities;
 using AutoMapper;
 using StudentManagement.Business.DTOs.TeacherDTOs;
 using StudentManagement.Business.DTOs.StudentDTOs;
+using Microsoft.AspNetCore.Hosting;
+using Org.BouncyCastle.Tls;
 
 namespace StudentManagement.Business.Services.Implementations
 {
@@ -32,25 +34,58 @@ namespace StudentManagement.Business.Services.Implementations
         private readonly ITokenService _tokenService;
         private readonly IStudentRepository _studentRepository;
        private readonly ITeacherRepository _teacherRepository;
-        private readonly IGetEmailTemplate _getEmailTemplate;
-        private readonly IMailService _mailService;
+        
         private readonly IMapper _mapper;
-        public AuthService(IMapper mapper,ITeacherRepository teacherRepository,IStudentRepository studentRepository,IMailService mailService,IGetEmailTemplate getEmailTemplate,UserManager<AppUser> userManager,SignInManager<AppUser> signInManager,ITokenService tokenService)
+        private readonly IHttpContextAccessor _contextAccessor;
+        public AuthService(IWebHostEnvironment webHost,IHttpContextAccessor contextAccessor,IMapper mapper,ITeacherRepository teacherRepository,IStudentRepository studentRepository,IMailService mailService,IGetEmailTemplate getEmailTemplate,UserManager<AppUser> userManager,SignInManager<AppUser> signInManager,ITokenService tokenService)
         {
+            _contextAccessor = contextAccessor;
             _mapper = mapper;
             _studentRepository = studentRepository;
-            _mailService = mailService;
-            _getEmailTemplate = getEmailTemplate;
+            
             _teacherRepository = teacherRepository;
      
             _tokenService = tokenService;
             _userManager = userManager;
             _signInManager = signInManager;
         }
+
+        public async Task ChangePasswordAsync(string id, ChangePasswordDTO changePasswordDTO)
+        {
+           var user =  await _userManager.FindByIdAsync(id);
+            if(user is null)
+            {
+                throw new UserNotFoundByIdException("User not found");
+            }
+            if(changePasswordDTO.oldPassword == changePasswordDTO.Password)
+            {
+                throw new PasswordsAreSameException("Same passwords");
+            }
+
+
+         var result =  await _userManager.CheckPasswordAsync(user, changePasswordDTO.oldPassword);
+            if (!result)
+            {
+                throw new OldPasswordIsNotCorrectException("OldPassword is not correct");   
+            }
+
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var resultChange = await _userManager.ResetPasswordAsync(user,token,changePasswordDTO.Password);
+            if(!resultChange.Succeeded) 
+            {
+                throw new ChangePasswordException(resultChange.Errors);
+            }
+           await _userManager.UpdateAsync(user);
+            
+               
+        }
+
         public async Task<TokenResponseDTO> LoginAsync(LoginDTO loginDTO)
         {
-           
-
+           if(_contextAccessor.HttpContext.User.Identity.IsAuthenticated)
+            {
+                throw new LoginFailException("Login Fail");
+            }
             var user = await _userManager.FindByNameAsync(loginDTO.Username);
             if (user is null)
             {
@@ -78,7 +113,7 @@ namespace StudentManagement.Business.Services.Implementations
 
 
 
-            var token = await _tokenService.CreateToken(user,studentDTO,teacherDTO);
+            var token = await _tokenService.CreateToken(user,studentDTO,teacherDTO,loginDTO.RememberMe);
             
             return  token;
 
@@ -90,29 +125,9 @@ namespace StudentManagement.Business.Services.Implementations
 
         }
 
-        public async Task ResetPassword(ForgotPasswordDTO forgotPasswordDTO)
-        {
-            if(forgotPasswordDTO.Email is null)
-            {
-                throw new EmailRequiredException("Email is required");
-            }
-            var user = await _userManager.FindByEmailAsync(forgotPasswordDTO.Email);
-            if (user is null) 
-            {
-                throw new UserNotFoundByEmailException("User not found by email");
-            }
-            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-            var body = await _getEmailTemplate.GetResetPasswordTemplateAsync(token,forgotPasswordDTO.Email);
-            MailRequestDTO mailRequest = new MailRequestDTO()
-            {
-                ToEmail = forgotPasswordDTO.Email,
-                Subject = "Reset password",
-                Body = body,
-            };
-            await _mailService.SendEmail(mailRequest);
+      
+      
 
-
-        }
     }
 
    

@@ -13,10 +13,10 @@ namespace StudentManagement.Business.Services.Interfaces
         Task<List<GetGroupDTO>> GetAllGroupsAsync(string? search);
         Task<GetGroupDTO> GetGroupByIdAsync(Guid id);
         Task<GetGroupForUpdateDTO> GetGroupByIdForUpdateAsync(Guid id);
-
+        Task<List<GetGroupForObjectsUpdateDTO>> GetGroupsForObjectsUpdateAsync();
         Task CreateGroupAsync(PostGroupDTO postGroupDTO);
         Task DeleteGroupAsync(Guid id); 
-        Task UpdateGroupAsync(Guid Id,PostGroupDTO postGroupDTO);
+        Task UpdateGroupAsync(Guid Id,PutGroupDTO putGroupDTO);
 
     }
 }

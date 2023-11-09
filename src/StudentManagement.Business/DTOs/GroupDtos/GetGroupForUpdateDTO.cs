@@ -8,10 +8,10 @@ namespace StudentManagement.Business.DTOs.GroupDtos
 {
     public class GetGroupForUpdateDTO
     {
+        public Guid Id { get; set; }
         public string Name { get; set; }
         public byte Year { get; set; }
         public Guid FacultyId { get; set; }
-        public List<Guid>? MainStudentsId { get; set; }
-        public List<Guid?> SubStudentsIds { get; set;}
+        public List<Guid>? StudentsId { get; set; }
     }
 }

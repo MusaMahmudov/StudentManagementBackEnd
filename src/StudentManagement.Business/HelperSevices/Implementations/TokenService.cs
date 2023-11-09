@@ -27,9 +27,17 @@ namespace StudentManagement.Business.HelperSevices.Implementations
             _userManager = userManager;
             _configuration = configuration;
         }
-        public async Task<TokenResponseDTO> CreateToken(AppUser User,StudentForTokenDTO? student,TeacherForTokenDTO? teacher)
+        public async Task<TokenResponseDTO> CreateToken(AppUser User,StudentForTokenDTO? student,TeacherForTokenDTO? teacher,bool rememberMe)
         {
-
+            //DateTime expireTime = DateTime.UtcNow;
+            //if (rememberMe)
+            //{
+            //    expireTime.AddMonths(3);
+            //}
+            //else
+            //{
+            //    expireTime.AddHours(6);
+            //}
 
             var roles =await _userManager.GetRolesAsync(User);
 
@@ -69,7 +77,7 @@ namespace StudentManagement.Business.HelperSevices.Implementations
                 claims: claims,
                 signingCredentials: signingCredentials,
                 notBefore: DateTime.UtcNow,
-                expires: DateTime.UtcNow.AddHours(6)
+                expires: rememberMe ? DateTime.UtcNow.AddMonths(3) : DateTime.UtcNow.AddHours(6)
                 );
             JwtSecurityTokenHandler jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
             string token = jwtSecurityTokenHandler.WriteToken(jwt);

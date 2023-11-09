@@ -19,7 +19,8 @@ namespace StudentManagement.Business.Services.Interfaces
         public Task<List<GetStudentForAttendanceForTeacherPageDTO>> GetStudentForAttendanceForTeacherPageAsync(Guid groupSubjectId);
 
         public Task<List<GetStudentForExamsForTeacherPageDTO>> GetStudentsForExamsForTeacherPageAsync(Guid groupSubjectId);
-
+        public Task<List<GetStudentForGroupUpdateDTO>> GetStudentsForGoupUpdateAsync(Guid groupId);
+        public Task<List<GetStudentForGroupForDetailsDTO>> GetStudentsForGroupForDetailsAsync(Guid groupId);
         public Task<List<GetStudentForCreateOrUpdateForExamResultDTO>> GetStudentsForCreateOrUpdateForExamResultAsync();
         public Task<GetStudentForStudentAttendancePageDTO> GetStudentForStudentAttendancePageDTOAsync(Guid studentId, Guid groupSubjectId);
 

@@ -41,6 +41,13 @@ namespace StudentProject.API.Controllers
             return Ok(group);
 
         }
+        [HttpGet("[Action]")]
+        public async Task<IActionResult> GetGroupsForObjectsUpdate()
+        {
+            var group = await _groupService.GetGroupsForObjectsUpdateAsync();
+            return Ok(group);
+
+        }
         [HttpGet("update/{Id}")]
         [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,Moderator")]
         public async Task<IActionResult> GetGroupByIdForUpdate(Guid Id)
@@ -58,9 +65,9 @@ namespace StudentProject.API.Controllers
         }
         [HttpPut("{Id}")]
         [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,Moderator")]
-        public async Task<IActionResult> UpdateGroup(Guid Id,PostGroupDTO postGroupDTO)
+        public async Task<IActionResult> UpdateGroup(Guid Id,PutGroupDTO putGroupDTO)
         {
-           await _groupService.UpdateGroupAsync(Id, postGroupDTO);
+           await _groupService.UpdateGroupAsync(Id, putGroupDTO);
             return StatusCode((int)HttpStatusCode.OK, new ResponseDTO(HttpStatusCode.OK, "Group updated "));
         }
 

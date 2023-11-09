@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
+using StudentManagement.Business.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -52,6 +53,10 @@ builder.Services.AddCors(options =>
         builder.AllowAnyOrigin();
     });
 
+});
+builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
+{
+    options.TokenLifespan =TimeSpan.FromHours(4);
 });
 builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
 {
@@ -105,10 +110,10 @@ using (var scope = app.Services.CreateScope())
     await initializer.UserSeedAsync();
 
 };
-    app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 app.UseCors("AllowAllOrigin");
 app.UseAuthentication();
-
+app.UseMiddleware<PreventLoginIfAuthenticatedMiddleware>();
 app.UseAuthorization();
 
 app.MapControllers();

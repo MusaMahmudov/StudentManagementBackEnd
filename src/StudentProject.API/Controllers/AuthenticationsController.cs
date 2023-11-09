@@ -43,13 +43,14 @@ namespace StudentProject.API.Controllers
             return Ok();
 
         }
-        [HttpPost("[Action]")]
-        public async Task<IActionResult> ForgotPassword(ForgotPasswordDTO forgotPasswordDTO)
+       
+        [HttpPut("[Action]/{Id}")]
+        public async Task<IActionResult> ChangePassword(string Id ,ChangePasswordDTO changePasswordDTO)
         {
-           await _authService.ResetPassword(forgotPasswordDTO);
-            return Ok("the link has been sent to your email");
-
+           await _authService.ChangePasswordAsync(Id, changePasswordDTO);
+            return Ok("Password changed successefully");
         }
+
        
     }
 }

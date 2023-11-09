@@ -5,6 +5,7 @@ using StudentManagement.Business.Exceptions.GroupExceptions;
 using StudentManagement.Business.Exceptions.StudentExceptions;
 using StudentManagement.Business.Services.Interfaces;
 using StudentManagement.Core.Entities;
+using StudentManagement.DataAccess.Enums;
 using StudentManagement.DataAccess.Repositories.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -19,9 +20,11 @@ namespace StudentManagement.Business.Services.Implementations
         private readonly IMapper _mapper;
         private readonly IGroupRepository _groupRepository;
         private readonly IStudentRepository _studentRepository;
+        private readonly IFacultyRepository _faultyRepository;
 
-        public GroupService(IMapper mapper, IGroupRepository groupRepository, IStudentRepository studentRepository)
+        public GroupService(IFacultyRepository facultyRepository,IMapper mapper, IGroupRepository groupRepository, IStudentRepository studentRepository)
         {
+            _faultyRepository = facultyRepository;
             _mapper = mapper;
             _groupRepository = groupRepository;
             _studentRepository = studentRepository;
@@ -46,7 +49,7 @@ namespace StudentManagement.Business.Services.Implementations
         }
         public async Task<GetGroupForUpdateDTO> GetGroupByIdForUpdateAsync(Guid id)
         {
-            var Group = await _groupRepository.GetSingleAsync(f => f.Id == id, "Students","Faculty", "studentGroups.Student", "GroupSubjects.Subject", "GroupSubjects.teacherSubjects.Teacher", "GroupSubjects.teacherSubjects.TeacherRole");
+            var Group = await _groupRepository.GetSingleAsync(f => f.Id == id, "Students","Faculty");
             if (Group is null)
                 throw new GroupNotFoundByIdException("Group not found");
 
@@ -56,26 +59,42 @@ namespace StudentManagement.Business.Services.Implementations
         }
         public async Task CreateGroupAsync(PostGroupDTO postGroupDTO)
         {
-
-            var newGroup = _mapper.Map<Group>(postGroupDTO);
-
-
-            if (newGroup.Students is not null || newGroup.Students?.Count() > 0)
+            var students =new List<Student>();  
+            if (postGroupDTO.StudentsId is not null || postGroupDTO.StudentsId?.Count() > 0)
             {
-                foreach (var studentInGroup in newGroup.Students)
+
+                foreach (var studentId in postGroupDTO.StudentsId)
                 {
-                    if (!await _studentRepository.IsExistsAsync(s=>s.Id==studentInGroup.Id))
+                    var student = await _studentRepository.GetSingleAsync(s => s.Id == studentId, "Group.Faculty");
+                    if (student is null)
                         throw new StudentNotFoundByIdException("Student not found");
-                    
-                    
+                    if (student.Group is not null)
+                    {
+                        throw new StudentAlreadyHasMainGroup($"Student: {student.FullName} already has group");
+                    }
+                    students.Add(student);
+
                 }
 
 
-                newGroup.StudentCount = (byte)postGroupDTO.MainStudentsId.Count();
+                postGroupDTO.StudentCount = (byte)postGroupDTO.StudentsId.Count();
             }
             else
             {
-                newGroup.StudentCount = 0;
+                postGroupDTO.StudentCount = 0;
+            }
+            if(!await _faultyRepository.IsExistsAsync(f=>f.Id == postGroupDTO.FacultyId))
+            {
+                throw new GroupNotFoundByIdException("Faculty not found");
+            }
+
+
+            var newGroup = _mapper.Map<Group>(postGroupDTO);
+            newGroup.Students = students;
+            if(newGroup.Students is not null)
+            {
+                newGroup.StudentCount = (byte)newGroup.Students.Count();
+
             }
             //if(newGroup.studentGroups is not null || newGroup.studentGroups?.Count() > 0)
             //{
@@ -109,29 +128,68 @@ namespace StudentManagement.Business.Services.Implementations
 
 
 
-        public async Task UpdateGroupAsync(Guid Id, PostGroupDTO postGroupDTO)
+        public async Task UpdateGroupAsync(Guid Id, PutGroupDTO putGroupDTO)
         {
-            var Group = await _groupRepository.GetSingleAsync(g => g.Id == Id);
+            var Group = await _groupRepository.GetSingleAsync(g => g.Id == Id,"Students");
             if (Group is null)
                 throw new GroupNotFoundByIdException("Group not found");
-           
-
-            
-            Group = _mapper.Map(postGroupDTO, Group);
-            if(Group.Students is not null)
+           var students =new List<Student>();
+            if(putGroupDTO.StudentsId.Count() > 0)
             {
-                Group.StudentCount = (byte)postGroupDTO.MainStudentsId?.Count();
+                foreach(var studentId in putGroupDTO.StudentsId)
+                {
+                    var student = await _studentRepository.GetSingleAsync(s => s.Id == studentId,"Group");
+                    if(student is null)
+                    {
+                        throw new StudentNotFoundByIdException("Student not found");
+                    }
+                    if(student.Group is not null && student.GroupId != Id)
+                    {
+                        throw new StudentAlreadyHasMainGroup($"Student : {student.FullName}  already in group");
+                    }
+                    students.Add(student);
+                }
+            }
+            Group.Students = students;
+            if(putGroupDTO.StudentsId.Count() == 0)
+            {
+                foreach (var studentId in Group.Students.Select(s => s.Id))
+                {
+                    var student = await _studentRepository.GetSingleAsync(s => s.Id == studentId);
+                    if (student is null)
+                    {
+                        throw new StudentNotFoundByIdException("Student not found");
+                    }
+                    student.Group = null;
+                    _studentRepository.Update(student);
+                }
+            }
+           
+            
+            Group = _mapper.Map(putGroupDTO, Group);
+            
+            if (Group.Students is not null && Group.Students.Count() > 0)
+            {
+                Group.StudentCount = (byte)putGroupDTO.StudentsId?.Count();
             }
             else
             {
                 Group.StudentCount = 0;
 
             }
+            
             _groupRepository.Update(Group);
            await _groupRepository.SaveChangesAsync();
         }
 
-       
+        public async Task<List<GetGroupForObjectsUpdateDTO>> GetGroupsForObjectsUpdateAsync()
+        {
+            var groups = await _groupRepository.GetAll().ToListAsync();
+            var groupsDTO = _mapper.Map<List<GetGroupForObjectsUpdateDTO>>(groups);
+            return groupsDTO;
+        }
+
+
         //public async Task AddStudentAsync(Guid Id) 
         //{
         //    var student = await _studentRepository.GetSingleAsync(s => s.Id == Id);

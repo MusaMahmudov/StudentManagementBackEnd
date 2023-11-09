@@ -12,6 +12,6 @@ namespace StudentManagement.Business.HelperSevices.Interfaces
 {
     public interface ITokenService
     {
-        Task<TokenResponseDTO> CreateToken(AppUser User,StudentForTokenDTO? student,TeacherForTokenDTO? teacher);
+        Task<TokenResponseDTO> CreateToken(AppUser User,StudentForTokenDTO? student,TeacherForTokenDTO? teacher,bool rememberMe);
     }
 }

@@ -4,6 +4,8 @@ using StudentManagement.Business.DTOs.ExamDTOs;
 using StudentManagement.Business.Exceptions.ExamExceptions;
 using StudentManagement.Business.Exceptions.ExamTypeExceptions;
 using StudentManagement.Business.Exceptions.GroupSubjectExceptions;
+using StudentManagement.Business.Exceptions.StudentExceptions;
+using StudentManagement.Business.Exceptions.TeacherExceptions;
 using StudentManagement.Business.Services.Interfaces;
 using StudentManagement.Core.Entities;
 using StudentManagement.DataAccess.Repositories.Interfaces;
@@ -21,8 +23,12 @@ namespace StudentManagement.Business.Services.Implementations
         private readonly IExamTypeRepository _examTypeRepository;
         private readonly IGroupSubjectRepository _groupSubjectRepository;
         private readonly IMapper _mapper;
-        public ExamService(IExamRepository examRepository,IMapper mapper,IGroupSubjectRepository groupSubjectRepository,IExamTypeRepository examTypeRepository) 
+        private readonly IStudentRepository _studentRepository;
+        private readonly ITeacherRepository _teacherRepository;
+        public ExamService(ITeacherRepository teacherRepository,IStudentRepository studentRepository,IExamRepository examRepository,IMapper mapper,IGroupSubjectRepository groupSubjectRepository,IExamTypeRepository examTypeRepository) 
         {
+            _teacherRepository = teacherRepository;
+            _studentRepository = studentRepository;
             _examTypeRepository = examTypeRepository;
             _groupSubjectRepository = groupSubjectRepository;
             _mapper = mapper;
@@ -65,13 +71,29 @@ namespace StudentManagement.Business.Services.Implementations
             var examsDTO = _mapper.Map<List<GetExamForSubjectsForStudentPageDTO>>(exams);
             return examsDTO;
         }
+        public async Task<List<GetExamsForExamResultUpdateDTO>> GetAllExamsForExamResultUpdateAsync()
+        {
+           var exams = await _examRepository.GetAll("ExamType","GroupSubject.Group", "GroupSubject.Subject").ToListAsync();
+            var examsDTO = _mapper.Map<List<GetExamsForExamResultUpdateDTO>>(exams);
+            return examsDTO;
+        }
         public async Task CreateExamAsync(PostExamDTO postExamDTO)
         {
-            if (!await _examTypeRepository.IsExistsAsync(et => et.Id == postExamDTO.ExamTypeId))
+            var groupSubject = await _groupSubjectRepository.GetSingleAsync(gs=>gs.Id == postExamDTO.GroupSubjectId);
+
+
+            if (groupSubject is null)
+                throw new GroupSubjectNotFoundByIdException("group's subject not found");
+
+            var examType = await _examTypeRepository.GetSingleAsync(et=>et.Id == postExamDTO.ExamTypeId);
+            if(examType is null)
                 throw new ExamTypeNotFoundByIdException("Exam's type not found");
 
-            if( !await _groupSubjectRepository.IsExistsAsync(gs=>gs.Id == postExamDTO.GroupSubjectId))
-                throw new GroupSubjectNotFoundByIdException("group's subject not found");
+            if(await _examRepository.IsExistsAsync(e=>e.GroupSubjectId == groupSubject.Id && e.ExamTypeId == examType.Id))
+                throw new ExamAlreadyExistsEception("Exam already exists exception");
+
+
+
 
             var newExam = _mapper.Map<Exam>(postExamDTO);
             
@@ -85,16 +107,27 @@ namespace StudentManagement.Business.Services.Implementations
             var Exam = await _examRepository.GetSingleAsync(e => e.Id == id, "ExamType", "GroupSubject.Group", "GroupSubject.Subject");
             if (Exam is null)
                 throw new ExamNotFoundByIdException("Exam not found");
-            if(putExamDTO.ExamTypeId is not null && Exam.ExamTypeId != putExamDTO.ExamTypeId)
+            if(Exam.ExamTypeId != putExamDTO.ExamTypeId)
             {
                 if (!await _examTypeRepository.IsExistsAsync(et => et.Id == putExamDTO.ExamTypeId))
                     throw new ExamTypeNotFoundByIdException("Exam type not found");
             }
-            if(putExamDTO.GroupSubjectId is not null && Exam.GroupSubjectId != putExamDTO.GroupSubjectId)
+            if(Exam.GroupSubjectId != putExamDTO.GroupSubjectId || Exam.ExamTypeId != putExamDTO.ExamTypeId)
             {
                 if (!await _groupSubjectRepository.IsExistsAsync(gs => gs.Id == putExamDTO.GroupSubjectId))
                     throw new GroupSubjectNotFoundByIdException("Group subject not found");
+
+                if(putExamDTO.GroupSubjectId != Exam.GroupSubjectId || putExamDTO.ExamTypeId != Exam.ExamTypeId)
+                {
+                    if (await _examRepository.IsExistsAsync(e => e.GroupSubjectId == putExamDTO.GroupSubjectId && e.ExamTypeId == putExamDTO.ExamTypeId))
+                    {
+                        throw new ExamAlreadyExistsEception("Exam already exists exception");
+                    }
+
+                }
+
             }
+            
 
             Exam = _mapper.Map(putExamDTO, Exam);
             _examRepository.Update(Exam);
@@ -115,6 +148,31 @@ namespace StudentManagement.Business.Services.Implementations
 
         }
 
-      
+        public async Task<List<GetExamForExamsScheduleForUserPage>> GetExamsForExamScheduleForStudentPageAsync(Guid studentId)
+        {
+            var student = await _studentRepository.GetSingleAsync(s=>s.Id == studentId,"Group");
+            if(student is null)
+            {
+                throw new StudentNotFoundByIdException("Student not found");
+            }
+
+          var exams = await  _examRepository.GetFiltered(e => e.GroupSubject.GroupId == student.GroupId, "ExamType","GroupSubject.Group", "GroupSubject.Subject").ToListAsync();
+            var examsDTO = _mapper.Map<List<GetExamForExamsScheduleForUserPage>>(exams);
+            return examsDTO;
+        }
+
+        public async Task<List<GetExamForExamsScheduleForUserPage>> GetExamsForExamScheduleForTeacherPageAsync(Guid teacherId)
+        {
+            if(!await _teacherRepository.IsExistsAsync(t=>t.Id == teacherId))
+            {
+                throw new TeacherNotFoundByIdException("Teacher Not Found");
+            }
+           var exams =await _examRepository.GetFiltered(e=>e.GroupSubject.teacherSubjects.Any(ts=>ts.TeacherId == teacherId),"GroupSubject.Group", "GroupSubject.Subject","ExamType").ToListAsync();
+            var examsDTO = _mapper.Map<List<GetExamForExamsScheduleForUserPage>>(exams);
+            return examsDTO;
+
+        }
+
+        
     }
 }

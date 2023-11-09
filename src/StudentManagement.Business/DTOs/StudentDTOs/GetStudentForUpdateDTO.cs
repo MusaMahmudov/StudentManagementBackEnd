@@ -22,7 +22,6 @@ namespace StudentManagement.Business.DTOs.StudentDTOs
     
         public DateTime DateOfBirth { get; set; }
         public string? AppUserId { get; set; }
-        public Guid? MainGroup { get; set; }
-        public List<Guid>? GroupId { get; set; }
+        public Guid GroupId { get; set; }
     }
 }
