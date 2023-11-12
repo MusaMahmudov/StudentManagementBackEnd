@@ -10,6 +10,7 @@ using StudentManagement.Business.Services.Interfaces;
 using StudentManagement.Core.Entities;
 using StudentManagement.Core.Entities.Identity;
 using StudentManagement.DataAccess.Contexts;
+using StudentManagement.DataAccess.Enums;
 using StudentManagement.DataAccess.Migrations;
 using StudentManagement.DataAccess.Repositories.Interfaces;
 using System;
@@ -85,7 +86,12 @@ namespace StudentManagement.Business.Services.Implementations
             return studentsDTO;
 
         }
-
+        public async Task<List<GetStudentForUser>> GetAllStudentsForUserUpdateAsync()
+        {
+            var students = await _studentRepository.GetAll().ToListAsync();
+            var studentsDTO = _mapper.Map<List<GetStudentForUser>>(students);
+            return studentsDTO;
+        }
         public async Task<List<GetStudentForCreateOrUpdateForExamResultDTO>> GetStudentsForCreateOrUpdateForExamResultAsync()
         {
             var students= await _studentRepository.GetAll("Group").ToListAsync();
@@ -119,6 +125,11 @@ namespace StudentManagement.Business.Services.Implementations
                     throw new UserAlreadyHasStudentException("User is already taken");
                 }
                 if(user.Teacher is not null)
+                {
+                    throw new UserCannotBeStudentAndTeacherException("User  already belongs to the teacher");
+                }
+                var roles = await _userManager.GetRolesAsync(user);
+                if(roles.Any(r=>r == Roles.Teacher.ToString()))
                 {
                     throw new UserCannotBeStudentAndTeacherException("User  already belongs to the teacher");
                 }
@@ -232,7 +243,7 @@ namespace StudentManagement.Business.Services.Implementations
 
             if (putStudentDTO.AppUserId is not null)
             {
-                var user =await  _userManager.Users.Include(u=>u.Student).FirstOrDefaultAsync(u=>u.Id == putStudentDTO.AppUserId);
+                var user =await  _userManager.Users.Include(u=>u.Student).Include(u => u.Teacher).FirstOrDefaultAsync(u=>u.Id == putStudentDTO.AppUserId);
                 if(user is null)
                 {
                     throw new UserNotFoundByIdException("User not found");
@@ -240,6 +251,16 @@ namespace StudentManagement.Business.Services.Implementations
                 if(user.Student is not null  && user.Student.Id != student.Id)
                 {
                     throw new UserAlreadyHasStudentException("User is already taken");
+                }
+                if(user.Teacher is not null)
+                {
+                    throw new UserCannotBeStudentAndTeacherException("User  already belongs to the teacher");
+                }
+                var roles =await _userManager.GetRolesAsync(user);
+                if (roles.Any(r=>r == Roles.Teacher.ToString()))
+                {
+                    throw new UserCannotBeStudentAndTeacherException("User  already belongs to the teacher");
+
                 }
 
             }
@@ -357,6 +378,6 @@ namespace StudentManagement.Business.Services.Implementations
 
         }
 
-      
+       
     }
 }

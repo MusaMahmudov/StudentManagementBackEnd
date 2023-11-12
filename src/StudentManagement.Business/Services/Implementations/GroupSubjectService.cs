@@ -7,6 +7,7 @@ using StudentManagement.Business.Exceptions.GroupExceptions;
 using StudentManagement.Business.Exceptions.GroupSubjectExceptions;
 using StudentManagement.Business.Exceptions.StudentExceptions;
 using StudentManagement.Business.Exceptions.SubjectExceptions;
+using StudentManagement.Business.Exceptions.TeacherRoleExceptions;
 using StudentManagement.Business.Services.Interfaces;
 using StudentManagement.Core.Entities;
 using StudentManagement.DataAccess.Contexts;
@@ -126,27 +127,36 @@ namespace StudentManagement.Business.Services.Implementations
             {
                 throw new GroupSubjectAlreadyExistsException("Group with this subject already exists");
             }
+            foreach(var teacherRole in postGroupSubjectDTO.teacherRole)
+            {
+                List<PostTeacherSubjectRoleDTO> checkList = postGroupSubjectDTO.teacherRole.Where(tr => tr.TeacherId == teacherRole.TeacherId && tr.RoleId == teacherRole.RoleId).ToList();
+                if (checkList.Count() > 1)
+                {
+                    throw new SeveralSameValuesOfTeacherAndTeacherRoleException("A teacher can't have same values in one subject ");
 
-            
+                }
 
 
+            }
 
             await _groupSubjectRepository.CreateAsync(newGroupSubject);
             await _groupSubjectRepository.SaveChangesAsync();
 
 
-            if(postGroupSubjectDTO.teacherRole is not null)
+            if (postGroupSubjectDTO.teacherRole is not null)
             {
+
                 List<TeacherSubject> teacherSubjects = new List<TeacherSubject>();
-                foreach(var teacherRole in postGroupSubjectDTO.teacherRole)
+                foreach (var teacherRole in postGroupSubjectDTO.teacherRole)
                 {
+                    
                     var teacherSubject = new TeacherSubject()
                     {
                         TeacherId = teacherRole.TeacherId,
                         GroupSubjectId = newGroupSubject.SubjectId,
                         TeacherRoleId = teacherRole.RoleId
-                        
-                     };
+
+                    };
                     teacherSubjects.Add(teacherSubject);
                 }
                 //await _context.TeacherSubjects.AddRangeAsync(teacherSubjects);
@@ -155,6 +165,7 @@ namespace StudentManagement.Business.Services.Implementations
                 await _teacherSubjectRepository.SaveChangesAsync();
 
             }
+
 
 
         }
@@ -192,15 +203,26 @@ namespace StudentManagement.Business.Services.Implementations
                     throw new GroupSubjectAlreadyExistsException("Group with this subject already exists");
                 }
             }
-           
-            existingGroupSubject = _mapper.Map(putGroupSubjectDTO,existingGroupSubject);
-            _groupSubjectRepository.Update(existingGroupSubject);
-            await _groupSubjectRepository.SaveChangesAsync();
-
-
             if (putGroupSubjectDTO.teacherRole is not null)
             {
+                //for(int i = 0; i < putGroupSubjectDTO.teacherRole.Count(); i++)
+                //{
+                //    if((putGroupSubjectDTO.teacherRole.Any(tr=>tr.TeacherId == putGroupSubjectDTO.teacherRole[i].TeacherId && tr.RoleId == putGroupSubjectDTO.teacherRole[i].RoleId)) && )
+                //    {
 
+                //        throw new SeveralSameValuesOfTeacherAndTeacherRoleException("A teacher can't have same values in one subject ");
+                //    }
+
+                //}
+                foreach (var teacherRole in putGroupSubjectDTO.teacherRole)
+                {
+                    List<PostTeacherSubjectRoleDTO> checkList = putGroupSubjectDTO.teacherRole.Where(tr => tr.TeacherId == teacherRole.TeacherId && tr.RoleId == teacherRole.RoleId).ToList();
+                    if (checkList.Count() > 1)
+                    {
+                        throw new SeveralSameValuesOfTeacherAndTeacherRoleException("A teacher can't have same values in one subject ");
+
+                    }
+                }
 
                 List<TeacherSubject>? teachersToRemove = existingGroupSubject.teacherSubjects?.Where(ts => !putGroupSubjectDTO.teacherRole.Any(tr => tr.TeacherId == ts.TeacherId && tr.RoleId == ts.TeacherRoleId)).ToList();
                 var teachersRoleAdd = putGroupSubjectDTO.teacherRole.Where(tr => !existingGroupSubject.teacherSubjects.Any(ts => ts.TeacherId == tr.TeacherId && ts.TeacherRoleId == tr.RoleId)).ToList();
@@ -209,6 +231,7 @@ namespace StudentManagement.Business.Services.Implementations
                 {
                     await _teacherSubjectService.DeleteTeacherSubjectsAsync(teachersToRemove);
                 }
+
 
                 List<TeacherSubject> teacherSubjects = new List<TeacherSubject>();
                 foreach (var teacherRole in teachersRoleAdd)
@@ -229,7 +252,7 @@ namespace StudentManagement.Business.Services.Implementations
             }
             else
             {
-                if(existingGroupSubject.teacherSubjects != null)
+                if (existingGroupSubject.teacherSubjects != null)
                 {
                     List<TeacherSubject> teachersToRemove = existingGroupSubject.teacherSubjects.ToList();
                     await _teacherSubjectService.DeleteTeacherSubjectsAsync(teachersToRemove);
@@ -238,6 +261,12 @@ namespace StudentManagement.Business.Services.Implementations
 
                 }
             }
+            existingGroupSubject = _mapper.Map(putGroupSubjectDTO,existingGroupSubject);
+            _groupSubjectRepository.Update(existingGroupSubject);
+            await _groupSubjectRepository.SaveChangesAsync();
+
+
+          
         }
 
         public List<GetGroupSubjectForTeacherPageDTO> GetGroupSubjectForTeacherPageDTO(Guid teacherId)

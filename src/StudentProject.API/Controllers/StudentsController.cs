@@ -29,6 +29,12 @@ namespace StudentProject.API.Controllers
             var students =  await _studentService.GetAllStudentsAsync(search);
             return Ok(students);
         }
+        [HttpGet("[Action]")]
+        public async Task<IActionResult> GetAllStudentsForUserUpdate()
+        {
+            var students = await _studentService.GetAllStudentsForUserUpdateAsync();
+            return Ok(students);
+        }
         [HttpPost]
         [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         public async Task<IActionResult> CreateStudent(PostStudentDTO postStudentDTO)

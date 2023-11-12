@@ -61,8 +61,47 @@ namespace StudentManagement.Business.Services.Implementations
         public async Task<AppUser> CreateAccountAsync(PostUserDTO postUserDTO)
         {
 
+            if(postUserDTO.RoleId.Count() == 0)
+            {
+                throw new RoleNotFoundByIdException("Roles are required");
+
+            }
+           
+
+
+
+            var allRoles = await _roleManager.Roles.ToListAsync();
+            var userRoles = new List<string>();
             
-            if(postUserDTO.TeacherId is not null && postUserDTO.StudentId is not null) 
+
+                foreach(var roleId in postUserDTO.RoleId)
+                {
+                var role = allRoles.FirstOrDefault(r=>r.Id == roleId);
+                if (role is null)
+                {
+                    throw new RoleNotFoundByIdException("Roles not found");
+                }
+                if(postUserDTO.TeacherId is not null && role.Name == Roles.Student.ToString())
+                {
+                    throw new UserDTOTeacherAndStudentException("Student and teacher cant be assigned at the same time");
+
+                }
+                if (postUserDTO.StudentId is not null && role.Name == Roles.Teacher.ToString())
+                {
+                    throw new UserDTOTeacherAndStudentException("Student and teacher cant be assigned at the same time");
+                }
+
+                userRoles.Add(role.Name);
+
+
+            }
+
+            
+
+
+
+
+            if (postUserDTO.TeacherId is not null && postUserDTO.StudentId is not null) 
             {
              throw new UserDTOTeacherAndStudentException("Student and teacher cant be assigned at the same time");
             }
@@ -82,7 +121,7 @@ namespace StudentManagement.Business.Services.Implementations
 
             var newUser = _mapper.Map<AppUser>(postUserDTO);
             newUser.Student = student;
-
+           
             
 
             var result = await _userManager.CreateAsync(newUser, postUserDTO.Password);
@@ -91,23 +130,33 @@ namespace StudentManagement.Business.Services.Implementations
             {
                 throw new CreateUserFailException(result.Errors);
             }
-            newUser.IsActive = false;
-
-
-
-
-            foreach (var roleId in postUserDTO.RoleId)
+            newUser.IsActive = true;
+            foreach (var role in userRoles)
             {
-                //var role = await _context.Roles.FirstOrDefaultAsync(r => r.Id == roleId);
-                var role = await _roleManager.Roles.FirstOrDefaultAsync(r => r.Id == roleId);
-
-                if (role is not null)
-                {
-                    var resultRole = await _userManager.AddToRoleAsync(newUser, role.Name);
+              
+                await  _userManager.AddToRoleAsync(newUser,role);
 
 
-                }
             }
+
+
+
+
+            //foreach (var roleId in postUserDTO.RoleId)
+            //{
+            //    //var role = await _context.Roles.FirstOrDefaultAsync(r => r.Id == roleId);
+            //    var role = await _roleManager.Roles.FirstOrDefaultAsync(r => r.Id == roleId);
+            //    if (role is null)
+            //    {
+            //    }
+
+            //    if (role is not null)
+            //    {
+            //        var resultRole = await _userManager.AddToRoleAsync(newUser, role.Name);
+
+
+            //    }
+            //}
 
 
             //var link = await GetEmailConfirmationLinkAsync(newUser);
@@ -119,10 +168,10 @@ namespace StudentManagement.Business.Services.Implementations
             //};
             //await _mailService.SendEmail(mailRequestDTO);
 
-            
 
-        
-            return  newUser;
+
+
+            return newUser;
 
         }
 
@@ -131,6 +180,14 @@ namespace StudentManagement.Business.Services.Implementations
             var user = await _userManager.Users.Include(u=>u.Student).Include(u=>u.Teacher).FirstOrDefaultAsync(u=>u.Id == id);
             if(user is null)    
                 throw new UserNotFoundByIdException("User Not found");
+
+            var roles = await _userManager.GetRolesAsync(user);
+            if (roles.Any(r=>r == Roles.Admin.ToString()))
+            {
+              throw new  AdminCannotBeDeletedException("Admin cannot be deleted");
+            }
+
+
             if(user.Student is not null)
             {
                 var student = await _studentRepository.GetSingleAsync(s => s.Id == user.Student.Id);
@@ -218,7 +275,12 @@ namespace StudentManagement.Business.Services.Implementations
 
                 foreach (var role in roles)
                 {
-                     identityRoles = await _roleManager.Roles.Where(r => r.Name == role).ToListAsync();
+                    var identityRole = await _roleManager.Roles.FirstOrDefaultAsync(r => r.Name == role);
+                    if (identityRole is not null)
+                    {
+                        identityRoles.Add(identityRole);
+
+                    }
 
                 }
                 foreach (var roleIdentity in identityRoles)
@@ -285,19 +347,37 @@ namespace StudentManagement.Business.Services.Implementations
                 throw new UserDTOTeacherAndStudentException("Student and teacher cant be assigned at the same time");
             }
             user = _mapper.Map(putUserDTO, user);
-
-
-            if (putUserDTO.RoleId?.Count()> 0)
+            if(putUserDTO.RoleId.Count() == 0)
+            {
+                throw new RoleNotFoundByIdException("Roles are required");
+            }
+            
+            if (putUserDTO.RoleId.Count()> 0)
             {
                 List<string>? newRoles  = new List<string>();
                 foreach(var roleId in putUserDTO.RoleId)
                 {
+
                     var role = await _roleManager.Roles.FirstOrDefaultAsync(r => r.Id == roleId);
                     if(role is null)
                     {
                         throw new RoleNotFoundByIdException($"Role with Id:{roleId} doesn't exist");
                     }
+                    if(putUserDTO.TeacherId is not null && role.Name == Roles.Student.ToString())
+                    {
+                        throw new UserDTOTeacherAndStudentException("Student and teacher cant be assigned at the same time");
+
+                    }
+                    if (putUserDTO.StudentId is not null && role.Name == Roles.Teacher.ToString())
+                    {
+                        throw new UserDTOTeacherAndStudentException("Student and teacher cant be assigned at the same time");
+
+                    }
                     newRoles.Add(role.Name);
+                }
+                if (newRoles.Where(r => r == Roles.Teacher.ToString() || r == Roles.Student.ToString()).Count() > 1)
+                {
+                    throw new UserDTOTeacherAndStudentException("Student and teacher cant be assigned at the same time");
                 }
 
                 var roles = await _userManager.GetRolesAsync(user);

@@ -92,7 +92,11 @@ namespace StudentManagement.Business.Services.Implementations
             if(await _examRepository.IsExistsAsync(e=>e.GroupSubjectId == groupSubject.Id && e.ExamTypeId == examType.Id))
                 throw new ExamAlreadyExistsEception("Exam already exists exception");
 
+            if(postExamDTO.Date <= DateTime.Now)
+            {
+                throw new ExamAlreadyExistsEception("The exam is scheduled for an early date");
 
+            }
 
 
             var newExam = _mapper.Map<Exam>(postExamDTO);

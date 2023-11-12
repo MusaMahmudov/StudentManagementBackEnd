@@ -17,5 +17,6 @@ namespace StudentManagement.Business.DTOs.UserDTOs
         [DataType(DataType.EmailAddress)]
         public string Email { get; set; }
         public List<string>? RoleId { get; set; }
+        public bool isActive { get; set; }
     }
 }

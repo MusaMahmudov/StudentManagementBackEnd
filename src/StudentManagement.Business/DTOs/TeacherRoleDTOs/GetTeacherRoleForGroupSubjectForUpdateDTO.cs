@@ -9,6 +9,6 @@ namespace StudentManagement.Business.DTOs.TeacherRoleDTOs
     public class GetTeacherRoleForGroupSubjectForUpdateDTO
     {
         public Guid TeacherId { get; set; }
-        public Guid TeacherRoleId { get; set; } 
+        public Guid RoleId { get; set; } 
     }
 }

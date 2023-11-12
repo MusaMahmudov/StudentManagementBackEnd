@@ -145,6 +145,11 @@ namespace StudentManagement.Business.Services.Implementations
             await _teacherRepository.SaveChangesAsync();
         }
 
-        
+        public async Task<List<GetTeacherForUser>> GetAllTeachersForUserUpdateAsync()
+        {
+            var teachers = await _teacherRepository.GetAll().ToListAsync();
+            var teachersDTO = _mapper.Map<List<GetTeacherForUser>>(teachers);
+            return teachersDTO;
+        }
     }
 }

@@ -15,7 +15,7 @@ namespace StudentManagement.Business.Mappers
     {
         public TeacherSubjectMapper() 
         {
-            CreateMap<TeacherSubject,GetTeacherRoleForGroupSubjectForUpdateDTO>();
+            CreateMap<TeacherSubject,GetTeacherRoleForGroupSubjectForUpdateDTO>().ForMember(gtr=>gtr.RoleId,x=>x.MapFrom(ts=>ts.TeacherRoleId)).ReverseMap();
             CreateMap<TeacherSubject, TeacherSubjectForTeacherPageDTO>().ForMember(tsd => tsd.teacherName, x => x.MapFrom(ts => ts.Teacher.FullName)).ForMember(tsd=>tsd.teacherRole,x=>x.MapFrom(ts=>ts.TeacherRole.Name)).ReverseMap();
             CreateMap<TeacherSubject, GetTeacherSubjectForGroupDTO>().ForMember(gt => gt.teacherRole, x => x.MapFrom(ts => ts.TeacherRole.Name)).ForMember(gt => gt.teacherName,x=>x.MapFrom(ts=>ts.Teacher.FullName)).ReverseMap();
             CreateMap<PostTeacherSubjectRoleDTO, TeacherSubject>().ReverseMap();

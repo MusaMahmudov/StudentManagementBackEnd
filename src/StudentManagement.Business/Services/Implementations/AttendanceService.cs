@@ -42,14 +42,22 @@ namespace StudentManagement.Business.Services.Implementations
 
         public async Task UpdateAttendanceAsync(Guid Id,PutAttendanceDTO putAttendanceDTO)
         {
-         var attendance = await  _attendanceRepository.GetSingleAsync(a=>a.Id == Id);
+         var attendance = await  _attendanceRepository.GetSingleAsync(a=>a.Id == Id,"SubjectHour");
             if(attendance is null)
             {
                 throw new StudentNotFoundByIdException("Attendance not found");
             }
+            var currentTime = DateTime.Now;
+             if(currentTime.Date != attendance.SubjectHour.Date || attendance.SubjectHour.StartTime.Add(TimeSpan.FromHours(3)) < currentTime.TimeOfDay)
+             {
+                throw new StudentNotFoundByIdException("You can't do that");
+ 
+             }
+           
             attendance = _mapper.Map(putAttendanceDTO, attendance);
             _attendanceRepository.Update(attendance);
           await  _attendanceRepository.SaveChangesAsync();
         }
+        
     }
 }

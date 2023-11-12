@@ -24,6 +24,7 @@ using StudentManagement.Business.DTOs.TeacherDTOs;
 using StudentManagement.Business.DTOs.StudentDTOs;
 using Microsoft.AspNetCore.Hosting;
 using Org.BouncyCastle.Tls;
+using StudentManagement.DataAccess.Enums;
 
 namespace StudentManagement.Business.Services.Implementations
 {
@@ -91,14 +92,33 @@ namespace StudentManagement.Business.Services.Implementations
             {
                 throw new LoginFailException("Sign in fail");
             }
+            if (!user.IsActive)
+            {
+                throw new LoginFailException("Sign in fail");
+            }
+
+            Student? student = await _studentRepository.GetSingleAsync(s => s.AppUserId == user.Id);
+            Teacher? teacher = await _teacherRepository.GetSingleAsync(t => t.AppUserId == user.Id);
+            var roles = await _userManager.GetRolesAsync(user);
+            if(roles.Count() == 0)
+            {
+                throw new LoginFailException("Sign in fail");
+
+            }
+            if (!roles.Any(r=>r == Roles.Admin.ToString() || r== Roles.Moderator.ToString())) 
+            {
+               if(student is null && teacher is null)
+                {
+                    throw new LoginFailException("Sign in fail");
+                }
+            }
 
              var singInResult = await _signInManager.PasswordSignInAsync(user,loginDTO.Password,loginDTO.RememberMe,true);
             if (!singInResult.Succeeded)
             {
                 throw new LoginFailException("Sign in fail");
             }
-            Student? student = await _studentRepository.GetSingleAsync(s => s.AppUserId == user.Id);
-            Teacher? teacher = await _teacherRepository.GetSingleAsync(t => t.AppUserId == user.Id);
+           
             TeacherForTokenDTO? teacherDTO = null;
             StudentForTokenDTO? studentDTO = null;
 
