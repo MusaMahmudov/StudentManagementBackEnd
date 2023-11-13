@@ -25,8 +25,10 @@ namespace StudentManagement.Business.Services.Implementations
         private readonly IMapper _mapper;
         private readonly IStudentRepository _studentRepository;
         private readonly ITeacherRepository _teacherRepository;
-        public ExamService(ITeacherRepository teacherRepository,IStudentRepository studentRepository,IExamRepository examRepository,IMapper mapper,IGroupSubjectRepository groupSubjectRepository,IExamTypeRepository examTypeRepository) 
+        private readonly IExamResultRepository _examResultRepository;
+        public ExamService(IExamResultRepository examResultRepository,ITeacherRepository teacherRepository,IStudentRepository studentRepository,IExamRepository examRepository,IMapper mapper,IGroupSubjectRepository groupSubjectRepository,IExamTypeRepository examTypeRepository) 
         {
+            _examResultRepository = examResultRepository;
             _teacherRepository = teacherRepository;
             _studentRepository = studentRepository;
             _examTypeRepository = examTypeRepository;
@@ -90,7 +92,7 @@ namespace StudentManagement.Business.Services.Implementations
                 throw new ExamTypeNotFoundByIdException("Exam's type not found");
 
             if(await _examRepository.IsExistsAsync(e=>e.GroupSubjectId == groupSubject.Id && e.ExamTypeId == examType.Id))
-                throw new ExamAlreadyExistsEception("Exam already exists exception");
+                throw new ExamAlreadyExistsEception("Exam already exists ");
 
             if(postExamDTO.Date <= DateTime.Now)
             {
@@ -125,11 +127,26 @@ namespace StudentManagement.Business.Services.Implementations
                 {
                     if (await _examRepository.IsExistsAsync(e => e.GroupSubjectId == putExamDTO.GroupSubjectId && e.ExamTypeId == putExamDTO.ExamTypeId))
                     {
-                        throw new ExamAlreadyExistsEception("Exam already exists exception");
+                        throw new ExamAlreadyExistsEception("Exam already exists ");
                     }
 
                 }
 
+            }
+            if(putExamDTO.maxScore != Exam.MaxScore)
+            {
+                var oldExamResults = await _examResultRepository.GetFiltered(er=>er.ExamId == Exam.Id).ToListAsync();
+                if(oldExamResults.Count()> 0)
+                {
+                    foreach(var examResult in oldExamResults)
+                    {
+                        if(examResult.Score > putExamDTO.maxScore)
+                        {
+                            _examResultRepository.Delete(examResult);
+                        }
+                    }
+
+                }
             }
             
 
