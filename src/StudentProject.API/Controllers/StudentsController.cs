@@ -89,7 +89,7 @@ namespace StudentProject.API.Controllers
 
         }
         [HttpGet("[Action]/{groupId}")]
-        //[Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,Moderator,Student")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,Moderator,Student")]
         public async Task<IActionResult> GetStudentsForGroupForDetails(Guid groupId)
         {
 
@@ -115,6 +115,7 @@ namespace StudentProject.API.Controllers
             return Ok(student);
         }
         [HttpGet("[Action]/{groupSubjectId}")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Teacher")]
         public async Task<IActionResult> GetStudentsForExamForTeacherPage(Guid groupSubjectId)
         {
             var students = await _studentService.GetStudentsForExamsForTeacherPageAsync(groupSubjectId);
