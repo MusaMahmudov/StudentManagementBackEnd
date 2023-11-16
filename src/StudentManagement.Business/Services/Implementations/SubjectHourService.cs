@@ -49,10 +49,10 @@ namespace StudentManagement.Business.Services.Implementations
 
             switch (groupSubject.Semester)
             {
-                case "Yaz":
+                case "Payiz":
                     startDate = new DateTime(groupSubject.Year,9,15);
                    break;
-                case "Payiz":
+                case "Yaz":
                     startDate = new DateTime(groupSubject.Year, 2, 15);
                         break;
                 case "Yay":
@@ -122,25 +122,25 @@ namespace StudentManagement.Business.Services.Implementations
                     }
                 }
             }
-            if(student.studentGroups.Count() > 0)
-            {
-                foreach(var studentGroup in student.studentGroups)
-                {
-                    if(studentGroup.Group?.GroupSubjects.Count() > 0)
-                    {
-                        foreach (var groupSubjectId in studentGroup.Group.GroupSubjects.Select(gs => gs.Id))
-                        {
-                            var groupSubjectHours = await _subjectHourRepository.GetFiltered(sh => sh.GroupSubjectId == groupSubjectId, "LessonType", "GroupSubject.Subject", "GroupSubject.Group").ToListAsync();
-                            foreach (var subjectHour in groupSubjectHours)
-                            {
-                                subjectHours.Add(subjectHour);
-                            }
-                        }
-                    }
+            //if(student.studentGroups.Count() > 0)
+            //{
+            //    foreach(var studentGroup in student.studentGroups)
+            //    {
+            //        if(studentGroup.Group?.GroupSubjects.Count() > 0)
+            //        {
+            //            foreach (var groupSubjectId in studentGroup.Group.GroupSubjects.Select(gs => gs.Id))
+            //            {
+            //                var groupSubjectHours = await _subjectHourRepository.GetFiltered(sh => sh.GroupSubjectId == groupSubjectId, "LessonType", "GroupSubject.Subject", "GroupSubject.Group").ToListAsync();
+            //                foreach (var subjectHour in groupSubjectHours)
+            //                {
+            //                    subjectHours.Add(subjectHour);
+            //                }
+            //            }
+            //        }
                   
-                }
+            //    }
                
-            }
+            //}
            
 
             var subjectHoursDTO = _mapper.Map<List<GetSubjectHourForStudentScheduleDTO>>(subjectHours);
@@ -189,10 +189,10 @@ namespace StudentManagement.Business.Services.Implementations
 
             switch (groupSubject.Semester)
             {
-                case "Yaz":
+                case "Payiz":
                     startDate = new DateTime(groupSubject.Year, 9, 15);
                     break;
-                case "Payiz":
+                case "Yaz":
                     startDate = new DateTime(groupSubject.Year, 2, 15);
                     break;
                 case "Yay":

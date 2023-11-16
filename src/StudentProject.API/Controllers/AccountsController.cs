@@ -45,34 +45,14 @@ namespace StudentProject.API.Controllers
         public async Task<IActionResult> CreateUser(PostUserDTO postUserDTO)
         {
             var newUser =   await _userService.CreateAccountAsync(postUserDTO);
-           // var token = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
-           // string link = $"http://localhost:3000/ConfirmEmail?token={UrlEncoder.Default.Encode(token)}&email={postUserDTO.Email}";
-           // var mailRequestDTO = new MailRequestDTO()
-           // {
-           //     Subject = "Confirm Email",
-           //     ToEmail = postUserDTO.Email,
-           //     Body = $"<h1>Please confirm your email {link} <h1>"
-           // };
-           //await _mailService.SendEmail(mailRequestDTO);
+          
 
 
 
             return Ok("Confirm email");
 
         }
-        //[HttpPost("[Action]/{token}/{email}")]
-        //public async Task<IActionResult> ConfirmEmail(string token,string email)
-        //{
-        //    if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(email))
-        //    {
-        //        return BadRequest("Something went wrong");
-        //    }
-        //    token =System.Web.HttpUtility.UrlDecode(token);
 
-        //     await _userService.ConfirmEmailAsync(token, email);
-        //    return Ok("Email confirmed");
-
-        //}
 
 
         [HttpGet]
@@ -103,6 +83,7 @@ namespace StudentProject.API.Controllers
             return Ok(user);
         }
         [HttpGet("[Action]")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         public async Task<IActionResult> GetUserForStudentAndTeacherUpdate()
         {
             var user = await _userService.GetUsersForTeacherAndStudentUpdateAsync();

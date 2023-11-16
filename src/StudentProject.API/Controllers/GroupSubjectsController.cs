@@ -18,13 +18,14 @@ namespace StudentProject.API.Controllers
             _groupSubjectService = groupSubjectService;
         }
         [HttpGet]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,Moderator")]
         public async Task<IActionResult> GetAllGroupSubjects()
         {
             var groupSubjects = await _groupSubjectService.GetAllGroupSubjectsAsync();
             return Ok(groupSubjects);
         }
         [HttpPost]
-        //[Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         public async Task<IActionResult> CreateGroupSubject(PostGroupSubjectDTO postGroupSubjectDTO)
         {
            await _groupSubjectService.CreateGroupSubjectAsync(postGroupSubjectDTO);
@@ -32,27 +33,28 @@ namespace StudentProject.API.Controllers
 
         }
         [HttpGet("{Id}")]
-        //[Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,Moderator")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,Moderator")]
         public async Task<IActionResult> GetGroupSubjectById(Guid Id)
         {
             var groupSubject = await _groupSubjectService.GetGroupSubjectByIdAsync(Id);
             return Ok(groupSubject);
         }
         [HttpGet("[Action]")]
-        //[Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,Moderator")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,Moderator")]
         public async Task<IActionResult> GetGroupSubjectsForExamUpdate()
         {
             var groupSubjects = await _groupSubjectService.GetGroupSubjectsForExamUpdateAsync();
             return Ok(groupSubjects);
         }
         [HttpGet("[Action]/{Id}")]
-        //[Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,Moderator")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,Moderator")]
         public async Task<IActionResult> GetGroupSubjectForUpdate(Guid Id)
         {
             var groupSubject = await _groupSubjectService.GetGroupSubjectForUpdateAsync(Id);
             return Ok(groupSubject);
         }
         [HttpPut("{Id}")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,Moderator")]
         public async Task<IActionResult> UpdateGroupSubject(Guid Id, PutGroupSubjectDTO putGroupSubjectDTO)
         {
            await _groupSubjectService.UpdateGroupSubjectAsync(Id, putGroupSubjectDTO);
@@ -67,6 +69,7 @@ namespace StudentProject.API.Controllers
         }
 
         [HttpGet("[Action]/{teacherId}")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Teacher")]
         public IActionResult GetGroupSubjectsForTeacherPageDTO(Guid teacherId)
         {
           var groupSubjects =  _groupSubjectService.GetGroupSubjectForTeacherPageDTO(teacherId);
@@ -74,6 +77,7 @@ namespace StudentProject.API.Controllers
         }
 
         [HttpGet("[Action]/{studentId}")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Student")]
         public async Task<IActionResult> GetGroupSubjectsForSubjectsForStudentPage(Guid studentId)
         {
             var groupSubjects = await _groupSubjectService.GetGroupSubjectForSubjectsForStudentPageAsync(studentId);

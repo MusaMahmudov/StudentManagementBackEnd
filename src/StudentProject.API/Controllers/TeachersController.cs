@@ -18,20 +18,21 @@ namespace StudentProject.API.Controllers
             _teacherService = teacherService;
         }
         [HttpGet]
-        //[Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,Moderator")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,Moderator")]
         public async Task<IActionResult> GetAllTeachers(string? search) 
         {
           var  teachers = await _teacherService.GetAllTeachersAsync(search);
             return Ok(teachers);
         }
         [HttpGet("GroupSubjectCreate")]
-
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         public async Task<IActionResult> GetTeachersForCreateGroupSubject()
         {
             var teachers = await _teacherService.GetTeachersForCreateGroupSubjectAsync();
             return Ok(teachers);
         }
         [HttpGet("[Action]")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,Moderator")]
         public async Task<IActionResult> GetAllTeachersForUser()
         {
             var teachers = await _teacherService.GetAllTeachersForUserUpdateAsync();

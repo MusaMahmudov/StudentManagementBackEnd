@@ -42,6 +42,7 @@ namespace StudentProject.API.Controllers
 
         }
         [HttpGet("[Action]")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,Moderator")]
         public async Task<IActionResult> GetGroupsForObjectsUpdate()
         {
             var group = await _groupService.GetGroupsForObjectsUpdateAsync();
