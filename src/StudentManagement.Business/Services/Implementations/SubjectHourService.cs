@@ -46,7 +46,10 @@ namespace StudentManagement.Business.Services.Implementations
             var startTime = new TimeSpan(postSubjectHourDTO.StartTime.Hours,postSubjectHourDTO.StartTime.Minutes,postSubjectHourDTO.StartTime.Seconds);
             var endTime = new TimeSpan(postSubjectHourDTO.EndTime.Hours, postSubjectHourDTO.EndTime.Minutes, postSubjectHourDTO.EndTime.Seconds);
             DateTime startDate = new DateTime();
-
+            if(startTime > endTime)
+            {
+                throw new StartTimeCannotBeMoreThanEndTimeException("Invalid time values");
+            }
             switch (groupSubject.Semester)
             {
                 case "Payiz":
@@ -184,7 +187,10 @@ namespace StudentManagement.Business.Services.Implementations
             var startTime = new TimeSpan(putSubjectHourDTO.StartTime.Hours, putSubjectHourDTO.StartTime.Minutes, putSubjectHourDTO.StartTime.Seconds);
             var endTime = new TimeSpan(putSubjectHourDTO.EndTime.Hours, putSubjectHourDTO.EndTime.Minutes, putSubjectHourDTO.EndTime.Seconds);
             DateTime startDate = new DateTime();
-
+            if (startTime > endTime)
+            {
+                throw new StartTimeCannotBeMoreThanEndTimeException("Invalid time values");
+            }
 
 
             switch (groupSubject.Semester)
